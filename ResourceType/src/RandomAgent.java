@@ -34,6 +34,28 @@ public class RandomAgent implements Agent{
         if (mustSpend && actions.size() == 0){
             return "has more that seven cards but cannot build anything";
         }
+
+        //If not forced to spend, agent can choose to do nothing
+        if (!mustSpend && actions.size() == 0){
+            return "does nothing";
+        }
+
+        String actionToPreform = actions.get(random.nextInt(actions.size()));
+        if (actionToPreform.startsWith("Build a ROAD")){
+            player.spend(ResourceType.BRICK, 1);
+            player.spend(ResourceType.WOOD, 1);
+        }else if (actionToPreform.startsWith("Build a SETTLEMENT")){
+            player.spend(ResourceType.BRICK, 1);
+            player.spend(ResourceType.WOOD, 1);
+            player.spend(ResourceType.WHEAT, 1);
+            player.spend(ResourceType.SHEEP, 1);
+        }else{
+            player.spend(ResourceType.WHEAT, 2);
+            player.spend(ResourceType.ORE, 3);
+            player.addVictoryPoints(1);
+        }
+
+        return  actionToPreform;
     }
 
 }
