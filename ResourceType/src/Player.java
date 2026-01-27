@@ -7,7 +7,7 @@ public class Player {
     private int id;
 
     public Player(UserHand handOfPlayer, int id){
-        this.handOfPlayer = new UserHand();
+        this.handOfPlayer = new UserHand(null);
         this.id = id;
     }
 

@@ -2,15 +2,20 @@ import java.util.*;
 public class UserHand {
 
     private HashMap<ResourceType, Integer> count;
-    public UserHand( HashMap<ResourceType, Integer> count){
+    public UserHand(HashMap<ResourceType, Integer> count){
         this.count = new HashMap<>();
         for (ResourceType t: ResourceType.values()){
             count.put(t, 0);
         }
-    }
 
-    public UserHand(){
-        this.count = count;
+        if (count != null){
+            for (ResourceType t: ResourceType.keySet()){
+                int amount = count.get(t);
+                if (amount < 0) throw new IllegalArgumentException("Amount of cards must be >= 0");
+                this.count.put(t, amount);
+
+            }
+        }
     }
 
     public int getCount(ResourceType type){
