@@ -1,6 +1,7 @@
 package player;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import utils.ResourceType;
 
@@ -12,10 +13,10 @@ import utils.ResourceType;
  */
 public abstract class Player {
     /** Represents the total number of players that have been created **/
-    static int num_players = 0;
+    private static int num_players = 0;
     
     /** The maximum number of players allowed in a game **/
-    static final int max_players = 4;
+    private static final int max_players = 4;
     
     /** The color of the player's structures **/
     private final PlayerColor color;
@@ -65,17 +66,8 @@ public abstract class Player {
     /**
      * Resets the number of players to zero. Used when restarting the game.
      */
-    static void resetNumPlayers() {
+    public static void resetNumPlayers() {
         num_players = 0;
-    }
-
-    /**
-     * Increments the player's victory points by a specified amount
-     * 
-     * @param points Number of points to increment by
-     */
-    public void incrementVictoryPoints(int points) {
-        this.victory_points += points;
     }
 
     /**
@@ -171,7 +163,7 @@ public abstract class Player {
      * 
      * @return List of Player's development cards
      */
-    public ArrayList<SpecialCard> getDevelopmentCards() {
+    public List<SpecialCard> getDevelopmentCards() {
         return development_cards;
     }
 
@@ -210,8 +202,8 @@ public abstract class Player {
      * 
      * @return List of player's cities
      */
-    public ArrayList<City> getCities() {
-        ArrayList<City> cities = new ArrayList<>();
+    public List<City> getCities() {
+        List<City> cities = new ArrayList<>();
         for (Structure structure : structures) {
             if (structure instanceof City) {
                 cities.add((City) structure);
@@ -225,8 +217,8 @@ public abstract class Player {
      * 
      * @return List of player's settlements
      */
-    public ArrayList<Settlement> getSettlements() {
-        ArrayList<Settlement> settlements = new ArrayList<>();
+    public List<Settlement> getSettlements() {
+        List<Settlement> settlements = new ArrayList<>();
         for (Structure structure : structures) {
             if (structure instanceof Settlement) {
                 settlements.add((Settlement) structure);
@@ -240,8 +232,8 @@ public abstract class Player {
      * 
      * @return List of player's roads
      */
-    public ArrayList<Road> getRoads() {
-        ArrayList<Road> roads = new ArrayList<>();
+    public List<Road> getRoads() {
+        List<Road> roads = new ArrayList<>();
         for (Structure structure : structures) {
             if (structure instanceof Road) {
                 roads.add((Road) structure);
