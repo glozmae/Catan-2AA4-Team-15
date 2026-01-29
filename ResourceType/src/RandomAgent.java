@@ -40,6 +40,10 @@ public class RandomAgent implements Agent{
             return "does nothing";
         }
 
+        if (!mustSpend && actions.size() > 0){
+            return "does nothing";
+        }
+
         String actionToPreform = actions.get(random.nextInt(actions.size()));
         if (actionToPreform.startsWith("Build a ROAD")){
             player.spend(ResourceType.BRICK, 1);

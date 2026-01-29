@@ -16,6 +16,7 @@ public class GameConfig {
                 return;
             }
 
+
             String after = content.substring(i + 6).trim();
             String number = after;
             turns = Integer.parseInt(number);
