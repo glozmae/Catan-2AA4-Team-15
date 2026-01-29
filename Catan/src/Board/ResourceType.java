@@ -1,3 +1,5 @@
+package Board;
+
 public enum ResourceType {
     WOOD,
     BRICK,
