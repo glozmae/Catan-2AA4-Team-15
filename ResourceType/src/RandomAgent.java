@@ -4,8 +4,8 @@ public class RandomAgent implements Agent{
 
     @override
     public String takeTurn(Player player, Random random){
-        ArrayList<String> actions = new ArrayList<>();
 
+        ArrayList<String> actions = new ArrayList<>();
         int total = player.totalCards();
         boolean mustSpend = total > 7;
 
@@ -40,7 +40,8 @@ public class RandomAgent implements Agent{
             return "does nothing";
         }
 
-        if (!mustSpend && actions.size() > 0){
+        //if not forced to spend, do nothing
+        if (!mustSpend){
             return "does nothing";
         }
 
@@ -53,7 +54,7 @@ public class RandomAgent implements Agent{
             player.spend(ResourceType.WOOD, 1);
             player.spend(ResourceType.WHEAT, 1);
             player.spend(ResourceType.SHEEP, 1);
-        }else{
+        }else if (actionToPreform.startsWith("Build a CITY")){
             player.spend(ResourceType.WHEAT, 2);
             player.spend(ResourceType.ORE, 3);
             player.addVictoryPoints(1);
