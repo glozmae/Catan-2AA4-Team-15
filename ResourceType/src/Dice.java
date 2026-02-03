@@ -1,6 +1,8 @@
+package player;
+
 import java.util.*;
 
-public class Dice {
+public class Dice{
 
     private final Random random;
 

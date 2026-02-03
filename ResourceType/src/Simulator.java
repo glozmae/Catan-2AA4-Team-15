@@ -1,3 +1,5 @@
+package player;
+
 import java.util.*;
 
 import player.Player;
@@ -9,8 +11,8 @@ public class Simulator{
 
     public Simulator (List<Player> players, Dice dice, Game game){
         this.players = players;
-        this.dice = dice();
-        this.game = game();
+        this.dice = dice;
+        this.game = game;
     }
 
     public void run(int turns){
@@ -35,7 +37,7 @@ public class Simulator{
                 }
                 p.takeTurn(game);
 
-                String action = game.consumeLastAction(p);
+                String action = game.deleteLastAction(p);
                 if (action == null || action.isBlank()){
                     action = "does nothing";
                 }

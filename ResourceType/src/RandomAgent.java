@@ -1,11 +1,12 @@
-import java.util.*;
+package player;
 
+import java.util.*;
 public class RandomAgent implements Agent{
 
-    @override
+    @Override
     public String takeTurn(Player player, Random random){
 
-        ArrayList<String> actions = new ArrayList<>();
+        List<String> actions = new ArrayList<>();
         int total = player.totalCards();
         boolean mustSpend = total > 7;
 

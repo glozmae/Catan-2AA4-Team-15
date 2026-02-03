@@ -1,8 +1,9 @@
+package player;
+
 public enum ResourceType {
     BRICK,
-    WOOD,
-    SHEEP,
-    WHEAT,
-    ORE,
-    DESERT;
+    LUMBER,
+    WOOL,
+    GRAIN,
+    ORE;
 }
