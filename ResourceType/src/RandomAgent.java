@@ -23,20 +23,15 @@ public class RandomAgent implements Agent{
                 player.numResource(ResourceType.ORE) >= 3;
 
         if (canMakeRoad){
-            actions.add("Build a ROAD by spending 1 BRICK and 1 WOOD");
+            actions.add("Build a ROAD by spending 1 BRICK and 1 LUMBER");
         }
 
         if (canMakeCity){
-            actions.add("Build a CITY by spending 2 WHEAT and 3 ORE");
+            actions.add("Build a CITY by spending 2 GRAIN and 3 ORE");
         }
 
         if (canMakeSettlement){
-            actions.add("Build a SETTLEMENT by spending 1 BRICK, 1 WOOD, 1 SHEEP and 1 WHEAT");
-        }
-
-        //if it must spend but it cant do anything, return a message
-        if (mustSpend && actions.size() == 0){
-            return "has more that seven cards but cannot build anything";
+            actions.add("Build a SETTLEMENT by spending 1 BRICK, 1 LUMBER, 1 WOOL and 1 GRAIN");
         }
 
         //If not forced to spend, agent can choose to do nothing
@@ -54,17 +49,21 @@ public class RandomAgent implements Agent{
         if (actionToPreform.startsWith("Build a ROAD")){
             player.removeResource(ResourceType.BRICK);
             player.removeResource(ResourceType.LUMBER);
+            player.addStructure(new Road(player, -1, -1));
         }else if (actionToPreform.startsWith("Build a SETTLEMENT")){
             player.removeResource(ResourceType.BRICK);
             player.removeResource(ResourceType.LUMBER);
             player.removeResource(ResourceType.WOOL);
             player.removeResource(ResourceType.GRAIN);
+            player.addStructure(new Settlement(player, -1));
+
         }else if (actionToPreform.startsWith("Build a CITY")){
             player.removeResource(ResourceType.GRAIN);
             player.removeResource(ResourceType.GRAIN);
             player.removeResource(ResourceType.ORE);
             player.removeResource(ResourceType.ORE);
             player.removeResource(ResourceType.ORE);
+            player.addStructure(new City(player, -1));
 
         }
 
