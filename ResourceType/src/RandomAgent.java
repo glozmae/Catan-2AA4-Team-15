@@ -6,18 +6,21 @@ public class RandomAgent implements Agent{
     @Override
     public String takeTurn(Player player, Random random){
 
-        List<String> actions = new ArrayList<>();
-        int total = player.totalCards();
+        int total = totalCards(player);
         boolean mustSpend = total > 7;
 
-        boolean canMakeRoad = player.enoughCards(ResourceType.BRICK, 1) && player.enoughCards(ResourceType.WOOD, 1);
-        boolean canMakeSettlement = player.enoughCards(ResourceType.BRICK, 1) &&
-                player.enoughCards(ResourceType.WOOD, 1) &&
-                player.enoughCards(ResourceType.SHEEP, 1) &&
-                player.enoughCards(ResourceType.WHEAT, 1);
+        List<String> actions = new ArrayList<>();
 
-        boolean canMakeCity = player.enoughCards(ResourceType.WHEAT, 2)&&
-                player.enoughCards(ResourceType.ORE, 3);
+        boolean canMakeRoad = player.numResource(ResourceType.BRICK) >= 1 && player.numResource(ResourceType.LUMBER) >= 1;
+
+        boolean canMakeSettlement =
+                player.numResource(ResourceType.BRICK) >= 1 &&
+                player.numResource(ResourceType.LUMBER) >= 1 &&
+                player.numResource(ResourceType.WOOL) >= 1 &&
+                player.numResource(ResourceType.GRAIN) >= 1;
+
+        boolean canMakeCity = player.numResource(ResourceType.GRAIN) >= 2 &&
+                player.numResource(ResourceType.ORE) >= 3;
 
         if (canMakeRoad){
             actions.add("Build a ROAD by spending 1 BRICK and 1 WOOD");
@@ -43,25 +46,37 @@ public class RandomAgent implements Agent{
 
         //if not forced to spend, do nothing
         if (!mustSpend){
-            return "does nothing";
+            actions.add("does nothing");
         }
 
         String actionToPreform = actions.get(random.nextInt(actions.size()));
+
         if (actionToPreform.startsWith("Build a ROAD")){
-            player.spend(ResourceType.BRICK, 1);
-            player.spend(ResourceType.WOOD, 1);
+            player.removeResource(ResourceType.BRICK);
+            player.removeResource(ResourceType.LUMBER);
         }else if (actionToPreform.startsWith("Build a SETTLEMENT")){
-            player.spend(ResourceType.BRICK, 1);
-            player.spend(ResourceType.WOOD, 1);
-            player.spend(ResourceType.WHEAT, 1);
-            player.spend(ResourceType.SHEEP, 1);
+            player.removeResource(ResourceType.BRICK);
+            player.removeResource(ResourceType.LUMBER);
+            player.removeResource(ResourceType.WOOL);
+            player.removeResource(ResourceType.GRAIN);
         }else if (actionToPreform.startsWith("Build a CITY")){
-            player.spend(ResourceType.WHEAT, 2);
-            player.spend(ResourceType.ORE, 3);
-            player.addVictoryPoints(1);
+            player.removeResource(ResourceType.GRAIN);
+            player.removeResource(ResourceType.GRAIN);
+            player.removeResource(ResourceType.ORE);
+            player.removeResource(ResourceType.ORE);
+            player.removeResource(ResourceType.ORE);
+
         }
 
         return  actionToPreform;
+    }
+
+    private int totalCards(Player player){
+        int sum = 0;
+        for (ResourceType t : ResourceType.values()){
+            sum += player.numResource(t);
+        }
+        return sum;
     }
 
 }

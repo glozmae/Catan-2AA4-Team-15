@@ -7,7 +7,7 @@ package player;
 public abstract class SpecialCard {
     private final String name;
 
-    protected SpecialCard(String name){
+    public SpecialCard(String name){
         this.name = name;
     }
 
