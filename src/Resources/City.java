@@ -15,7 +15,7 @@ public class City extends Structure implements Purchasable {
     private static final int MAX = 4;
 
     /**
-     * Returns the resource cost required to build one City
+     * Returns the resource cost required to build one City.
      * @return the required cost
      */
     @Override
@@ -25,7 +25,7 @@ public class City extends Structure implements Purchasable {
 	}
 
     /**
-     * Returns the number of victory points a City provides
+     * Returns the number of victory points a City provides.
      * @return Victory points gained from this City (2)
      */
     @Override
@@ -34,7 +34,7 @@ public class City extends Structure implements Purchasable {
 	}
 
     /**
-     * Returns the maximum number of cities a player may build
+     * Returns the maximum number of cities a player may build.
      * @return the city limit per player
      */
     public static int getMax() {

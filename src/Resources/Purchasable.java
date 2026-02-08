@@ -13,7 +13,7 @@ package Resources;
 public interface Purchasable {
 
 	/**
-     * Returns the resource cost required to purchase/build this item
+     * Returns the resource cost required to purchase/build this item.
 	 * @return the required cost
 	 */
 	public Cost getCost();

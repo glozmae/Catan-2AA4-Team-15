@@ -17,7 +17,7 @@ public class Road extends Structure implements Purchasable {
 	private static final int MAX = 15;
 
     /**
-     * Returns the resource cost required to build one Road
+     * Returns the resource cost required to build one Road.
      * @return the required cost
      */
     @Override
@@ -27,7 +27,7 @@ public class Road extends Structure implements Purchasable {
 	}
 
     /**
-     * Returns the number of victory points a Road provides
+     * Returns the number of victory points a Road provides.
      * @return Victory points gained from this Road (0)
      */
     @Override
@@ -36,7 +36,7 @@ public class Road extends Structure implements Purchasable {
     }
 
     /**
-     * Returns the maximum number of roads a player may build
+     * Returns the maximum number of roads a player may build.
      * @return the road limit per player
      */
     public static int getMax() {

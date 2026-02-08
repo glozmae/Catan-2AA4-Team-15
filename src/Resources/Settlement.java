@@ -16,7 +16,7 @@ public class Settlement extends Structure implements Purchasable {
 	private static final int MAX = 5;
 
 	/**
-	 * Returns the resource cost required to build one Settlement
+	 * Returns the resource cost required to build one Settlement.
      * @return the required cost
 	 */
     @Override
@@ -26,7 +26,7 @@ public class Settlement extends Structure implements Purchasable {
 	}
 
 	/**
-	 * Returns the number of victory points a Settlement provides
+	 * Returns the number of victory points a Settlement provides.
 	 * @return Victory points gained from this Settlement (1)
 	 */
     @Override
@@ -35,7 +35,7 @@ public class Settlement extends Structure implements Purchasable {
 	}
 
     /**
-     * Returns the maximum number of settlements a player may build
+     * Returns the maximum number of settlements a player may build.
      * @return the settlement limit per player
      */
     public static int getMax() {

@@ -8,17 +8,49 @@ import Player.Player;
 
 /************************************************************/
 /**
- * 
+ * Represents a structure in the game (e.g, Road, Settlement, City).
+ * Each Structure has an owner and provides a numebr of victory points.
+ * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public abstract class Structure {
-	/**
-	 * 
-	 */
-	public Player owner;
+	/** The player who owns this structure */
+	private Player owner;
 
-	/**
-	 * 
-	 * @return 
+    /**
+     * Creates a Structure with no owner initially. Ownership should be assigned
+     * once by the game logic when the structure is placed.
+     */
+    public Structure(){
+        this.owner = null;
+    }
+
+    /**
+     * Returns the owner of this structure.
+     * @return the owning player, or null if not yet assigned
+     */
+    public Player getOwner(){
+        return owner;
+    }
+
+    /**
+     * Assigns the owner of this structure exactly once.
+     * @param owner the player who owns this structure
+     * @throws IllegalArgumentException if owner is null
+     * @throws IllegalStateException if the owner was already assigned
+     */
+    public void setOwner(Player owner){
+        if (owner == null){
+            throw new IllegalArgumentException("Owner cannot be null");
+        }
+        if (this.owner != null){
+            throw new IllegalStateException("Owner already assigned");
+        }
+        this.owner = owner;
+    }
+
+    /**
+	 * Returns the number of victory points this structure provies.
+	 * @return victory points
 	 */
 	public abstract int getVictoryPoints();
 }
