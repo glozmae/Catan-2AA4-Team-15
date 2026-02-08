@@ -6,17 +6,15 @@ package Resources;
 
 /************************************************************/
 /**
- * 
+ * Represents something that an be purchased in the game using resources.
+ * Implementing classes (e.g, Settlement, Road) must provide their resource cost.
+ * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public interface Purchasable {
-	/**
-	 * 
-	 */
-	public Cost cost;
 
 	/**
-	 * 
-	 * @return 
+     * Returns the resource cost required to purchase/build this item
+	 * @return the required cost
 	 */
 	public Cost getCost();
 }
