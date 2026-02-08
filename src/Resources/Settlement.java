@@ -36,4 +36,11 @@ public class Settlement extends Structure implements Purchasable {
         return 1;
 	}
 
+    /**
+     * Returns the maximum number of settlements a player may build
+     * @return the road limit per player
+     */
+    public static int getMax() {
+        return MAX;
+    }
 }
