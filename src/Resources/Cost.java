@@ -6,27 +6,95 @@ package Resources;
 
 /************************************************************/
 /**
- * 
+ * Represents the resource cost required to build something in the game.
+ * A Cost object is immutable and stores how many of each ResourceType are needed.
+ *
+ * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public class Cost {
-	/**
-	 * 
-	 */
+	/** Number of BRICK cards required */
 	private int brick;
-	/**
-	 * 
-	 */
-	private int lumber;
-	/**
-	 * 
-	 */
-	private int grain;
-	/**
-	 * 
-	 */
-	private int wool;
-	/**
-	 * 
-	 */
-	private int ore;
+    /** Number of LUMBER cards required */
+    private int lumber;
+    /** Number of GRAIN cards required */
+    private int grain;
+    /** Number of WOOL cards required */
+    private int wool;
+    /** Number of ORE cards required */
+    private int ore;
+
+    /**
+     * Constructs a Cost with the required amounts of each resource.
+     * All values must be non-negative.
+     * @param brick number of BRICK required
+     * @param lumber number of LUMBER required
+     * @param grain number of GRAIN required
+     * @param wool number of WOOL required
+     * @param ore number of ORE required
+     */
+    public Cost(int brick, int lumber, int grain, int wool, int ore) {
+        requireNonNegative(brick, "brick");
+        requireNonNegative(lumber, "lumber");
+        requireNonNegative(grain, "grain");
+        requireNonNegative(wool, "wool");
+        requireNonNegative(ore, "ore");
+
+        this.brick = brick;
+        this.lumber = lumber;
+        this.grain = grain;
+        this.wool = wool;
+        this.ore = ore;
+
+    }
+    /**
+     * Returns the number of BRICK required
+     * @return brick cost
+     */
+    public in getBrick(){
+        return brick;
+    }
+
+    /**
+     * Returns the number of LUMBER required
+     * @return lumber cost
+     */
+    public in getLumber(){
+        return lumber;
+    }
+
+    /**
+     * Returns the number of GRAIN required.
+     * @return grain cost
+     */
+    public in getGrain(){
+        return grain;
+    }
+
+    /**
+     * Returns the number of WOOL required.
+     * @return wool cost
+     */
+    public in getWool(){
+        return wool;
+    }
+
+    /**
+     * Returns the number of ORE required.
+     * @return ore cost
+     */
+    public in getOre(){
+        return ore;
+    }
+
+    /**
+     * Validates that a resource amount is not negative
+     * @param amount the amount being validated
+     * @param name the resource name
+     * @throws IllegalArgumentException if amount is negative
+     */
+    private static void requireNonNegative(int amount, String name){
+        if (amount < 0){
+            throw new IllegalArgumentException(name + " must be greater then or equal to 0");
+        }
+    }
 }
