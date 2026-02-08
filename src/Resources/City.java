@@ -12,7 +12,7 @@ package Resources;
  */
 public class City extends Structure implements Purchasable {
     /** Maximum number of cities a player can build */
-    private static int MAX = 4;
+    private static final int MAX = 4;
 
     /**
      * Returns the resource cost required to build one City
@@ -21,7 +21,7 @@ public class City extends Structure implements Purchasable {
     @Override
 	public Cost getCost() {
         //0 BRICK, 0 LUMBER, 2 GRAIN, 0 WOOL, 3 ORE
-        return new Cost(0, 0, 2, 0, 3)
+        return new Cost(0, 0, 2, 0, 3);
 	}
 
     /**

@@ -13,7 +13,7 @@ package Resources;
 public class Settlement extends Structure implements Purchasable {
 
     /** Maximum number of settlements a player can build */
-	private static int MAX = 5;
+	private static final int MAX = 5;
 
 	/**
 	 * Returns the resource cost required to build one Settlement

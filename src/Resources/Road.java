@@ -14,7 +14,7 @@ package Resources;
  */
 public class Road extends Structure implements Purchasable {
     /** Maximum number of Roads a player can build */
-	private static int MAX = 15;
+	private static final int MAX = 15;
 
     /**
      * Returns the resource cost required to build one Road
