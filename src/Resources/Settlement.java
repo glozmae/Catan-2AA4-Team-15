@@ -12,14 +12,12 @@ package Resources;
  */
 public class Settlement extends Structure implements Purchasable {
 
-    /**
-	 * Maximum number of settlemets a player can build
-	 */
+    /** Maximum number of settlements a player can build */
 	private static int MAX = 5;
 
 	/**
 	 * Returns the resource cost required to build one Settlement
-     * @return a Cost object representing the build cost
+     * @return the required cost
 	 */
     @Override
 	public Cost getCost() {
@@ -38,7 +36,7 @@ public class Settlement extends Structure implements Purchasable {
 
     /**
      * Returns the maximum number of settlements a player may build
-     * @return the road limit per player
+     * @return the settlement limit per player
      */
     public static int getMax() {
         return MAX;

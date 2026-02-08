@@ -6,25 +6,38 @@ package Resources;
 
 /************************************************************/
 /**
- * 
+ * Represents a City that a player can build in the game.
+ * A City is a type of Structure worth 2 victory points, and it has a
+ * fixed resource cost so other parts of the system can query it through the Purchasable interface.
  */
 public class City extends Structure implements Purchasable {
-	/**
-	 * 
-	 */
-	private static int MAX = 4;
+    /** Maximum number of cities a player can build */
+    private static int MAX = 4;
 
-	/**
-	 * 
-	 * @return 
-	 */
+    /**
+     * Returns the resource cost required to build one City
+     * @return the required cost
+     */
+    @Override
 	public Cost getCost() {
+        //0 BRICK, 0 LUMBER, 2 GRAIN, 0 WOOL, 3 ORE
+        return new Cost(0, 0, 2, 0, 3)
 	}
 
-	/**
-	 * 
-	 * @return 
-	 */
+    /**
+     * Returns the number of victory points a City provides
+     * @return Victory points gained from this City (2)
+     */
+    @Override
 	public int getVictoryPoints() {
+        return 2;
 	}
+
+    /**
+     * Returns the maximum number of cities a player may build
+     * @return the city limit per player
+     */
+    public static int getMax() {
+        return MAX;
+    }
 }
