@@ -6,27 +6,13 @@ package Resources;
 
 /************************************************************/
 /**
- * 
+ * Represents the five basic resource cards used in Catan.
+ * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public enum ResourceType {
-	/**
-	 * 
-	 */
 	BRICK,
-	/**
-	 * 
-	 */
 	LUMBER,
-	/**
-	 * 
-	 */
 	ORE,
-	/**
-	 * 
-	 */
 	WOOL,
-	/**
-	 * 
-	 */
 	GRAIN;
 }
