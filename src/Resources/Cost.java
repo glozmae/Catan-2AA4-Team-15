@@ -13,15 +13,15 @@ package Resources;
  */
 public class Cost {
 	/** Number of BRICK cards required */
-	private int brick;
+	private final int brick;
     /** Number of LUMBER cards required */
-    private int lumber;
+    private final int lumber;
     /** Number of GRAIN cards required */
-    private int grain;
+    private final int grain;
     /** Number of WOOL cards required */
-    private int wool;
+    private final int wool;
     /** Number of ORE cards required */
-    private int ore;
+    private final int ore;
 
     /**
      * Constructs a Cost with the required amounts of each resource.
@@ -50,7 +50,7 @@ public class Cost {
      * Returns the number of BRICK required
      * @return brick cost
      */
-    public in getBrick(){
+    public int getBrick(){
         return brick;
     }
 
@@ -58,7 +58,7 @@ public class Cost {
      * Returns the number of LUMBER required
      * @return lumber cost
      */
-    public in getLumber(){
+    public int getLumber(){
         return lumber;
     }
 
@@ -66,7 +66,7 @@ public class Cost {
      * Returns the number of GRAIN required.
      * @return grain cost
      */
-    public in getGrain(){
+    public int getGrain(){
         return grain;
     }
 
@@ -74,7 +74,7 @@ public class Cost {
      * Returns the number of WOOL required.
      * @return wool cost
      */
-    public in getWool(){
+    public int getWool(){
         return wool;
     }
 
@@ -82,7 +82,7 @@ public class Cost {
      * Returns the number of ORE required.
      * @return ore cost
      */
-    public in getOre(){
+    public int getOre(){
         return ore;
     }
 
