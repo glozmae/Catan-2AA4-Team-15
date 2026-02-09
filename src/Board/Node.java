@@ -4,9 +4,9 @@
 
 package Board;
 
+import GameResources.Road;
+import GameResources.Structure;
 import Player.Player;
-import Resources.Road;
-import Resources.Structure;
 
 /************************************************************/
 /**
