@@ -6,25 +6,39 @@ package Resources;
 
 /************************************************************/
 /**
- * 
+ * A Settlement is a structure worth 1 victory point. Cost values are kept here so other parts
+ * of the system can query the cost through the Purchasable interface.
+ * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public class Settlement extends Structure implements Purchasable {
-	/**
-	 * 
-	 */
-	private static int MAX = 5;
+
+    /** Maximum number of settlements a player can build */
+	private static final int MAX = 5;
 
 	/**
-	 * 
-	 * @return 
+	 * Returns the resource cost required to build one Settlement.
+     * @return the required cost
 	 */
+    @Override
 	public Cost getCost() {
+        //1 BRICK, 1 LUMBER, 1 GRAIN, 1 WOOL, 0 ORE
+        return new Cost(1, 1, 1, 1, 0);
 	}
 
 	/**
-	 * 
-	 * @return 
+	 * Returns the number of victory points a Settlement provides.
+	 * @return Victory points gained from this Settlement (1)
 	 */
+    @Override
 	public int getVictoryPoints() {
+        return 1;
 	}
+
+    /**
+     * Returns the maximum number of settlements a player may build.
+     * @return the settlement limit per player
+     */
+    public static int getMax() {
+        return MAX;
+    }
 }
