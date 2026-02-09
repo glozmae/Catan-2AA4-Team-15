@@ -8,41 +8,57 @@ import Resources.ResourceType;
 
 /************************************************************/
 /**
- * 
+ *
  */
 public class Tile {
 	/**
-	 * 
+	 *
 	 */
 	private ResourceType type;
 	/**
-	 * 
+	 *
 	 */
 	private Node[] nodes;
 	/**
-	 * 
+	 *
 	 */
 	private int id;
 
 	/**
-	 * 
-	 * @param id 
-	 * @param nodes 
-	 * @param type 
+	 *
+	 * @param id
+	 * @param nodes
+	 * @param type
 	 */
-	public void Tile(int id, Node[] nodes, ResourceType type) {
+	public Tile(int id, Node[] nodes, ResourceType type) {
+		this.id = id;
+
+		// VALIDATION: Ensure the passed array is the correct size
+		if (nodes == null || nodes.length != 6) {
+			throw new IllegalArgumentException("A tile requires exactly 6 valid nodes.");
+		}
+		this.nodes = nodes;
+		nodeConnector();
+		this.type = type;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void nodeConnector() {
+		nodes[0].setVert(nodes[1]);
+		nodes[1].setLeft(nodes[2]);
+		nodes[2].setLeft(nodes[3]);
+		nodes[3].setVert(nodes[4]);
+		nodes[4].setRight(nodes[5]);
+		nodes[5].setRight(nodes[0]);
 	}
 
 	/**
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 */
 	public ResourceType getType() {
+		return this.type;
 	}
 }
