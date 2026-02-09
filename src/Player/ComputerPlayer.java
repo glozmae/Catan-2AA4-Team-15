@@ -4,42 +4,120 @@
 
 package Player;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import Game.Game;
+import GameResources.City;
+import GameResources.ResourceType;
+import GameResources.Road;
+import GameResources.Settlement;
 
 /************************************************************/
 /**
- * 
+ * Represents a computer simulation of a player
+ *
+ * @author Yojith Sai Biradavolu, McMaster University
+ * @version Winter, 2026
  */
 public class ComputerPlayer extends Player {
-	/**
-	 * 
-	 */
-	private int randomizer;
+    /** Randomizer for moves **/
+    private Random randomizer;
 
-	/**
-	 * 
-	 */
-	public void ComputerPlayer() {
-	}
+    /**
+     * Constructor for a computer player
+     */
+    public ComputerPlayer() {
+        super();
+        this.randomizer = new Random();
+    }
 
-	/**
-	 * 
-	 * @param seed 
-	 */
-	public void ComputerPlayer(int seed) {
-	}
+    /**
+     * Constructor for a computer player with a seed for the randomizer
+     *
+     * @param seed Seed for the randomizer
+     */
+    public ComputerPlayer(int seed) {
+        super();
+        this.randomizer = new Random(seed);
+    }
 
-	/**
-	 * 
-	 * @param game 
-	 */
-	public void takeTurn(Game game) {
-	}
+    /**
+     * Initiate the current player's turn
+     *
+     * @param game The current game
+     */
+    @Override
+    public void takeTurn(Game game) {
 
-	/**
-	 * 
-	 * @param game 
-	 */
-	public void setup(Game game) {
-	}
+        int total = getNumResource(ResourceType.BRICK) + getNumResource(ResourceType.LUMBER)
+                + getNumResource(ResourceType.WOOL) + getNumResource(ResourceType.GRAIN)
+                + getNumResource(ResourceType.ORE);
+        boolean mustSpend = total > 7;
+
+        List<String> actions = new ArrayList<>();
+
+        boolean canMakeRoad = getNumResource(ResourceType.BRICK) >= 1 && getNumResource(ResourceType.LUMBER) >= 1;
+
+        boolean canMakeSettlement = getNumResource(ResourceType.BRICK) >= 1 && getNumResource(ResourceType.LUMBER) >= 1
+                && getNumResource(ResourceType.WOOL) >= 1 && getNumResource(ResourceType.GRAIN) >= 1;
+
+        boolean canMakeCity = getNumResource(ResourceType.GRAIN) >= 2 && getNumResource(ResourceType.ORE) >= 3;
+
+        if (canMakeRoad) {
+            actions.add("Build a ROAD by spending 1 BRICK and 1 LUMBER");
+        }
+
+        if (canMakeCity) {
+            actions.add("Build a CITY by spending 2 GRAIN and 3 ORE");
+        }
+
+        if (canMakeSettlement) {
+            actions.add("Build a SETTLEMENT by spending 1 BRICK, 1 LUMBER, 1 WOOL and 1 GRAIN");
+        }
+
+        // If not forced to spend, agent can choose to do nothing
+        if (!mustSpend || actions.size() == 0) {
+            actions.add("Does nothing");
+        }
+
+        String actionToPerform = actions.get(randomizer.nextInt(actions.size()));
+
+        if (actionToPerform.startsWith("Build a ROAD")) {
+            removeResource(ResourceType.BRICK);
+            removeResource(ResourceType.LUMBER);
+            addRoad(new Road()); // Check with Tai how to add roads safely
+        } else if (actionToPerform.startsWith("Build a SETTLEMENT")) {
+            removeResource(ResourceType.BRICK);
+            removeResource(ResourceType.LUMBER);
+            removeResource(ResourceType.WOOL);
+            removeResource(ResourceType.GRAIN);
+            addStructure(new Settlement()); // Check with Tai how to add settlements safely
+
+        } else if (actionToPerform.startsWith("Build a CITY")) {
+            removeResource(ResourceType.GRAIN);
+            removeResource(ResourceType.GRAIN);
+            removeResource(ResourceType.ORE);
+            removeResource(ResourceType.ORE);
+            removeResource(ResourceType.ORE);
+            addStructure(new City()); // Check with Tai how to add cities safely
+        }
+    }
+
+    /**
+     * Setup of the player's structures at the beginning of the game
+     *
+     * @param game The current game
+     */
+    @Override
+    public void setup(Game game) {
+        int numNodes = 54;
+        boolean emptyNode = false; // replace with function to check if a node is empty
+        while (!emptyNode) {
+            int settlementNode = randomizer.nextInt(numNodes);
+            emptyNode = true;
+        }
+        if 
+    }
 }
