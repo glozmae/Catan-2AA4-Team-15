@@ -118,6 +118,6 @@ public class ComputerPlayer extends Player {
             int settlementNode = randomizer.nextInt(numNodes);
             emptyNode = true;
         }
-        if 
+        // game.getBoard().addSettlement(new Settlement()); Check with Tai how to add settlements safely
     }
 }
