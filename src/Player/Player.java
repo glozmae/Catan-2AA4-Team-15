@@ -102,73 +102,70 @@ public abstract class Player {
 	 * 
 	 * @return 
 	 */
+	public int calculateVictoryPoints() {
+	}
 
-//	/*
-//	public int calculateVictoryPoints() {
-//	}
-//
-//	/**
-//	 *
-//	 * @return
-//	 */
-//	public int getId() {
-//	}
-//
-//	/**
-//	 *
-//	 * @return
-//	 */
-//	public PlayerColor getColor() {
-//	}
-//
-//	/**
-//	 *
-//	 * @return
-//	 */
-//	public City[] getCities() {
-//	}
-//
-//	/**
-//	 *
-//	 * @return
-//	 */
-//	public Settlement[] getSettlements() {
-//	}
-//
-//	/**
-//	 *
-//	 * @return
-//	 */
-//	public Road[] getRoads() {
-//	}
-//
-//	/**
-//	 *
-//	 * @return
-//	 */
-//	public String toString() {
-//	}
-//
-//	/**
-//	 *
-//	 * @return
-//	 */
-//	public PlayerHand getHand() {
-//	}
-//
-//	/**
-//	 *
-//	 * @param type
-//	 * @return
-//	 */
-//	public int getResourceAmount(ResourceType type) {
-//	}
-//
-//	/**
-//	 *
-//	 * @return
-//	 */
-//	public int getLongestRoad() {
-//	}
-//	**/
+	/**
+	 * 
+	 * @return 
+	 */
+	public int getId() {
+	}
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public PlayerColor getColor() {
+	}
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public City[] getCities() {
+	}
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public Settlement[] getSettlements() {
+	}
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public Road[] getRoads() {
+	}
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public String toString() {
+	}
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public PlayerHand getHand() {
+	}
+
+	/**
+	 * 
+	 * @param type 
+	 * @return 
+	 */
+	public int getResourceAmount(ResourceType type) {
+	}
+
+	/**
+	 * 
+	 * @return 
+	 */
+	public int getLongestRoad() {
+	}
 }

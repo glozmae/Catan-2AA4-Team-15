@@ -4,7 +4,7 @@
 
 package Board;
 
-import Resources.ResourceType;
+import GameResources.ResourceType;
 
 /************************************************************/
 /**

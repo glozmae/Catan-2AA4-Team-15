@@ -4,54 +4,71 @@
 
 package Player;
 
-import Resources.ResourceType;
 import java.util.Map;
+
+import GameResources.ResourceType;
 
 /************************************************************/
 /**
- * 
+ * Represents the hand of a player, tracking the number of each resource type.
+ *
+ * @author Yojith Sai Biradavolu, McMaster University
+ * @version Winter, 2026
  */
 public class PlayerHand {
-	/**
-	 * 
-	 */
-	private Map count;
-	/**
-	 * 
-	 */
-	public ResourceType resourcetype;
+	/** Map of the count of each resource type in the player's hand **/
+	private Map<ResourceType, Integer> count;
 
 	/**
+	 * Creates a new PlayerHand with the given map containing count of each resource
 	 * 
-	 * @param count 
+	 * @param count A map containing count of each resource
 	 */
-	public void UserHand(Map count) {
+	public void UserHand(Map<ResourceType, Integer> count) {
+		this.count = count;
 	}
 
 	/**
+	 * Returns the count of the specified resource type in the hand
 	 * 
-	 * @param type 
-	 * @return 
+	 * @param type The resource type to count
+	 * @return The count of the resource type
 	 */
-
-
 	public int getCount(ResourceType type) {
-		return 0;
+		return this.count.get(type);
 	}
 
 	/**
+	 * Adds the specified amount of the given resource type to the hand
 	 * 
-	 * @param type 
-	 * @param amount 
+	 * @param type   The resource type to add
+	 * @param amount The amount of the resource type to add
 	 */
 	public void addCard(ResourceType type, int amount) {
+		if (this.count.containsKey(type)) {
+			this.count.put(type, this.count.get(type) + amount);
+		} else {
+			this.count.put(type, amount);
+		}
 	}
 
 	/**
+	 * Removes the specified amount of the given resource type from the hand
 	 * 
-	 * @param type 
-	 * @param amount 
+	 * @param type   The resource type to remove
+	 * @param amount The amount of the resource type to remove
 	 */
 	public void removeCard(ResourceType type, int amount) {
+		if (this.count.containsKey(type)) {
+			int inHand = this.count.get(type);
+			if (inHand >= amount) {
+				this.count.put(type, inHand - amount);
+			} else {
+				throw new IllegalArgumentException("Error: Requested " + amount + " of " + type + " to remove but only "
+						+ inHand + " are in hand!");
+			}
+		} else {
+			throw new IllegalArgumentException("Error: No resources of type " + type + " found in the hand!");
+		}
 	}
 }

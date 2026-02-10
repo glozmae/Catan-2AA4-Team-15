@@ -6,23 +6,14 @@ package Player;
 
 /************************************************************/
 /**
- * 
+ * Represents all possible colors for a player
+ *
+ * @author Yojith Sai Biradavolu, McMaster University
+ * @version Winter, 2026
  */
 public enum PlayerColor {
-	/**
-	 * 
-	 */
-	RED,
-	/**
-	 * 
-	 */
-	ORANGE,
-	/**
-	 * 
-	 */
-	BLUE,
-	/**
-	 * 
-	 */
-	WHITE;
+    RED,
+    ORANGE,
+    BLUE,
+    WHITE;
 }
