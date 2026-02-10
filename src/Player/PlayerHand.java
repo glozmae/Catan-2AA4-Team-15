@@ -33,7 +33,10 @@ public class PlayerHand {
 	 * @param type 
 	 * @return 
 	 */
+
+
 	public int getCount(ResourceType type) {
+		return 0;
 	}
 
 	/**

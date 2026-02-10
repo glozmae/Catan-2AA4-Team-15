@@ -61,4 +61,13 @@ public class Tile {
 	public ResourceType getType() {
 		return this.type;
 	}
+
+	// Add inside Tile.java
+	public int getId() { return id; }
+
+	@Override
+	public String toString() {
+		String typeStr = (this.type == null) ? "DESERT" : this.type.toString();
+		return String.format("Tile ID: %-2d | Resource: %-8s", id, typeStr);
+	}
 }

@@ -14,7 +14,7 @@ public interface Bank {
 	/**
 	 * 
 	 */
-	public Purchasable purchasable;
+	//public Purchasable purchasable;
 
 	/**
 	 * 

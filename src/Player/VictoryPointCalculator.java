@@ -15,5 +15,6 @@ public class VictoryPointCalculator {
 	 * @param player 
 	 */
 	public static int calculate(Player player) {
+		return 0;
 	}
 }

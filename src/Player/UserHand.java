@@ -30,6 +30,7 @@ public class UserHand {
 	 * @return 
 	 */
 	public int getCount(ResourceType type) {
+		return 0;
 	}
 
 	/**

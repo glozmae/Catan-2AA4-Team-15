@@ -26,5 +26,6 @@ public class Dice {
 	 * @return 
 	 */
 	public int roll() {
+		return 0;
 	}
 }
