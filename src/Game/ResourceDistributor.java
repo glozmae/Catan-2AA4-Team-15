@@ -8,9 +8,7 @@ import java.util.Random;
 /**
  * Handles resource distribution.
  *
- * In a full Catan implementation, this would use the Board state and the dice roll.
- * For this runnable milestone build, we grant small resources so purchasing logic
- * and victory point progression can be tested without Board dependencies.
+ * Board state & dice Roll for resource distribution
  */
 public class ResourceDistributor {
     /** Grant a single random resource card to a player. */
