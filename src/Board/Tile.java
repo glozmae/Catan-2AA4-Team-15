@@ -8,63 +8,90 @@ import GameResources.ResourceType;
 
 /************************************************************/
 /**
- *
+ * Represents a hexagonal tile (Hex) on the Catan game board.
+ * Each tile produces a specific resource type and is bounded by
+ * six nodes (intersections).
+ * @author Taihan Mobasshir, 400578506, McMaster University
  */
 public class Tile {
+
 	/**
-	 *
+	 * The type of resource this tile produces (e.g., WOOD, WHEAT).
+	 * Typically null for the Desert tile.
 	 */
 	private ResourceType type;
+
 	/**
-	 *
+	 * Array containing the 6 nodes (vertices) surrounding this hex.
+	 * These are stored in a specific order to facilitate neighbor linking.
 	 */
 	private Node[] nodes;
+
 	/**
-	 *
+	 * Unique identifier for the tile, usually assigned during board generation.
 	 */
 	private int id;
 
 	/**
-	 *
-	 * @param id
-	 * @param nodes
-	 * @param type
+	 * Constructor for a Tile.
+	 * * @param id    Unique identifier for the hex.
+	 * @param nodes An array of exactly 6 Node objects that form the perimeter.
+	 * @param type  The ResourceType associated with this hex.
+	 * @throws IllegalArgumentException if the nodes array is not exactly size 6.
 	 */
 	public Tile(int id, Node[] nodes, ResourceType type) {
 		this.id = id;
 
-		// VALIDATION: Ensure the passed array is the correct size
+		// VALIDATION: Ensure the passed array is the correct size for a hexagon.
 		if (nodes == null || nodes.length != 6) {
 			throw new IllegalArgumentException("A tile requires exactly 6 valid nodes.");
 		}
 		this.nodes = nodes;
+
+		// Automatically establish the directional links between the provided nodes.
 		nodeConnector();
 		this.type = type;
 	}
 
 	/**
-	 *
+	 * Internal logic to link the 6 nodes together.
+	 * This method defines the physical layout of the hexagon by assigning
+	 * neighbors (Left, Right, Vertical) to each node based on its position
+	 * in the perimeter array.
 	 */
 	private void nodeConnector() {
+		// Node 0 and 1 are connected vertically
 		nodes[0].setVert(nodes[1]);
+		// Nodes 1, 2, and 3 form the "leftward" side of the hex
 		nodes[1].setLeft(nodes[2]);
 		nodes[2].setLeft(nodes[3]);
+		// Nodes 3 and 4 are connected vertically
 		nodes[3].setVert(nodes[4]);
+		// Nodes 4, 5, and 0 form the "rightward" side of the hex
 		nodes[4].setRight(nodes[5]);
 		nodes[5].setRight(nodes[0]);
 	}
 
 	/**
-	 *
-	 * @return
+	 * Gets the resource type this tile provides.
+	 * @return ResourceType enum value.
 	 */
 	public ResourceType getType() {
 		return this.type;
 	}
 
-	// Add inside Tile.java
-	public int getId() { return id; }
+	/**
+	 * Gets the unique ID of this tile.
+	 * @return integer ID.
+	 */
+	public int getId() {
+		return id;
+	}
 
+	/**
+	 * Returns a formatted string representation of the tile for debugging.
+	 * @return A string showing the ID and the resource type.
+	 */
 	@Override
 	public String toString() {
 		String typeStr = (this.type == null) ? "DESERT" : this.type.toString();

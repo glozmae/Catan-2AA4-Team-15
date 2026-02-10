@@ -5,18 +5,18 @@
 package Board;
 
 import Player.Player;
-import Resources.Road;
-import Resources.Structure;
+import GameResources.Road;
+import GameResources.Structure;
 import java.util.ArrayList;
 import java.util.List;
 
 /************************************************************/
 /**
- * Represents an intersection (vertex) on the Catan game board.
- * <p>
+ * Represents an intersection (vertex) on the Catan game board
  * Nodes are the points where hexagonal tiles meet. They can hold
  * structures (Settlements/Cities) and connect to up to 3 other
  * nodes via Roads.
+ * @author Taihan Mobasshir, 400578506, McMaster University
  */
 public class Node {
 
@@ -143,6 +143,51 @@ public class Node {
 	 * @return The Road object if one is built, otherwise null.
 	 */
 	public Road getVertRoad() { return vertRoad; }
+
+	/**
+	 * Sets the player for this node. Only works if no player is currently assigned.
+	 */
+	void setPlayer(Player player) {
+		if (this.player == null) {
+			this.player = player;
+		}
+	}
+
+	/**
+	 * Sets the structure for this node. Only works if no structure is currently assigned.
+	 */
+	void setStructure(Structure structure) {
+		if (this.structure == null) {
+			this.structure = structure;
+		}
+	}
+
+	/**
+	 * Sets the left road. Only works if the slot is empty.
+	 */
+	void setLeftRoad(Road road) {
+		if (this.leftRoad == null) {
+			this.leftRoad = road;
+		}
+	}
+
+	/**
+	 * Sets the right road. Only works if the slot is empty.
+	 */
+	void setRightRoad(Road road) {
+		if (this.rightRoad == null) {
+			this.rightRoad = road;
+		}
+	}
+
+	/**
+	 * Sets the vertical road. Only works if the slot is empty.
+	 */
+	void setVertRoad(Road road) {
+		if (this.vertRoad == null) {
+			this.vertRoad = road;
+		}
+	}
 
 	/**
 	 * Identifies neighboring nodes that are valid targets for road expansion.

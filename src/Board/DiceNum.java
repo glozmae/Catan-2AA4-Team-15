@@ -5,9 +5,9 @@ import java.util.List;
 
 /**
  * Represents a Number Token (Chit) on the board (2-12).
- * <p>
  * This class maps a specific dice roll number to the Tiles that 
  * produce resources when that number is rolled.
+ * @author Taihan Mobasshir, 400578506, McMaster University
  */
 public class DiceNum {
 

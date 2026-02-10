@@ -3,7 +3,7 @@ package Board;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import Resources.ResourceType;
+import GameResources.ResourceType;
 
 /**
  * Represents the entire game map.
@@ -63,13 +63,10 @@ public class Board {
 
 		// CRITICAL: Randomize the resource locations!
 		// This ensures the Desert and resources can appear anywhere.
-		Collections.shuffle(resourceDeck);
+		//Collections.shuffle(resourceDeck);
 
 		// 3. Create Tiles and Map Topology
 		tiles = new ArrayList<>();
-
-		// We use a helper 'createTile' to decide whether to make a DesertTile or Tile
-		// based on the shuffled resourceDeck.
 
 		// --- CENTER TILE (ID: 0) ---
 		tiles.add(createTile(0, n(0, 1, 2, 3, 4, 5), resourceDeck.get(0)));
@@ -174,15 +171,4 @@ public class Board {
 
 	public List<Tile> getTiles() { return tiles; }
 	public List<Node> getNodes() { return nodes; }
-
-	/**
-	 * Debugging method to visualize the board in console
-	 */
-	public void printBoard() {
-		System.out.println("\n=== GENERATED BOARD (Random Desert) ===");
-		for(Tile t : tiles) {
-			System.out.println(t.toString());
-		}
-		System.out.println("=======================================");
-	}
 }

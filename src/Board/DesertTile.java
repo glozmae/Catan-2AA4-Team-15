@@ -4,14 +4,14 @@
 
 package Board;
 
-import Resources.ResourceType;
+import GameResources.ResourceType;
 
 /************************************************************/
 /**
  * Represents the specific "Desert" hexagonal tile.
- * <p>
  * This tile is initialized with the explicit DESERT resource type.
  * It serves as a placeholder for desert geometry and produces no resources.
+ * @author Taihan Mobasshir, 400578506, McMaster University
  */
 public class DesertTile extends Tile {
 
