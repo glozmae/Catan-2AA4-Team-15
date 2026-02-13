@@ -6,6 +6,8 @@ package Game;
 
 import java.util.List;
 
+import Board.Board;
+
 /************************************************************/
 /**
  * 
@@ -19,6 +21,11 @@ public class Game {
 	 * 
 	 */
 	private Dice dice;
+
+	/**
+	 * NEW ATTRIBUTE NOT IN UML!!!!
+	 */
+	private Board board;
 
 	/**
 	 * 
@@ -48,5 +55,14 @@ public class Game {
 	 * 
 	 */
 	private void checkWin() {
+	}
+
+	/**
+	 * NEW METHOD NOT IN UML!!!!
+	 * 
+	 * @return
+	 */
+	public Board getBoard() {
+		return this.board;
 	}
 }
