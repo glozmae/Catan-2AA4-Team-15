@@ -27,7 +27,7 @@ import GameResources.Settlement;
  * rolling,
  * resource distribution, and victory point checking
  * 
- * @author Elizabeth Glozman, 40059660 McMaster University
+ * @author Elizabeth Glozman, 400559660 McMaster University
  * @author Taihan Mobasshir, 400578506, McMaster University
  */
 public class Game {
@@ -95,7 +95,6 @@ public class Game {
      * 
      * @param players   - list of players
      * @param dice      - dice impelmentation
-     * @param board     - board for the game
      * @param winPoints - victory point target
      * @param maxRounds - maximum rounds before stopping
      */
@@ -276,7 +275,6 @@ public class Game {
 
     /**
      * Print which tiles produce a resources
-     * Desert tile is null
      * 
      * @param roll - dice roll value
      */
