@@ -1,4 +1,4 @@
-#SFWRENG 2AA4 - Assignment 1: Catan Game Simulator
+# SFWRENG 2AA4 - Assignment 1: Catan Game Simulator
 This repository contains a Java implementation of a simplified Settlers of Catan–style simulator developed for SFWRENG 2AA4. The goal of the project is to model Catan’s gameplay using clear object-oriented design and SOLID principles. The project is intended as a course deliverable that showcases modelling decisions, class design, and implementation quality of the game.
 
 ## How to run
