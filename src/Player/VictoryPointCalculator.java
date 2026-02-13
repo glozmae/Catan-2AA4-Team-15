@@ -20,7 +20,8 @@ public class VictoryPointCalculator {
      */
     public static int calculate(Player player) {
         int points = 0;
-        List<Structure> structures = new ArrayList<>(player.getCities());
+        List<Structure> structures = new ArrayList<>();
+        structures.addAll(player.getCities());
         structures.addAll(player.getSettlements());
         for (Structure structure : structures) {
             points += structure.getVictoryPoints();

@@ -24,9 +24,20 @@ public class PlayerHand {
 	 * 
 	 * @param count A map containing count of each resource
 	 */
-	public void UserHand(Map<ResourceType, Integer> count) {
-		this.count = count;
-	}
+	// public void UserHand(Map<ResourceType, Integer> count) {
+	// 	this.count = count;
+	// }
+
+	public PlayerHand() {
+    this.count = new java.util.EnumMap<>(ResourceType.class);
+
+    for (ResourceType type : ResourceType.values()) {
+    if (type != ResourceType.DESERT) {
+        this.count.put(type, 0);
+    }
+}
+
+}
 
 	/**
 	 * Returns the count of the specified resource type in the hand
@@ -35,7 +46,7 @@ public class PlayerHand {
 	 * @return The count of the resource type
 	 */
 	public int getCount(ResourceType type) {
-		return this.count.get(type);
+		return this.count.getOrDefault(type, 0);
 	}
 
 	/**
