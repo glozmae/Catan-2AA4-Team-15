@@ -22,228 +22,230 @@ import GameResources.Structure;
  * @version Winter, 2026
  */
 public abstract class Player {
-    /** Represents the total number of players that have been created **/
-    private static int num_players = 0;
+	/** Represents the total number of players that have been created **/
+	private static int num_players = 0;
 
-    /** The maximum number of players allowed in a game **/
-    private static final int max_players = 4;
+	/** The maximum number of players allowed in a game **/
+	private static final int max_players = 4;
 
-    /** The color of the player's structures **/
-    private final PlayerColor color;
+	/** The color of the player's structures **/
+	private final PlayerColor color;
 
-    /** Represents the numerical id of the player **/
-    private int id;
+	/** Represents the numerical id of the player **/
+	private int id;
 
-    /** The player's settlements, and cities **/
-    private List<Structure> structures;
+	/** The player's settlements, and cities **/
+	private List<Structure> structures;
 
-    /** The player's hand of resource cards **/
-    private PlayerHand hand;
+	/** The player's hand of resource cards **/
+	private PlayerHand hand;
 
-    /** The player's roads **/
-    private List<Road> roads;
+	/** The player's roads **/
+	private List<Road> roads;
 
-    /** The player's longest road length **/
-    private int longestRoad;
+	/** The player's longest road length **/
+	private int longestRoad;
 
-    /** The player's victory point calculator **/
-    public VictoryPointCalculator victorypointcalculator; // Consider deleting
+	/** The player's victory point calculator **/
+	public VictoryPointCalculator victorypointcalculator; // Consider deleting
 
-    /**
-     * Constructor for a player, whether it be a human or a computer.
-     */
-    public Player() {
-        if (num_players >= max_players) {
-            throw new IllegalStateException("Maximum number of players reached");
-        }
+	/**
+	 * Constructor for a player, whether it be a human or a computer.
+	 */
+	public Player() {
+		if (num_players >= max_players) {
+			throw new IllegalStateException("Maximum number of players reached");
+		}
 
-        this.id = num_players;
-        num_players += 1;
-        this.longestRoad = 0;
-        this.color = PlayerColor.values()[this.id];
-        this.structures = new ArrayList<Structure>();
-        this.hand = new PlayerHand();
-        this.roads = new ArrayList<Road>();
-        this.victorypointcalculator = new VictoryPointCalculator();
-    }
+		this.id = num_players;
+		num_players += 1;
+		this.longestRoad = 0;
+		this.color = PlayerColor.values()[this.id];
+		this.structures = new ArrayList<Structure>();
+		this.hand = new PlayerHand();
+		this.roads = new ArrayList<Road>();
+		this.victorypointcalculator = new VictoryPointCalculator();
+	}
 
-    /**
-     * Initiate the current player's turn
-     * 
-     * @param game The current game
-     */
-    public abstract void takeTurn(Game game);
+	/**
+	 * Initiate the current player's turn
+	 *
+	 * @param game The current game
+	 */
+	public abstract void takeTurn(Game game);
 
-    /**
-     * Setup of the player's structures at the beginning of the game
-     * 
-     * @param game The current game
-     */
-    public abstract void setup(Game game);
+	/**
+	 * Setup of the player's structures at the beginning of the game
+	 *
+	 * @param game The current game
+	 */
+	public abstract void setup(Game game);
 
-    /**
-     * Resets the number of players to zero. Used when restarting the game.
-     */
-    public static void resetNumPlayers() {
-        num_players = 0;
-    }
+	/**
+	 * Resets the number of players to zero. Used when restarting the game.
+	 */
+	public static void resetNumPlayers() {
+		num_players = 0;
+	}
 
-    /**
-     * Adds a new card to the player's hand
-     * 
-     * @param type New card type to be added
-     */
-    public void addResource(ResourceType type) {
-        this.hand.addCard(type, 1);
-    }
+	/**
+	 * Adds a new card to the player's hand
+	 *
+	 * @param type New card type to be added
+	 */
+	public void addResource(ResourceType type) {
+		this.hand.addCard(type, 1);
+	}
 
-    /**
-     * Removes a resource card from the player's hand
-     * 
-     * @param type Type of resource card to be removed
-     */
-    public void removeResource(ResourceType type) {
-        this.hand.removeCard(type, 1);
-    }
+	/**
+	 * Removes a resource card from the player's hand
+	 *
+	 * @param type Type of resource card to be removed
+	 */
+	public void removeResource(ResourceType type) {
+		this.hand.removeCard(type, 1);
+	}
 
-    /**
-     * NOTE: THIS IS A NEW METHOD
-     * Returns the number of resources of a specified type
-     * 
-     * @param type Type of resource
-     * @return Number of resources the player has of the specified type
-     */
-    public int getNumResource(ResourceType type) {
-        return this.hand.getCount(type);
-    }
+	/**
+	 * NOTE: THIS IS A NEW METHOD
+	 * Returns the number of resources of a specified type
+	 *
+	 * @param type Type of resource
+	 * @return Number of resources the player has of the specified type
+	 */
+	public int getNumResource(ResourceType type) {
+		return this.hand.getCount(type);
+	}
 
-    /**
-     * Adds a structure to the player's list of structures
-     * 
-     * @param structure Structure to be added
-     */
-    public void addStructure(Structure structure) {
-        this.structures.add(structure);
-    }
+	/**
+	 * Adds a structure to the player's list of structures
+	 *
+	 * @param structure Structure to be added
+	 */
+	public void addStructure(Structure structure) {
+		structure.setOwner(this);
+		this.structures.add(structure);
+	}
 
-    /**
-     * Removes a structure from the player's list of structures
-     * 
-     * @param structure Structure to be removed
-     */
-    public void removeStructure(Structure structure) {
-        this.structures.remove(structure);
-    }
+	/**
+	 * Removes a structure from the player's list of structures
+	 *
+	 * @param structure Structure to be removed
+	 */
+	public void removeStructure(Structure structure) {
+		this.structures.remove(structure);
+	}
 
-    /**
-     * Adds a road to the player's road list
-     * 
-     * @param road Road to be added
-     */
-    public void addRoad(Road road) {
-        this.roads.add(road);
-    }
+	/**
+	 * Adds a road to the player's road list
+	 *
+	 * @param road Road to be added
+	 */
+	public void addRoad(Road road) {
+		road.setOwner(this);
+		this.roads.add(road);
+	}
 
-    /**
-     * Calculates and returns the player's total victory points
-     * 
-     * @return Player's total victory points
-     */
-    public int calculateVictoryPoints() {
-        return VictoryPointCalculator.calculate(this);
-    }
+	/**
+	 * Calculates and returns the player's total victory points
+	 *
+	 * @return Player's total victory points
+	 */
+	public int calculateVictoryPoints() {
+		return VictoryPointCalculator.calculate(this);
+	}
 
-    /**
-     * Returns the player's id
-     * 
-     * @return Player id
-     */
-    public int getId() {
-        return id;
-    }
+	/**
+	 * Returns the player's id
+	 *
+	 * @return Player id
+	 */
+	public int getId() {
+		return id;
+	}
 
-    /**
-     * Returns the player's color based on their player id.
-     * 
-     * @return Player's color
-     */
-    public PlayerColor getColor() {
-        return this.color;
-    }
+	/**
+	 * Returns the player's color based on their player id.
+	 *
+	 * @return Player's color
+	 */
+	public PlayerColor getColor() {
+		return this.color;
+	}
 
-    /**
-     * Returns a list of the player's cities
-     * 
-     * @return List of player's cities
-     */
-    public List<City> getCities() {
-        List<City> cities = new ArrayList<>();
-        for (Structure structure : structures) {
-            if (structure instanceof City) {
-                cities.add((City) structure);
-            }
-        }
-        return cities;
-    }
+	/**
+	 * Returns a list of the player's cities
+	 *
+	 * @return List of player's cities
+	 */
+	public List<City> getCities() {
+		List<City> cities = new ArrayList<>();
+		for (Structure structure : structures) {
+			if (structure instanceof City) {
+				cities.add((City) structure);
+			}
+		}
+		return cities;
+	}
 
-    /**
-     * Returns a list of the player's settlements
-     * 
-     * @return List of player's settlements
-     */
-    public List<Settlement> getSettlements() {
-        List<Settlement> settlements = new ArrayList<>();
-        for (Structure structure : structures) {
-            if (structure instanceof Settlement) {
-                settlements.add((Settlement) structure);
-            }
-        }
-        return settlements;
-    }
+	/**
+	 * Returns a list of the player's settlements
+	 *
+	 * @return List of player's settlements
+	 */
+	public List<Settlement> getSettlements() {
+		List<Settlement> settlements = new ArrayList<>();
+		for (Structure structure : structures) {
+			if (structure instanceof Settlement) {
+				settlements.add((Settlement) structure);
+			}
+		}
+		return settlements;
+	}
 
-    /**
-     * Returns a list of the player's roads
-     * 
-     * @return List of player's roads
-     */
-    public List<Road> getRoads() {
-        return roads;
-    }
+	/**
+	 * Returns a list of the player's roads
+	 *
+	 * @return List of player's roads
+	 */
+	public List<Road> getRoads() {
+		return roads;
+	}
 
-    /**
-     * Returns a string representation of the player
-     * 
-     * @return String representation of the player with their id and color
-     */
-    @Override
-    public String toString() {
-        return "Player " + this.id + ", color: " + getColor();
-    }
+	/**
+	 * Returns a string representation of the player
+	 *
+	 * @return String representation of the player with their id and color
+	 */
+	@Override
+	public String toString() {
+		return "Player " + (this.id + 1)+ ", color: " + getColor();
+	}
 
-    /**
-     * 
-     * @return
-     */
-    public PlayerHand getHand() {
-        return this.hand;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public PlayerHand getHand() {
+		return this.hand;
+	}
 
-    /**
-     * Returns the number of resource cards of a specific type the player has
-     * 
-     * @param type Type of resource card
-     * @return Number of resource cards of the specified type
-     */
-    public int getResourceAmount(ResourceType type) {
-        return this.hand.getCount(type);
-    }
+	/**
+	 * Returns the number of resource cards of a specific type the player has
+	 *
+	 * @param type Type of resource card
+	 * @return Number of resource cards of the specified type
+	 */
+	public int getResourceAmount(ResourceType type) {
+		return this.hand.getCount(type);
+	}
 
-    /**
-     * Gets the length of the player's longest road
-     * 
-     * @return Length of the longest road
-     */
-    public int getLongestRoad() {
-        return longestRoad;
-    }
+	/**
+	 * Gets the length of the player's longest road
+	 *
+	 * @return Length of the longest road
+	 */
+	public int getLongestRoad() {
+		return longestRoad;
+	}
 }

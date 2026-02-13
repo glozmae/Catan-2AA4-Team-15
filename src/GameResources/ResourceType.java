@@ -6,7 +6,7 @@ package GameResources;
 
 /************************************************************/
 /**
- * Represents the five basic resource cards used in Catan.
+ * Represents the five basic resource cards used in Catan + a DESERT tile representation.
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public enum ResourceType {
@@ -14,5 +14,6 @@ public enum ResourceType {
 	LUMBER,
 	ORE,
 	WOOL,
-	GRAIN;
+	GRAIN,
+	DESERT;
 }

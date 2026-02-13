@@ -4,140 +4,229 @@
 
 package Board;
 
+import Player.Player;
 import GameResources.Road;
 import GameResources.Structure;
-import Player.Player;
+import java.util.ArrayList;
+import java.util.List;
 
 /************************************************************/
 /**
- * 
+ * Represents an intersection (vertex) on the Catan game board
+ * Nodes are the points where hexagonal tiles meet. They can hold
+ * structures (Settlements/Cities) and connect to up to 3 other
+ * nodes via Roads.
+ * @author Taihan Mobasshir, 400578506, McMaster University
  */
 public class Node {
+
 	/**
-	 * 
+	 * Unique identifier for this node (used for board setup/serialization).
 	 */
 	private int id;
+
 	/**
-	 * 
+	 * Reference to the neighboring Node in the "Left" direction.
 	 */
 	private Node left;
+
 	/**
-	 * 
+	 * Reference to the neighboring Node in the "Right" direction.
 	 */
 	private Node right;
+
 	/**
-	 * 
+	 * Reference to the neighboring Node in the "Vertical" direction.
 	 */
 	private Node vert;
+
 	/**
-	 * 
+	 * The Player who currently owns a structure on this node.
+	 * Null if the node is unoccupied.
 	 */
 	private Player player;
+
 	/**
-	 * 
+	 * The type of structure built on this node (e.g., SETTLEMENT, CITY).
+	 * Null if no structure exists.
 	 */
 	private Structure structure;
+
 	/**
-	 * 
+	 * The Road built on the edge connecting to the 'left' neighbor.
+	 * Null if no road exists on this edge.
 	 */
 	private Road leftRoad;
+
 	/**
-	 * 
+	 * The Road built on the edge connecting to the 'right' neighbor.
+	 * Null if no road exists on this edge.
 	 */
 	private Road rightRoad;
+
 	/**
-	 * 
+	 * The Road built on the edge connecting to the 'vert' neighbor.
+	 * Null if no road exists on this edge.
 	 */
 	private Road vertRoad;
 
 	/**
-	 * 
-	 * @param id 
+	 * Constructor for the Node class.
+	 * * @param id The unique ID assigned to this vertex.
 	 */
-	public void Node(int id) {
+	public Node(int id) {
+		this.id = id;
 	}
 
 	/**
-	 * 
-	 * @return 
+	 * Gets the neighbor node in the left position.
+	 * @return The adjacent Node object or null if none exists (board edge).
 	 */
-	public Node getLeft() {
-	}
+	public Node getLeft() { return left; }
 
 	/**
-	 * 
-	 * @return 
+	 * Gets the neighbor node in the right position.
+	 * @return The adjacent Node object or null if none exists.
 	 */
-	public Node getRight() {
-	}
+	public Node getRight() { return right; }
 
 	/**
-	 * 
-	 * @return 
+	 * Gets the neighbor node in the vertical position.
+	 * @return The adjacent Node object or null if none exists.
 	 */
-	public Node getVert() {
-	}
+	public Node getVert() { return vert; }
 
 	/**
-	 * 
-	 * @param node 
+	 * Sets the neighbor node in the left position.
+	 * @param node The Node to link to the left.
 	 */
 	public void setLeft(Node node) {
-	}
+    if (node == null) return;
+
+    if (this.left == null) this.left = node;
+    if (node.right == null) node.right = this;
+}
+
+public void setRight(Node node) {
+    if (node == null) return;
+
+    if (this.right == null) this.right = node;
+    if (node.left == null) node.left = this;
+}
+
+public void setVert(Node node) {
+    if (node == null) return;
+
+    if (this.vert == null) this.vert = node;
+    if (node.vert == null) node.vert = this;
+}
+
 
 	/**
-	 * 
-	 * @param node 
+	 * Gets the player who currently owns the structure on this node.
+	 * @return The Player object, or null if unoccupied.
 	 */
-	public void setRight(Node node) {
-	}
+	public Player getPlayer() { return player; }
 
 	/**
-	 * 
-	 * @param node 
+	 * Gets the structure details (e.g. type of building) on this node.
+	 * @return The Structure object, or null.
 	 */
-	public void setVert(Node node) {
-	}
+	public Structure getStructure() { return structure; }
 
 	/**
-	 * 
-	 * @return 
+	 * Gets the road object on the left edge.
+	 * @return The Road object if one is built, otherwise null.
 	 */
-	public Player getPlayer() {
-	}
+	public Road getLeftRoad() { return leftRoad; }
 
 	/**
-	 * 
-	 * @return 
+	 * Gets the road object on the right edge.
+	 * @return The Road object if one is built, otherwise null.
 	 */
-	public Structure getStructure() {
-	}
+	public Road getRightRoad() { return rightRoad; }
 
 	/**
-	 * 
-	 * @return 
+	 * Gets the road object on the vertical edge.
+	 * @return The Road object if one is built, otherwise null.
 	 */
-	public Road getLeftRoad() {
-	}
+	public Road getVertRoad() { return vertRoad; }
 
 	/**
-	 * 
-	 * @return 
+	 * Sets the player for this node. Only works if no player is currently assigned.
 	 */
-	public Road getRighttRoad() {
+	void setPlayer(Player player) {
+		if (this.player == null) {
+			this.player = player;
+		}
 	}
 
 	/**
-	 * 
-	 * @return 
+	 * Sets the structure for this node. Only works if no structure is currently assigned.
 	 */
-	public Road getVertRoad() {
+	void setStructure(Structure structure) {
+		if (this.structure == null) {
+			this.structure = structure;
+		}
 	}
 
 	/**
-	 * 
-	 * @return 
+	 * Sets the left road. Only works if the slot is empty.
+	 */
+	void setLeftRoad(Road road) {
+		if (this.leftRoad == null) {
+			this.leftRoad = road;
+		}
+	}
+
+	/**
+	 * Sets the right road. Only works if the slot is empty.
+	 */
+	void setRightRoad(Road road) {
+		if (this.rightRoad == null) {
+			this.rightRoad = road;
+		}
+	}
+
+	/**
+	 * Sets the vertical road. Only works if the slot is empty.
+	 */
+	void setVertRoad(Road road) {
+		if (this.vertRoad == null) {
+			this.vertRoad = road;
+		}
+	}
+
+	/**
+	 * Identifies neighboring nodes that are valid targets for road expansion.
+	 * <p>
+	 * Since the current player owns *this* node, an "open" neighbor is defined
+	 * as a node that exists (is not null) and is not yet connected by a Road
+	 * (the road slot is null).
+	 * * @return An array of neighbor Nodes where a new Road can be built.
 	 */
 	public Node[] openNodes() {
+		// Use a list to dynamically add valid neighbors
+		List<Node> openNeighbors = new ArrayList<>();
+
+		// Check Left Direction:
+		// 1. Does the neighbor exist? (Not edge of board)
+		// 2. Is the path empty? (No road built yet)
+		if (this.left != null && this.leftRoad == null) {
+			openNeighbors.add(this.left);
+		}
+
+		// Check Right Direction
+		if (this.right != null && this.rightRoad == null) {
+			openNeighbors.add(this.right);
+		}
+
+		// Check Vertical Direction
+		if (this.vert != null && this.vertRoad == null) {
+			openNeighbors.add(this.vert);
+		}
+
+		// Convert the List to a fixed-size Array as required by the signature
+		return openNeighbors.toArray(new Node[0]);
 	}
 }
