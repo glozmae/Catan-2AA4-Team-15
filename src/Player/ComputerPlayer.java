@@ -87,7 +87,6 @@ public class ComputerPlayer extends Player {
                     potentialMoves.add(() -> {
                         System.out.println(this + " building Road from Node " + startNode + " to " + endNode);
                         payForRoad();
-                        // FIXME: See note in placeRoad about reference equality bugs
                         placeRoad(startNode, endNode, new Road());
                     });
                 }
@@ -221,13 +220,6 @@ public class ComputerPlayer extends Player {
      * *
      */
     private void placeRoad(Node start, Node end, Road r) {
-        // FIXME: BUG ALERT
-        // The check 'start.getLeft() == end' uses reference equality. If the board
-        // was constructed such that 'end' is a different object than 'start.left',
-        // this will fail.
-        // Additionally, if the road is set on 'start' but NOT on 'end' (because of
-        // the if/else logic), the network graph will be broken, and the AI will stop
-        // building roads.
 
         // We must set the road on BOTH nodes involved in the edge
         if (start.getLeft() == end) {
