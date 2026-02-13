@@ -1,4 +1,6 @@
 # SFWRENG 2AA4 - Assignment 1: Catan Game Simulator
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=glozmae_Catan-2AA4-Team-15)](https://sonarcloud.io/summary?id=glozmae_Catan-2AA4-Team-15)
+
 This repository contains a Java implementation of a simplified Settlers of Catan–style simulator developed for SFWRENG 2AA4. The goal of the project is to model Catan’s gameplay using clear object-oriented design and SOLID principles. The project is intended as a course deliverable that showcases modelling decisions, class design, and implementation quality of the game.
 
 ## How to run
@@ -22,6 +24,6 @@ java -cp out Simulator
 | Name | Email | GitHub |
 |---|---|---|
 | Parnia Yazdinia | yazdinp@mcmaster.ca | yazdinp |
-| Eliabeth Glozman | glozmae@mcmaster.ca | glozmae |
+| Elizabeth Glozman | glozmae@mcmaster.ca | glozmae |
 | Yoji Sai Biradavolu | biradavy@mcmaster.ca | biradavy |
 | Tai Mobasshir | mobasst@mcmaster.ca | mobasst |
