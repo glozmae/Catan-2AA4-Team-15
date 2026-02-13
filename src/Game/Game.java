@@ -119,28 +119,28 @@ public class Game {
      */
     private int turnCounter = 0;
 
-private void nextTurn() {
+    private void nextTurn() {
 
-    
-    lastRoll = rollMultiDice();
 
-	turnCounter ++;
+        lastRoll = rollMultiDice();
 
-Player current = getCurrentPlayer();
+        turnCounter ++;
 
-if (dice instanceof MultiDice md) {
-    System.out.print( "Turn " + turnCounter +
-        ": Player " + (current.getId() + 1) +
-        " rolled " + md.getLastDie1() + " + " + md.getLastDie2() +
-        " -> "
-    );
-} else {
-    System.out.print( "Turn " + turnCounter +
-        ": Player " + (current.getId() + 1) +
-        " rolled " + lastRoll +
-        " -> "
-    );
-}
+    Player current = getCurrentPlayer();
+
+    if (dice instanceof MultiDice md) {
+        System.out.print( "Turn " + turnCounter +
+            "/ Player " + (current.getId() + 1) +
+            ": rolled " + md.getLastDie1() + " + " + md.getLastDie2() +
+            " -> "
+        );
+    } else {
+        System.out.print( "Turn " + turnCounter +
+            ": Player " + (current.getId() + 1) +
+            " rolled " + lastRoll +
+            " -> "
+        );
+    }
 
     printProduction(lastRoll);
 
@@ -225,14 +225,14 @@ if (dice instanceof MultiDice md) {
 private void printProduction(int roll) {
 
     if (roll == 7) {
-        System.out.println("Producing: [ROBBER — no production]");
+        System.out.print("Producing: [ROBBER — no production] || ");
         return;
     }
 
     DiceNum dn = board.getTilesForRoll(roll);
 
     if (dn == null || dn.getTiles().isEmpty()) {
-        System.out.println("Producing: []");
+        System.out.print("Producing: [] || ");
         return;
     }
 
@@ -255,9 +255,9 @@ private void printProduction(int roll) {
         first = false;
     }
 
-    sb.append("]");
+    sb.append("] || ");
 
-    System.out.println(sb.toString());
+    System.out.print(sb.toString());
 }
 
 

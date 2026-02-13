@@ -105,21 +105,21 @@ public class Node {
 
     if (this.left == null) this.left = node;
     if (node.right == null) node.right = this;
-}
+	}
 
-public void setRight(Node node) {
-    if (node == null) return;
+	public void setRight(Node node) {
+		if (node == null) return;
 
-    if (this.right == null) this.right = node;
-    if (node.left == null) node.left = this;
-}
+		if (this.right == null) this.right = node;
+		if (node.left == null) node.left = this;
+	}
 
-public void setVert(Node node) {
-    if (node == null) return;
+	public void setVert(Node node) {
+		if (node == null) return;
 
-    if (this.vert == null) this.vert = node;
-    if (node.vert == null) node.vert = this;
-}
+		if (this.vert == null) this.vert = node;
+		if (node.vert == null) node.vert = this;
+	}
 
 
 	/**
@@ -155,7 +155,7 @@ public void setVert(Node node) {
 	/**
 	 * Sets the player for this node. Only works if no player is currently assigned.
 	 */
-	void setPlayer(Player player) {
+	public void setPlayer(Player player) {
 		if (this.player == null) {
 			this.player = player;
 		}
@@ -164,7 +164,7 @@ public void setVert(Node node) {
 	/**
 	 * Sets the structure for this node. Only works if no structure is currently assigned.
 	 */
-	void setStructure(Structure structure) {
+	public void setStructure(Structure structure) {
 		if (this.structure == null) {
 			this.structure = structure;
 		}
@@ -173,7 +173,7 @@ public void setVert(Node node) {
 	/**
 	 * Sets the left road. Only works if the slot is empty.
 	 */
-	void setLeftRoad(Road road) {
+	public void setLeftRoad(Road road) {
 		if (this.leftRoad == null) {
 			this.leftRoad = road;
 		}
@@ -182,7 +182,7 @@ public void setVert(Node node) {
 	/**
 	 * Sets the right road. Only works if the slot is empty.
 	 */
-	void setRightRoad(Road road) {
+	public void setRightRoad(Road road) {
 		if (this.rightRoad == null) {
 			this.rightRoad = road;
 		}
@@ -191,42 +191,112 @@ public void setVert(Node node) {
 	/**
 	 * Sets the vertical road. Only works if the slot is empty.
 	 */
-	void setVertRoad(Road road) {
+	public void setVertRoad(Road road) {
 		if (this.vertRoad == null) {
 			this.vertRoad = road;
 		}
 	}
 
 	/**
-	 * Identifies neighboring nodes that are valid targets for road expansion.
-	 * <p>
-	 * Since the current player owns *this* node, an "open" neighbor is defined
-	 * as a node that exists (is not null) and is not yet connected by a Road
-	 * (the road slot is null).
-	 * * @return An array of neighbor Nodes where a new Road can be built.
+	 * Checks if a specific player can legally build a SETTLEMENT at this node.
+	 * Enforces:
+	 * 1. Node is physically empty.
+	 * 2. Distance Rule (no neighbors have settlements).
+	 * 3. Connectivity (player must have a connecting road).
 	 */
-	public Node[] openNodes() {
-		// Use a list to dynamically add valid neighbors
-		List<Node> openNeighbors = new ArrayList<>();
+	public boolean canBuildSettlement(Player p) {
+		// 1. Occupied Check: Is there already a building here?
+		if (this.player != null) return false;
 
-		// Check Left Direction:
-		// 1. Does the neighbor exist? (Not edge of board)
-		// 2. Is the path empty? (No road built yet)
+		// 2. Distance Rule: Are any immediate neighbors occupied?
+		// (This enforces the "2 nodes away" rule)
+		if (hasOccupiedNeighbor()) return false;
+
+		// 3. Connectivity: Does the player have a road leading here?
+		// (We ignore this during setup, but this method implies active play)
+		if (!ownsConnectingRoad(p)) return false;
+
+		return true;
+	}
+
+	/**
+	 * Checks valid places to build a NEW ROAD starting from this node.
+	 * * This handles the "Long Road" logic:
+	 * - It checks if the player has "access" to this node (via an existing road chain).
+	 * - It checks if the player is "blocked" by an enemy settlement.
+	 * - It looks for empty edges extending outward.
+	 * * @param p The player attempting to build
+	 * @return A list of neighbor Nodes that form a valid, empty edge for a new road.
+	 */
+	public List<Node> getBuildableRoadNeighbors(Player p) {
+		List<Node> validTargets = new ArrayList<>();
+
+		// STEP 1: Can the player extend from here?
+		// You can only build OUT from this node if:
+		// A) You have a settlement here.
+		// B) You have an incoming road AND you are not blocked by an enemy settlement.
+		if (!canExtendRoadFromHere(p)) {
+			return validTargets; // Dead end or invalid start point
+		}
+
+		// STEP 2: Check valid empty edges
+		// Left Direction
 		if (this.left != null && this.leftRoad == null) {
-			openNeighbors.add(this.left);
+			validTargets.add(this.left);
 		}
-
-		// Check Right Direction
+		// Right Direction
 		if (this.right != null && this.rightRoad == null) {
-			openNeighbors.add(this.right);
+			validTargets.add(this.right);
 		}
-
-		// Check Vertical Direction
+		// Vertical Direction
 		if (this.vert != null && this.vertRoad == null) {
-			openNeighbors.add(this.vert);
+			validTargets.add(this.vert);
 		}
 
-		// Convert the List to a fixed-size Array as required by the signature
-		return openNeighbors.toArray(new Node[0]);
+		return validTargets;
+	}
+
+	/**
+	 * Helper to enforce the Distance Rule.
+	 * Returns true if ANY neighbor has a settlement/city.
+	 */
+	private boolean hasOccupiedNeighbor() {
+		if (this.left != null && this.left.player != null) return true;
+		if (this.right != null && this.right.player != null) return true;
+		if (this.vert != null && this.vert.player != null) return true;
+		return false;
+	}
+
+	/**
+	 * Helper to check if the player has at least one road touching this node.
+	 */
+	private boolean ownsConnectingRoad(Player p) {
+		if (this.leftRoad != null && this.leftRoad.getOwner().equals(p)) return true;
+		if (this.rightRoad != null && this.rightRoad.getOwner().equals(p)) return true;
+		if (this.vertRoad != null && this.vertRoad.getOwner().equals(p)) return true;
+		return false;
+	}
+
+	/**
+	 * Helper to check the "Road Interruption" rule.
+	 * You cannot build a road *through* an opponent's settlement.
+	 */
+	private boolean canExtendRoadFromHere(Player p) {
+		// Case 1: You own the settlement on this node.
+		// You can always build roads extending from your own house.
+		if (this.player != null && this.player.equals(p)) return true;
+
+		// Case 2: An ENEMY owns the settlement on this node.
+		// Your road is BLOCKED. You cannot extend past their settlement.
+		if (this.player != null && !this.player.equals(p)) return false;
+
+		// Case 3: The node is empty (no settlement).
+		// You can extend if you have a road reaching this node.
+		return ownsConnectingRoad(p);
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(id);
 	}
 }
