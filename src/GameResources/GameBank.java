@@ -2,8 +2,22 @@ package GameResources;
 
 import Player.Player;
 
+/**
+ * Concrete implementation of Bank interface to validate purchases and deduct approprite
+ * resources from players when they purchase
+ * 
+ * @author Elizabeth Glozman, 400559660, McMaster University
+ */
 public class GameBank implements Bank {
 
+    /**
+     * Determine if a player can afford item
+     * compare resources and cost for item
+     * 
+     * @param item - item to purchase
+     * @param plater - player wanting to buy item
+     * @return true if player has enough resources
+     */
     @Override
     public boolean canBuy(Purchasable item, Player player) {
         if (item == null || player == null) return false;
@@ -17,6 +31,13 @@ public class GameBank implements Bank {
             && player.getResourceAmount(ResourceType.ORE) >= c.getOre();
     }
 
+    /**
+     * Executes purchase by deducting required resources from player
+     * 
+     * @param item - item being purchased
+     * @param player - player making the purchase
+     * @throws IllegalStateException if player doesn't have enough resources
+     */
     @Override
     public void buy(Purchasable item, Player player) {
         if (!canBuy(item, player)) {
