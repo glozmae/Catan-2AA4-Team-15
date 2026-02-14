@@ -5,7 +5,9 @@
 package Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import Game.Game;
 import GameResources.City;
@@ -211,6 +213,56 @@ public abstract class Player {
 			}
 		}
 		return settlements;
+	}
+
+	// Overload: The public method starts the process with an empty set
+	private int roadLengthCalc(Node n) {
+		return roadLengthCalc(n, new HashSet<>());
+	}
+
+	// Private recursive method with the 'visited' history
+	private int roadLengthCalc(Node n, Set<Road> visitedRoads) {
+		int longestLeft = 0;
+		int longestRight = 0;
+		int longestVert = 0;
+
+		// Check Left
+		if (n.getLeftRoad() != null && !visitedRoads.contains(n.getLeftRoad())) {
+			// Create a copy of the set for this specific path branch
+			Set<Road> newVisited = new HashSet<>(visitedRoads);
+			newVisited.add(n.getLeftRoad());
+
+			longestLeft = 1 + roadLengthCalc(n.getLeft(), newVisited);
+		}
+
+		// Check Right
+		if (n.getRightRoad() != null && !visitedRoads.contains(n.getRightRoad())) {
+			Set<Road> newVisited = new HashSet<>(visitedRoads);
+			newVisited.add(n.getRightRoad());
+
+			longestRight = 1 + roadLengthCalc(n.getRight(), newVisited);
+		}
+
+		// Check Vertical
+		if (n.getVertRoad() != null && !visitedRoads.contains(n.getVertRoad())) {
+			Set<Road> newVisited = new HashSet<>(visitedRoads);
+			newVisited.add(n.getVertRoad());
+
+			longestVert = 1 + roadLengthCalc(n.getVert(), newVisited);
+		}
+
+		return Math.max(Math.max(longestLeft, longestRight), longestVert);
+	}
+
+	public int longestRoad() {
+		int longestLength = 0;
+		for (Node n : nodes) {
+			int currentLength = roadLengthCalc(n);
+			if (currentLength > longestLength) {
+				longestLength = currentLength;
+			}
+		}
+		return longestLength;
 	}
 
 	/**
