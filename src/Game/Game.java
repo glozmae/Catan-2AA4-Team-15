@@ -253,9 +253,9 @@ public class Game {
         int longestRoad = 5;
         Player longestRoadPlayer = null;
         for (Player p : players) {
-            int playerLongestRoad = 0;
-            if (p.longestRoad() > longestRoad) {
-                longestRoad = p.getLongestRoad();
+            int playerLongestRoad = p.longestRoad();
+            if (playerLongestRoad > longestRoad) {
+                longestRoad = playerLongestRoad;
                 longestRoadPlayer = p;
             }
         }

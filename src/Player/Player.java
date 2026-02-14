@@ -220,7 +220,7 @@ public abstract class Player {
 		return roadLengthCalc(n, new HashSet<>());
 	}
 
-	// Private recursive method with the 'visited' history
+	// Private recursive helper method with the 'visited' history
 	private int roadLengthCalc(Node n, Set<Road> visitedRoads) {
 		int longestLeft = 0;
 		int longestRight = 0;
@@ -254,6 +254,11 @@ public abstract class Player {
 		return Math.max(Math.max(longestLeft, longestRight), longestVert);
 	}
 
+	/**
+	 * Gets the length of the player's longest road
+	 *
+	 * @return Length of the longest road
+	 */
 	public int longestRoad() {
 		int longestLength = 0;
 		for (Node n : nodes) {
@@ -302,12 +307,5 @@ public abstract class Player {
 		return this.hand.getCount(type);
 	}
 
-	/**
-	 * Gets the length of the player's longest road
-	 *
-	 * @return Length of the longest road
-	 */
-	public int getLongestRoad() {
-		return longestRoad;
-	}
+
 }
