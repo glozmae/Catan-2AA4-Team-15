@@ -46,9 +46,6 @@ public abstract class Player {
 	/** The player's roads **/
 	private List<Road> roads;
 
-	/** The player's longest road length **/
-	private int longestRoad;
-
 	/** The nodes the player owns and can build in and around **/
 	private List<Node> nodes;
 
