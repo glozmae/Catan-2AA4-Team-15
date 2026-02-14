@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import Board.Node;
+import GameResources.Structure;
 import Game.Game;
 import GameResources.City;
 import GameResources.ResourceType;
@@ -48,7 +49,6 @@ public class ComputerPlayer extends Player {
 
     /**
      * Initiate the current player's turn.
-     * <p>
      * The strategy is:
      * 1. Check current resources to see what types of structures are affordable.
      * 2. Scan the entire board to find every legal spot to build those structures.
@@ -59,7 +59,6 @@ public class ComputerPlayer extends Player {
      */
     @Override
     public void takeTurn(Game game) {
-        //
         // We store actions as Runnable objects so we can execute them later
         List<Runnable> potentialMoves = new ArrayList<>();
         List<Node> allNodes = game.getBoard().getNodes();

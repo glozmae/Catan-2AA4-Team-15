@@ -3,11 +3,8 @@ package Board;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-<<<<<<< HEAD:src/OriginalBoard/Placement.java
-import GameResources.City;
-=======
 
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Board/Placement.java
+import GameResources.City;
 import GameResources.Road;
 import GameResources.Settlement;
 import GameResources.Structure;
@@ -15,9 +12,8 @@ import Player.Player;
 
 /**
  * Handles legal placement of structures/roads on the board.
- * Update the structure and roads on the map Allowing for initial setup and
- * building
- * 
+ * Update the structure and roads on the map allowing for initial setup and building.
+ *
  * @author Elizabeth Glozman, 400559660, McMaster University
  */
 public class Placement {
@@ -29,10 +25,10 @@ public class Placement {
     private final Random rng;
 
     /**
-     * Constructs placememnt manager for specific board
-     * 
+     * Constructs placement manager for specific board
+     *
      * @param board - Game board where structures are placed
-     * @param seed  - Random placement
+     * @param seed  - Random placement seed
      */
     public Placement(Board board, long seed) {
         this.board = board;
@@ -40,10 +36,10 @@ public class Placement {
     }
 
     /**
-     * Places inital settlement to follow distance rule
-     * Settlement is assingmend to player
-     * 
-     * @param player - player recieving the settlement
+     * Places initial settlement to follow distance rule
+     * Settlement is assigned to player
+     *
+     * @param player - player receiving the settlement
      * @return - node where settlement is placed
      */
     public Node placeInitialSettlement(Player player) {
@@ -57,10 +53,10 @@ public class Placement {
     }
 
     /**
-     * Place intial road extending from given node
+     * Place initial road extending from given node
      * Randomly selected neighbouring node with an open edge
-     * 
-     * @param player - Player recieving road
+     *
+     * @param player - Player receiving road
      * @param from   - Starting node of the road
      */
     public void placeInitialRoad(Player player, Node from) {
@@ -72,14 +68,14 @@ public class Placement {
     }
 
     /**
-     * Attempt to build a road from any node owned by player
-     * Road is built in random adjacent edge
-     * 
+     * Attempt to build a road during gameplay.
+     * Picks a random start node that has at least one buildable neighbor,
+     * then places a road to a random valid target.
+     *
      * @param player - Player building the road
-     * @return - Ture if road is built/ Flase if road is not builts
+     * @return true if a road was built, false otherwise
      */
     public boolean tryBuildRoad(Player player) {
-<<<<<<< HEAD:src/OriginalBoard/Placement.java
         List<Node> starts = new ArrayList<>();
 
         for (Node n : board.getNodes()) {
@@ -88,7 +84,8 @@ public class Placement {
             }
         }
 
-        if (starts.isEmpty()) return false;
+        if (starts.isEmpty())
+            return false;
 
         Node from = starts.get(rng.nextInt(starts.size()));
         List<Node> targets = from.getBuildableRoadNeighbors(player);
@@ -102,6 +99,7 @@ public class Placement {
 
     /**
      * Attempts to build a new Settlement for the given player during gameplay.
+     *
      * @param player Player attempting to build
      * @return true if a settlement was built, otherwise false
      */
@@ -112,7 +110,8 @@ public class Placement {
                 candidates.add(n);
             }
         }
-        if (candidates.isEmpty()) return false;
+        if (candidates.isEmpty())
+            return false;
 
         Node node = candidates.get(rng.nextInt(candidates.size()));
         Settlement s = new Settlement();
@@ -123,6 +122,7 @@ public class Placement {
 
     /**
      * Attempts to upgrade one of the player's settlements into a city.
+     *
      * @param player Player attempting to upgrade
      * @return true if a city upgrade happened, otherwise false
      */
@@ -133,7 +133,8 @@ public class Placement {
                 candidates.add(n);
             }
         }
-        if (candidates.isEmpty()) return false;
+        if (candidates.isEmpty())
+            return false;
 
         Node node = candidates.get(rng.nextInt(candidates.size()));
         Structure old = node.getStructure();
@@ -143,29 +144,13 @@ public class Placement {
         player.addStructure(city);
 
         return true;
-=======
-        // find one owned node, build an open edge from it
-        for (Node n : board.getNodes()) {
-            Structure s = n.getStructure();
-            if (s != null && s.getOwner() == player) {
-                Node to = pickNeighborWithOpenEdgeOrNull(n);
-                if (to != null) {
-                    Road r = new Road();
-                    placeRoad(n, to, r, player);
-                    player.addRoad(r);
-                    return true;
-                }
-            }
-        }
-        return false;
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Board/Placement.java
     }
 
     /**
-     * Select random node that is permited in placmeent rules
-     * 
+     * Select random node that is permitted in placement rules
+     *
      * @return - legal node for placement
-     * @throws IllegalStateExecption - no legal nodes available
+     * @throws IllegalStateException - no legal nodes available
      */
     private Node pickRandomLegalSettlementNode() {
         List<Node> candidates = new ArrayList<>();
@@ -181,8 +166,8 @@ public class Placement {
 
     /**
      * Checks for node to satisfy settlement distance rule
-     * Legal node mus be empty and have no adjacent structures
-     * 
+     * Legal node must be empty and have no adjacent structures
+     *
      * @param n - node to check
      * @return - true if node is legal
      */
@@ -200,8 +185,8 @@ public class Placement {
     }
 
     /**
-     * Select random neighbouring node conncted by an open edge
-     * 
+     * Select random neighbouring node connected by an open edge
+     *
      * @param from - starting node
      * @return - neighbouring node with available edge
      * @throws IllegalStateException if no open edges exist
@@ -222,15 +207,10 @@ public class Placement {
         return options.get(rng.nextInt(options.size()));
     }
 
-<<<<<<< HEAD:src/OriginalBoard/Placement.java
-=======
     /**
      * Select random neighbour node connected by an open edge.
-     * Although similar to pickRandomNeighborWithOpenEdge, this is needed to prevent
-     * program crashing
-     * if no edge is available during setup, there is a mistake, whereas in game
-     * play it is normal
-     * 
+     * Returns null if none exist (useful during gameplay to avoid crashing).
+     *
      * @param from - starting node
      * @return - neighbouring node or null if none
      */
@@ -248,20 +228,16 @@ public class Placement {
             return null;
         return options.get(rng.nextInt(options.size()));
     }
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Board/Placement.java
 
     /**
      * Places structure on a node and assigns ownership
-     * 
+     *
      * @param node      - node where structure is placed
      * @param structure - structure being placed
      * @param owner     - owning player
      */
     private void placeStructure(Node node, Structure structure, Player owner) {
-        // set owner at the structure level
         structure.setOwner(owner);
-
-        // Board-package access to Node internals:
         node.setStructure(structure);
         node.setPlayer(owner);
     }
@@ -269,9 +245,9 @@ public class Placement {
     /**
      * Place road between two neighbouring nodes
      * road is mirrored on both ends of the edge
-     * 
+     *
      * @param a     - First node
-     * @param b     - Seecond node
+     * @param b     - Second node
      * @param road  - road being placed
      * @param owner - owning player
      */
@@ -285,7 +261,7 @@ public class Placement {
 
     /**
      * Assign road to the correct edge of a node
-     * 
+     *
      * @param from - node receiving the road reference
      * @param to   - neighbouring node
      * @param road - road to assign

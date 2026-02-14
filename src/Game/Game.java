@@ -26,7 +26,7 @@ import GameResources.Settlement;
  * Coordinates board creation and set up, turn order and progression, dice
  * rolling,
  * resource distribution, and victory point checking
- * 
+ *
  * @author Elizabeth Glozman, 400559660 McMaster University
  * @author Taihan Mobasshir, 400578506, McMaster University
  */
@@ -61,7 +61,7 @@ public class Game {
 
     /**
      * Construct game with provided board
-     * 
+     *
      * @param players   - list of players
      * @param dice      - dice impelmentation
      * @param board     - board for the game
@@ -71,7 +71,7 @@ public class Game {
      * @throws NullPointerException     if players, dice, or boad are null
      */
     public Game(List<Player> players, Dice dice, Board board,
-            int winPoints, int maxRounds) {
+                int winPoints, int maxRounds) {
 
         this.players = new ArrayList<>(Objects.requireNonNull(players));
         this.dice = Objects.requireNonNull(dice);
@@ -92,21 +92,21 @@ public class Game {
 
     /**
      * Auto created board
-     * 
+     *
      * @param players   - list of players
      * @param dice      - dice impelmentation
      * @param winPoints - victory point target
      * @param maxRounds - maximum rounds before stopping
      */
     public Game(List<Player> players, Dice dice,
-            int winPoints, int maxRounds) {
+                int winPoints, int maxRounds) {
 
         this(players, dice, new Board(), winPoints, maxRounds);
     }
 
     /**
      * roll dice using implementation
-     * 
+     *
      * @return - dice roll value
      */
     public int rollMultiDice() {
@@ -122,34 +122,17 @@ public class Game {
 
         printBoard();
 
-        System.out.println(
-<<<<<<< HEAD:src/OriginalGame/Game.java
-                ">>> STARTING DICE ROLL SIMULATION <<<\n"
-        );
-
-        while (winner == null && round < maxRounds) {
-
-            for (int i = 0;
-                 i < players.size() && winner == null;
-                 i++) {
-=======
-                ">>> STARTING DICE ROLL SIMULATION <<<\n");
+        System.out.println(">>> STARTING DICE ROLL SIMULATION <<<\n");
 
         while (winner == null && round < maxRounds) {
 
             for (int i = 0; i < players.size() && winner == null; i++) {
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Game/Game.java
-
                 playOneTurn();
             }
 
             round++;
         }
     }
-<<<<<<< HEAD:src/OriginalGame/Game.java
-
-=======
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Game/Game.java
 
     /**
      * Setup phase by delegating to SetUpManager
@@ -166,7 +149,7 @@ public class Game {
 
     /**
      * Executes players turn
-     * 
+     *
      * Rolls dice and prints output
      * prints tiles that produce resources for the roll
      * distributes resources to all adjacent owners
@@ -183,33 +166,6 @@ public class Game {
 
         Player current = getCurrentPlayer();
 
-<<<<<<< HEAD:src/OriginalGame/Game.java
-        if (dice instanceof MultiDice md) {
-            System.out.print( "Turn " + turnCounter +
-                    "/ Player " + (current.getId() + 1) +
-                    ": rolled " + md.getLastDie1() + " + " + md.getLastDie2() +
-                    " -> "
-            );
-        } else {
-            System.out.print( "Turn " + turnCounter +
-                    ": Player " + (current.getId() + 1) +
-                    " rolled " + lastRoll +
-                    " -> "
-            );
-        }
-
-        printProduction(lastRoll);
-
-        distributeResources(lastRoll);
-
-        current.takeTurn(this);
-
-        currentPlayerIndex =
-                (currentPlayerIndex + 1) % players.size();
-    }
-
-
-=======
         // multiple dice display
         if (dice instanceof MultiDice md) {
             System.out.print("Turn " + turnCounter +
@@ -237,7 +193,6 @@ public class Game {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
     }
 
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Game/Game.java
     /**
      * play turn + check win.
      */
@@ -248,7 +203,7 @@ public class Game {
 
     /**
      * Resource distribution:
-     * 
+     *
      * Robber ignored
      * Finds tiles with roll number
      * pays 1 resource per settlement, 2 for city
@@ -279,13 +234,7 @@ public class Game {
                 if (owner == null)
                     continue;
 
-<<<<<<< HEAD:src/OriginalGame/Game.java
-                int payout =
-                        (s instanceof City) ? 2 :
-                                (s instanceof Settlement) ? 1 : 0;
-=======
                 int payout = (s instanceof City) ? 2 : (s instanceof Settlement) ? 1 : 0;
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Game/Game.java
 
                 for (int i = 0; i < payout; i++) {
                     owner.addResource(type);
@@ -325,12 +274,9 @@ public class Game {
         }
     }
 
-<<<<<<< HEAD:src/OriginalGame/Game.java
-=======
     /**
      * Print generated board tiles
      */
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Game/Game.java
     private void printBoard() {
         System.out.println("\n=== GENERATED BOARD (Random Desert) ===");
 
@@ -341,14 +287,11 @@ public class Game {
         System.out.println("======================================\n");
     }
 
-<<<<<<< HEAD:src/OriginalGame/Game.java
-=======
     /**
      * Print which tiles produce a resources
-     * 
+     *
      * @param roll - dice roll value
      */
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Game/Game.java
     private void printProduction(int roll) {
 
         if (roll == 7) {
@@ -371,17 +314,11 @@ public class Game {
         for (Tile t : dn.getTiles()) {
 
             ResourceType rt = t.getType();
-<<<<<<< HEAD:src/OriginalGame/Game.java
-            if (rt == null || rt == ResourceType.DESERT) continue;
-
-            if (!first) sb.append(" | ");
-=======
             if (rt == null || rt == ResourceType.DESERT)
                 continue;
 
             if (!first)
                 sb.append(" | ");
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Game/Game.java
 
             sb.append(rt)
                     .append(" from Tile ")
@@ -395,59 +332,27 @@ public class Game {
         System.out.print(sb.toString());
     }
 
-<<<<<<< HEAD:src/OriginalGame/Game.java
-
-
     // ---------------- Getters ----------------
 
-    public Board getBoard() { return board; }
-
-    public Dice getDice() { return dice; }
-
-    public int getLastRoll() { return lastRoll; }
-
-    public int getRound() { return round; }
-=======
-    /**
-     * reutrn board used by game
-     * 
-     * @return - board used by game
-     */
     public Board getBoard() {
         return board;
     }
 
-    /**
-     * reutrns dice used in game
-     * 
-     * @return dice object
-     */
     public Dice getDice() {
         return dice;
     }
 
-    /**
-     * returns most recent dice roll total
-     * 
-     * @return last roll value
-     */
     public int getLastRoll() {
         return lastRoll;
     }
 
-    /**
-     * return completed rounds
-     * 
-     * @return number of completed rounds
-     */
     public int getRound() {
         return round;
     }
->>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Game/Game.java
 
     /**
      * returns unmodifable view of player list
-     * 
+     *
      * @return unmodifiable list of players
      */
     public List<Player> getPlayers() {
@@ -456,7 +361,7 @@ public class Game {
 
     /**
      * Reutrn player whose turn it is
-     * 
+     *
      * @return current player
      */
     public Player getCurrentPlayer() {
@@ -465,7 +370,7 @@ public class Game {
 
     /**
      * indicates if game has ended
-     * 
+     *
      * @return true if game is over
      */
     public boolean isOver() {
@@ -474,7 +379,7 @@ public class Game {
 
     /**
      * Reutrn winning player or null if game unifnished
-     * 
+     *
      * @return winning player or null
      */
     public Player getWinner() {
