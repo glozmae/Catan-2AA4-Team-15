@@ -95,7 +95,7 @@ public class Placement {
      * Select random node that is permited in placmeent rules
      * 
      * @return - legal node for placement
-     * @throws IllegalStateExecption - no legal nodes available
+     * @throws IllegalStateException - no legal nodes available
      */
     private Node pickRandomLegalSettlementNode() {
         List<Node> candidates = new ArrayList<>();
