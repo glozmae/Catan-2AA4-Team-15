@@ -15,7 +15,7 @@ public class GameBank implements Bank {
      * compare resources and cost for item
      * 
      * @param item - item to purchase
-     * @param plater - player wanting to buy item
+     * @param player - player wanting to buy item
      * @return true if player has enough resources
      */
     @Override
