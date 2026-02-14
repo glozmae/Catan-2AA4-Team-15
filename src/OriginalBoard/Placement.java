@@ -3,7 +3,11 @@ package Board;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+<<<<<<< HEAD:src/OriginalBoard/Placement.java
 import GameResources.City;
+=======
+
+>>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Board/Placement.java
 import GameResources.Road;
 import GameResources.Settlement;
 import GameResources.Structure;
@@ -75,6 +79,7 @@ public class Placement {
      * @return - Ture if road is built/ Flase if road is not builts
      */
     public boolean tryBuildRoad(Player player) {
+<<<<<<< HEAD:src/OriginalBoard/Placement.java
         List<Node> starts = new ArrayList<>();
 
         for (Node n : board.getNodes()) {
@@ -138,6 +143,22 @@ public class Placement {
         player.addStructure(city);
 
         return true;
+=======
+        // find one owned node, build an open edge from it
+        for (Node n : board.getNodes()) {
+            Structure s = n.getStructure();
+            if (s != null && s.getOwner() == player) {
+                Node to = pickNeighborWithOpenEdgeOrNull(n);
+                if (to != null) {
+                    Road r = new Road();
+                    placeRoad(n, to, r, player);
+                    player.addRoad(r);
+                    return true;
+                }
+            }
+        }
+        return false;
+>>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Board/Placement.java
     }
 
     /**
@@ -201,6 +222,33 @@ public class Placement {
         return options.get(rng.nextInt(options.size()));
     }
 
+<<<<<<< HEAD:src/OriginalBoard/Placement.java
+=======
+    /**
+     * Select random neighbour node connected by an open edge.
+     * Although similar to pickRandomNeighborWithOpenEdge, this is needed to prevent
+     * program crashing
+     * if no edge is available during setup, there is a mistake, whereas in game
+     * play it is normal
+     * 
+     * @param from - starting node
+     * @return - neighbouring node or null if none
+     */
+    private Node pickNeighborWithOpenEdgeOrNull(Node from) {
+        List<Node> options = new ArrayList<>();
+
+        if (from.getLeft() != null && from.getLeftRoad() == null)
+            options.add(from.getLeft());
+        if (from.getRight() != null && from.getRightRoad() == null)
+            options.add(from.getRight());
+        if (from.getVert() != null && from.getVertRoad() == null)
+            options.add(from.getVert());
+
+        if (options.isEmpty())
+            return null;
+        return options.get(rng.nextInt(options.size()));
+    }
+>>>>>>> f38a71f8306e34245dcdecee793fb3b1e2a9e04b:src/Board/Placement.java
 
     /**
      * Places structure on a node and assigns ownership
