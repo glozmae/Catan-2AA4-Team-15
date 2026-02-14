@@ -6,6 +6,8 @@ package Board;
 
 import Player.Player;
 import GameResources.Road;
+import GameResources.City;
+import GameResources.Settlement;
 import GameResources.Structure;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +109,10 @@ public class Node {
     if (node.right == null) node.right = this;
 	}
 
+    /**
+     * Sets the neighbor node in the right position.
+     * @param node The Node to link to the right.
+     */
 	public void setRight(Node node) {
 		if (node == null) return;
 
@@ -114,6 +120,10 @@ public class Node {
 		if (node.left == null) node.left = this;
 	}
 
+    /**
+     * Sets the neighbor node in the vertical position.
+     * @param node The Node to link to the vertical.
+     */
 	public void setVert(Node node) {
 		if (node == null) return;
 
@@ -206,7 +216,7 @@ public class Node {
 	 */
 	public boolean canBuildSettlement(Player p) {
 		// 1. Occupied Check: Is there already a building here?
-		if (this.player != null) return false;
+		if (this.structure != null) return false;
 
 		// 2. Distance Rule: Are any immediate neighbors occupied?
 		// (This enforces the "2 nodes away" rule)
@@ -218,6 +228,37 @@ public class Node {
 
 		return true;
 	}
+
+    /**
+     *
+     * @param p
+     * @return
+     */
+    public boolean canUpgradeToCity(Player p){
+        if (this.structure == null){
+            return false;
+        }
+        if (!(this.structure instanceof Settlement)){
+            return false;
+        }
+        if(this.player == null){
+            return false;
+        }
+        return this.player.equals(p);
+    }
+    
+
+    /**
+     * Replaces an existing Settlement (owned by p) with a City.
+     */
+    public void upgradeToCity(Player p, City city) {
+        if (!canUpgradeToCity(p)) {
+            throw new IllegalStateException("Cannot upgrade: no owned Settlement at node " + id);
+        }
+        city.setOwner(p);
+        this.structure = city;
+        this.player = p;
+    }
 
 	/**
 	 * Checks valid places to build a NEW ROAD starting from this node.
@@ -261,9 +302,9 @@ public class Node {
 	 * Returns true if ANY neighbor has a settlement/city.
 	 */
 	private boolean hasOccupiedNeighbor() {
-		if (this.left != null && this.left.player != null) return true;
-		if (this.right != null && this.right.player != null) return true;
-		if (this.vert != null && this.vert.player != null) return true;
+		if (this.left != null && this.left.structure != null) return true;
+		if (this.right != null && this.right.structure != null) return true;
+		if (this.vert != null && this.vert.structure != null) return true;
 		return false;
 	}
 

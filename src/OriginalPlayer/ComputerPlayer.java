@@ -209,8 +209,10 @@ public class ComputerPlayer extends Player {
      * Helper to update the Board State and Player Inventory when upgrading to a City.
      */
     private void placeCity(Node node, City c) {
-        node.setStructure(c);
-        this.addStructure(c);
+        Structure old = node.getStructure();
+        node.upgradeToCity(this, c);
+        this.removeStructure(old);
+        this.addStructure(c);                  
     }
 
     /**

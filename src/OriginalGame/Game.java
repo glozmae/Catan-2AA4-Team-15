@@ -81,28 +81,28 @@ public class Game {
     /**
      * Runs simulation until winner OR round limit.
      */
-   public void simulate() {
+    public void simulate() {
 
-    setup();
+        setup();
 
-    printBoard();
+        printBoard();
 
-    System.out.println(
-        ">>> STARTING DICE ROLL SIMULATION <<<\n"
-    );
+        System.out.println(
+                ">>> STARTING DICE ROLL SIMULATION <<<\n"
+        );
 
-    while (winner == null && round < maxRounds) {
+        while (winner == null && round < maxRounds) {
 
-        for (int i = 0;
-             i < players.size() && winner == null;
-             i++) {
+            for (int i = 0;
+                 i < players.size() && winner == null;
+                 i++) {
 
-            playOneTurn();
+                playOneTurn();
+            }
+
+            round++;
         }
-
-        round++;
     }
-}
 
 
     /**
@@ -126,31 +126,31 @@ public class Game {
 
         turnCounter ++;
 
-    Player current = getCurrentPlayer();
+        Player current = getCurrentPlayer();
 
-    if (dice instanceof MultiDice md) {
-        System.out.print( "Turn " + turnCounter +
-            "/ Player " + (current.getId() + 1) +
-            ": rolled " + md.getLastDie1() + " + " + md.getLastDie2() +
-            " -> "
-        );
-    } else {
-        System.out.print( "Turn " + turnCounter +
-            ": Player " + (current.getId() + 1) +
-            " rolled " + lastRoll +
-            " -> "
-        );
+        if (dice instanceof MultiDice md) {
+            System.out.print( "Turn " + turnCounter +
+                    "/ Player " + (current.getId() + 1) +
+                    ": rolled " + md.getLastDie1() + " + " + md.getLastDie2() +
+                    " -> "
+            );
+        } else {
+            System.out.print( "Turn " + turnCounter +
+                    ": Player " + (current.getId() + 1) +
+                    " rolled " + lastRoll +
+                    " -> "
+            );
+        }
+
+        printProduction(lastRoll);
+
+        distributeResources(lastRoll);
+
+        current.takeTurn(this);
+
+        currentPlayerIndex =
+                (currentPlayerIndex + 1) % players.size();
     }
-
-    printProduction(lastRoll);
-
-    distributeResources(lastRoll);
-
-    current.takeTurn(this);
-
-    currentPlayerIndex =
-        (currentPlayerIndex + 1) % players.size();
-}
 
 
     /**
@@ -188,7 +188,7 @@ public class Game {
 
                 int payout =
                         (s instanceof City) ? 2 :
-                        (s instanceof Settlement) ? 1 : 0;
+                                (s instanceof Settlement) ? 1 : 0;
 
                 for (int i = 0; i < payout; i++) {
                     owner.addResource(type);
@@ -204,10 +204,11 @@ public class Game {
 
         int longestRoad = 5;
         Player longestRoadPlayer = null;
+
         for (Player p : players) {
-            int playerLongestRoad = 0;
-            if (p.longestRoad() > longestRoad) {
-                longestRoad = p.getLongestRoad();
+            int playerLongestRoad = p.longestRoad();
+            if (playerLongestRoad > longestRoad) {
+                longestRoad = playerLongestRoad;
                 longestRoadPlayer = p;
             }
         }
@@ -227,53 +228,53 @@ public class Game {
         }
     }
 
-	private void printBoard() {
-    System.out.println("\n=== GENERATED BOARD (Random Desert) ===");
+    private void printBoard() {
+        System.out.println("\n=== GENERATED BOARD (Random Desert) ===");
 
-    for (Tile t : board.getTiles()) {
-        System.out.println(t);
+        for (Tile t : board.getTiles()) {
+            System.out.println(t);
+        }
+
+        System.out.println("======================================\n");
     }
 
-    System.out.println("======================================\n");
-}
+    private void printProduction(int roll) {
 
-private void printProduction(int roll) {
+        if (roll == 7) {
+            System.out.print("Producing: [ROBBER — no production] || ");
+            return;
+        }
 
-    if (roll == 7) {
-        System.out.print("Producing: [ROBBER — no production] || ");
-        return;
+        DiceNum dn = board.getTilesForRoll(roll);
+
+        if (dn == null || dn.getTiles().isEmpty()) {
+            System.out.print("Producing: [] || ");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Producing: [");
+
+        boolean first = true;
+
+        for (Tile t : dn.getTiles()) {
+
+            ResourceType rt = t.getType();
+            if (rt == null || rt == ResourceType.DESERT) continue;
+
+            if (!first) sb.append(" | ");
+
+            sb.append(rt)
+                    .append(" from Tile ")
+                    .append(t.getId());
+
+            first = false;
+        }
+
+        sb.append("] || ");
+
+        System.out.print(sb.toString());
     }
-
-    DiceNum dn = board.getTilesForRoll(roll);
-
-    if (dn == null || dn.getTiles().isEmpty()) {
-        System.out.print("Producing: [] || ");
-        return;
-    }
-
-    StringBuilder sb = new StringBuilder();
-    sb.append("Producing: [");
-
-    boolean first = true;
-
-    for (Tile t : dn.getTiles()) {
-
-        ResourceType rt = t.getType();
-        if (rt == null || rt == ResourceType.DESERT) continue;
-
-        if (!first) sb.append(" | ");
-
-        sb.append(rt)
-          .append(" from Tile ")
-          .append(t.getId());
-
-        first = false;
-    }
-
-    sb.append("] || ");
-
-    System.out.print(sb.toString());
-}
 
 
 
