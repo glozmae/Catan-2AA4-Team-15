@@ -62,7 +62,6 @@ public abstract class Player {
 
 		this.id = num_players;
 		num_players += 1;
-		this.longestRoad = 0;
 		this.color = PlayerColor.values()[this.id];
 		this.structures = new ArrayList<Structure>();
 		this.hand = new PlayerHand();
