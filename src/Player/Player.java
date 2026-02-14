@@ -117,17 +117,6 @@ public abstract class Player {
 	}
 
 	/**
-	 * NOTE: THIS IS A NEW METHOD
-	 * Returns the number of resources of a specified type
-	 *
-	 * @param type Type of resource
-	 * @return Number of resources the player has of the specified type
-	 */
-	public int getNumResource(ResourceType type) {
-		return this.hand.getCount(type);
-	}
-
-	/**
 	 * Adds a structure to the player's list of structures
 	 *
 	 * @param structure Structure to be added

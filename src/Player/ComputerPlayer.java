@@ -66,10 +66,10 @@ public class ComputerPlayer extends Player {
 
         // --- STEP 1: RESOURCE CHECKS ---
         // Determine what the AI can afford this turn
-        boolean canAffordRoad = getNumResource(ResourceType.BRICK) >= 1 && getNumResource(ResourceType.LUMBER) >= 1;
-        boolean canAffordSettlement = getNumResource(ResourceType.BRICK) >= 1 && getNumResource(ResourceType.LUMBER) >= 1
-                && getNumResource(ResourceType.WOOL) >= 1 && getNumResource(ResourceType.GRAIN) >= 1;
-        boolean canAffordCity = getNumResource(ResourceType.GRAIN) >= 2 && getNumResource(ResourceType.ORE) >= 3;
+        boolean canAffordRoad = getResourceAmount(ResourceType.BRICK) >= 1 && getResourceAmount(ResourceType.LUMBER) >= 1;
+        boolean canAffordSettlement = getResourceAmount(ResourceType.BRICK) >= 1 && getResourceAmount(ResourceType.LUMBER) >= 1
+                && getResourceAmount(ResourceType.WOOL) >= 1 && getResourceAmount(ResourceType.GRAIN) >= 1;
+        boolean canAffordCity = getResourceAmount(ResourceType.GRAIN) >= 2 && getResourceAmount(ResourceType.ORE) >= 3;
 
         // --- STEP 2: SCAN FOR VALID MOVES ---
 
