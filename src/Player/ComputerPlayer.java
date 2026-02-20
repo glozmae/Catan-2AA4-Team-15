@@ -224,16 +224,17 @@ public class ComputerPlayer extends Player {
         // We must set the road on BOTH nodes involved in the edge
         if (start.getLeft() == end) {
             start.setLeftRoad(r);
-            end.setRightRoad(r); // Assumes Left's inverse is Right
+            end.setRightRoad(r); // Left's inverse is Right
         } else if (start.getRight() == end) {
             start.setRightRoad(r);
-            end.setLeftRoad(r); // Assumes Right's inverse is Left
+            end.setLeftRoad(r); // Right's inverse is Left
         } else if (start.getVert() == end) {
             start.setVertRoad(r);
-            end.setVertRoad(r); // Assumes Vert's inverse is Vert
+            end.setVertRoad(r); // Vert's inverse is Vert
         }
 
         this.addRoad(r);
+        this.addNode(end);
     }
 
     /**

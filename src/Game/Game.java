@@ -250,8 +250,23 @@ public class Game {
      */
     private void checkWin() {
 
+        int longestRoad = 5;
+        Player longestRoadPlayer = null;
         for (Player p : players) {
+            int playerLongestRoad = p.longestRoad();
+            if (playerLongestRoad > longestRoad) {
+                longestRoad = playerLongestRoad;
+                longestRoadPlayer = p;
+            }
+        }
+
+        for (Player p : players) {
+
             int vp = p.calculateVictoryPoints();
+
+            if (p == longestRoadPlayer) {
+                vp += 2;
+            }
 
             if (vp >= winPoints) {
                 winner = p;

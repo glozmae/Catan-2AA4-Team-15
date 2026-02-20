@@ -5,7 +5,9 @@
 package Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import Game.Game;
 import GameResources.City;
@@ -44,9 +46,6 @@ public abstract class Player {
 	/** The player's roads **/
 	private List<Road> roads;
 
-	/** The player's longest road length **/
-	private int longestRoad;
-
 	/** The nodes the player owns and can build in and around **/
 	private List<Node> nodes;
 
@@ -63,7 +62,6 @@ public abstract class Player {
 
 		this.id = num_players;
 		num_players += 1;
-		this.longestRoad = 0;
 		this.color = PlayerColor.values()[this.id];
 		this.structures = new ArrayList<Structure>();
 		this.hand = new PlayerHand();
@@ -203,6 +201,70 @@ public abstract class Player {
 	}
 
 	/**
+	 * Gets the length of the player's longest road.
+	 * Optimized to prevent memory overflow.
+	 */
+	public int longestRoad() {
+		int maxLen = 0;
+		// We reuse this single Set for every path check to save memory
+		Set<Road> visited = new HashSet<>();
+
+		// Iterate through all nodes associated with the player
+		// (Note: To be accurate, this should ideally be ALL nodes touching the player's roads,
+		// not just their settlements, but we stick to your structure here).
+		for (Node n : nodes) {
+			// Clear the set before starting a new path search
+			visited.clear();
+			int currentLen = roadLengthCalc(n, visited);
+			if (currentLen > maxLen) {
+				maxLen = currentLen;
+			}
+		}
+		return maxLen;
+	}
+
+	/**
+	 * Recursive DFS with Backtracking.
+	 * Uses a single Set instance to track visited roads, avoiding O(N^2) memory allocation.
+	 */
+	private int roadLengthCalc(Node n, Set<Road> visitedRoads) {
+		int longest = 0;
+
+		// Check Left
+		if (isValidRoad(n.getLeftRoad(), visitedRoads)) {
+			visitedRoads.add(n.getLeftRoad()); // 1. Mark as visited
+			longest = Math.max(longest, 1 + roadLengthCalc(n.getLeft(), visitedRoads));
+			visitedRoads.remove(n.getLeftRoad()); // 2. Backtrack (Unmark)
+		}
+
+		// Check Right
+		if (isValidRoad(n.getRightRoad(), visitedRoads)) {
+			visitedRoads.add(n.getRightRoad());
+			longest = Math.max(longest, 1 + roadLengthCalc(n.getRight(), visitedRoads));
+			visitedRoads.remove(n.getRightRoad());
+		}
+
+		// Check Vertical
+		if (isValidRoad(n.getVertRoad(), visitedRoads)) {
+			visitedRoads.add(n.getVertRoad());
+			longest = Math.max(longest, 1 + roadLengthCalc(n.getVert(), visitedRoads));
+			visitedRoads.remove(n.getVertRoad());
+		}
+
+		return longest;
+	}
+
+	/**
+	 * Helper to check if a road exists, belongs to us, and hasn't been visited.
+	 */
+	private boolean isValidRoad(Road r, Set<Road> visited) {
+		// 1. Road must exist
+		// 2. Road must NOT be in the current path (visited)
+		// 3. Road must belong to THIS player (Crucial check missing in original code!)
+		return r != null && !visited.contains(r) && r.getOwner() == this;
+	}
+
+	/**
 	 * Returns a list of the player's roads
 	 *
 	 * @return List of player's roads
@@ -239,12 +301,5 @@ public abstract class Player {
 		return this.hand.getCount(type);
 	}
 
-	/**
-	 * Gets the length of the player's longest road
-	 *
-	 * @return Length of the longest road
-	 */
-	public int getLongestRoad() {
-		return longestRoad;
-	}
+
 }
