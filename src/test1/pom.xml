@@ -16,6 +16,7 @@
     </properties>
 
     <dependencies>
+        <!-- JUnit 4 (your tests use org.junit.*) -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -26,7 +27,10 @@
 
     <build>
         <plugins>
-            <!-- Your code is in ../src and tests are in ../src/test relative to this pom location -->
+            <!-- Your layout:
+                 main code:  src/Board, src/Game, ...
+                 test code:  src/test/src/Board, src/test/src/Game, ... (EXTRA src level)
+            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -35,20 +39,26 @@
                     <execution>
                         <id>add-main-source</id>
                         <phase>generate-sources</phase>
-                        <goals><goal>add-source</goal></goals>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
                         <configuration>
                             <sources>
-                                <source>../src</source>
+                                <source>src</source>
                             </sources>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>add-test-source</id>
                         <phase>generate-test-sources</phase>
-                        <goals><goal>add-test-source</goal></goals>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
                         <configuration>
                             <sources>
-                                <source>../src/test</source>
+                                <!-- IMPORTANT: your tests live under src/test/src -->
+                                <source>src/test/src</source>
                             </sources>
                         </configuration>
                     </execution>
