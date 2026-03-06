@@ -225,7 +225,7 @@ public class Game {
         for (Tile tile : tiles) {
 
             ResourceType type = tile.getType();
-            if (type == null || type == ResourceType.DESERT)
+            if (type == ResourceType.DESERT)
                 continue;
 
             for (Node node : tile.getNodes()) {
