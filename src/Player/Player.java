@@ -46,9 +46,6 @@ public abstract class Player {
 
 	/** The player's longest road length **/
 	private int longestRoad;
-
-	/** The nodes the player owns and can build in and around **/
-	private List<Node> nodes;
     
 	/**
 	 * Constructor for a player, whether it be a human or a computer.
@@ -65,7 +62,6 @@ public abstract class Player {
 		this.structures = new ArrayList<Structure>();
 		this.hand = new PlayerHand();
 		this.roads = new ArrayList<Road>();
-		this.nodes = new ArrayList<Node>();
 	}
 
 	/**
@@ -88,11 +84,6 @@ public abstract class Player {
 	public static void resetNumPlayers() {
 		num_players = 0;
 	}
-
-	/**
-	 *
-	 */
-	public void addNode(Node node) {this.nodes.add(node);}
 
 	/**
 	 * Adds a new card to the player's hand
