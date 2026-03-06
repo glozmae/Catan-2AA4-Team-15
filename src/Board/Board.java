@@ -3,6 +3,9 @@ package Board;
 import java.util.List;
 import java.util.ArrayList;
 import GameResources.ResourceType;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collections;
 
 /**
  * Represents the entire game map.
@@ -26,10 +29,7 @@ public class Board {
 	 */
 	private List<Tile> tiles;
 
-	/**
-	 * List of DiceNum objects that map dice rolls (2-12) to specific tiles.
-	 */
-	private List<DiceNum> diceNumbers;
+    private Map<Integer, List<Tile>> tilesByRoll;
 
 	/**
 	 * Constructor: Builds the standard Catan board layout with RANDOMIZED resources.
@@ -92,20 +92,21 @@ public class Board {
 		tiles.add(createTile(17, n(50, 51, 52, 23, 22, 49), resourceDeck.get(17)));
 		tiles.add(createTile(18, n(52, 53, 24, 7, 6, 23), resourceDeck.get(18)));
 
+        tilesByRoll = new HashMap<>();
 		// 4. Distribute Dice Numbers
 		// This will automatically skip whichever tile is the Desert
 		setupDiceNumbers();
 	}
 
+    public List<Tile> getTilesForRoll(int roll) {
+        return tilesByRoll.getOrDefault(roll, List.of());
+    }
+
 	/**
 	 * Factory method to create the correct Tile class based on the resource type.
 	 */
 	private Tile createTile(int id, Node[] nodes, ResourceType type) {
-		if (type == ResourceType.DESERT) {
-			return new DesertTile(id, nodes);
-		} else {
-			return new Tile(id, nodes, type);
-		}
+        return new Tile(id, nodes, type);
 	}
 
 	/**
@@ -123,51 +124,33 @@ public class Board {
 	 * Assigns number tokens (2-12) to the tiles, skipping the Desert.
 	 */
 	private void setupDiceNumbers() {
-		diceNumbers = new ArrayList<>();
-
 		// Standard Catan number token distribution
 		int[] standardTokens = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
 
 		// Create buckets for each number (2-12)
-		DiceNum[] lookup = new DiceNum[13];
 		for(int i=2; i<=12; i++) {
-			if(i!=7) lookup[i] = new DiceNum(i);
+			if (i != 7){
+                tilesByRoll.put(i, new ArrayList<>());
+            }
 		}
 
 		int tokenIndex = 0;
 
 		// Iterate through all tiles (which are now randomized resources)
 		for (Tile t : tiles) {
-			// Check for Enum value DESERT
-			if (t.getType() == ResourceType.DESERT) {
-				continue; // Skip the desert (no number token)
-			}
+            // Check for Enum value DESERT
+            if (t.getType() == ResourceType.DESERT) {
+                continue; // Skip the desert (no number token)
+            }
 
-			if (tokenIndex < standardTokens.length) {
-				int val = standardTokens[tokenIndex];
-				if (lookup[val] != null) {
-					lookup[val].addTile(t);
-				}
-				tokenIndex++;
-			}
-		}
-
-		// Finalize the list
-		for(int i=2; i<=12; i++) {
-			if(lookup[i] != null) diceNumbers.add(lookup[i]);
-		}
+            int number = standardTokens[tokenIndex];
+            tielsByRoll.get(number).add(t);
+            tokenIndex;
+        }
 	}
 
-	/**
-	 * Returns the DiceNum object for a specific roll.
-	 */
-	public DiceNum getTilesForRoll(int roll) {
-		for (DiceNum dn : diceNumbers) {
-			if (dn.getNumber() == roll) return dn;
-		}
-		return null;
-	}
-
-	public List<Tile> getTiles() { return tiles; }
+	public List<Tile> getTilesForRoll(int roll) {
+        return tileByroll.getOrDefualt(roll, Collections.emptyList());
+    }
 	public List<Node> getNodes() { return nodes; }
 }
