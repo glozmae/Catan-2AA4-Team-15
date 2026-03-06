@@ -137,7 +137,11 @@ public abstract class Player {
 	 * @return Player's total victory points
 	 */
 	public int calculateVictoryPoints() {
-		return VictoryPointCalculator.calculate(this);
+        int total = 0;
+        for (Structure structure : structures){
+            total += sructure.getVictoryPoints();
+        }
+		return total;
 	}
 
 	/**

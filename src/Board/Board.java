@@ -152,6 +152,7 @@ public class Board {
             }
 
             int number = standardTokens[tokenIndex];
+            t.setProductionNumber(number);
             tilesByRoll.get(number).add(t);
             tokenIndex++;
         }

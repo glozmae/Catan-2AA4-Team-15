@@ -32,6 +32,8 @@ public class Tile {
 	 */
 	private int id;
 
+    private Integer productionNumber;
+
 	/**
 	 * Constructor for a Tile.
 	 * * @param id    Unique identifier for the hex.
@@ -51,7 +53,9 @@ public class Tile {
 		// Automatically establish the directional links between the provided nodes.
 		nodeConnector();
 		this.type = type;
+        this.productionNumber = null;
 	}
+
 
 	/**
 	 * Internal logic to link the 6 nodes together.
@@ -84,13 +88,27 @@ public class Tile {
     	return nodes;
 	}
 
-	/**
-	 * Gets the unique ID of this tile.
-	 * @return integer ID.
-	 */
-	public int getId() {
-		return id;
-	}
+
+    /**
+     * Gets the production number assigned to this tile.
+     *
+     * @return production number or null
+     */
+    public Integer getProductionNumber() {
+        return productionNumber;
+    }
+
+    public void setProductionNumber(Integer productionNumber) {
+        this.productionNumber = productionNumber;
+    }
+
+    /**
+     * Gets the unique ID of this tile.
+     * @return integer ID.
+     */
+    public int getId() {
+        return id;
+    }
 
 	/**
 	 * Returns a formatted string representation of the tile for debugging.
