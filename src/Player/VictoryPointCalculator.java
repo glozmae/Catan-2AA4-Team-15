@@ -13,11 +13,10 @@ import GameResources.Structure;
  * 
  */
 public class VictoryPointCalculator {
-    /**
-     * 
-     * @return
-     * @param player
-     */
+
+    /**Prevent instantiation.*/
+    private VictoryPointCalculator() {}
+
     public static int calculate(Player player) {
         int points = 0;
         List<Structure> structures = new ArrayList<>();

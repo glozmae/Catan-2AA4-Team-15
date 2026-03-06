@@ -49,10 +49,7 @@ public abstract class Player {
 
 	/** The nodes the player owns and can build in and around **/
 	private List<Node> nodes;
-
-	/** The player's victory point calculator **/
-	public VictoryPointCalculator victorypointcalculator; // Consider deleting
-
+    
 	/**
 	 * Constructor for a player, whether it be a human or a computer.
 	 */
@@ -69,7 +66,6 @@ public abstract class Player {
 		this.hand = new PlayerHand();
 		this.roads = new ArrayList<Road>();
 		this.nodes = new ArrayList<Node>();
-		this.victorypointcalculator = new VictoryPointCalculator();
 	}
 
 	/**
