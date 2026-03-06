@@ -152,7 +152,7 @@ public class Board {
             }
 
             int number = standardTokens[tokenIndex];
-            tielsByRoll.get(number).add(t);
+            tilesByRoll.get(number).add(t);
             tokenIndex++;
         }
     }

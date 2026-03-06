@@ -288,7 +288,7 @@ public class Game {
 
         List<Tile> tiles = board.getTilesForRoll(roll);
         if (tiles.isEmpty()){
-            System.out.println("Producing: [] || ");
+            System.out.print("Producing: [] || ");
             return;
         }
 
