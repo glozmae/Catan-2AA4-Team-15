@@ -6,7 +6,7 @@ import java.util.Random;
  * Represent a pair of six-sided dice for this game version
  * This implementation generates two independent dice rolls
  * Stores individual die values
- * 
+ *
  * @author Elizabeth Glozman, 400559660, McMaster University
  */
 public class MultiDice implements Dice {
@@ -29,7 +29,7 @@ public class MultiDice implements Dice {
     /**
      * Construct MultiDice instance with fixed seed for repretable dice
      * Used for controlability and testing
-     * 
+     *
      * @param seed - random number generator seed
      */
     public MultiDice(int seed) {
@@ -38,7 +38,7 @@ public class MultiDice implements Dice {
 
     /**
      * Rolls both dice and returns total and stores individual dice
-     * 
+     *
      * @return sum of two dice
      */
     @Override
@@ -50,7 +50,7 @@ public class MultiDice implements Dice {
 
     /**
      * Reutrn value of first dice
-     * 
+     *
      * @return - last value of dice 1
      */
     public int getLastDie1() {
@@ -59,7 +59,7 @@ public class MultiDice implements Dice {
 
     /**
      * Return value of second dice
-     * 
+     *
      * @return last value of dice 2
      */
     public int getLastDie2() {
