@@ -23,8 +23,9 @@
 hs_err_pid*
 replay_pid*
 
-#Maven build folder
+#Maven build
 target/
+dependency-reduced-pom.xml
 
 #Eclipse
 .classpath
@@ -35,7 +36,6 @@ target/
 .idea/
 *.iml
 
-target/
 #OS files
 .DS_Store
 Thumbs.db

@@ -1,11 +1,16 @@
 package TestGame;
-import static org.junit.Assert.*;
-import org.junit.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.Random;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import Game.MultiDice;
 
 /**
  * Unit tests for MultiDice
- *
  * Represent a pair of six-sided dice for this game version
  * This implementation generates two independent dice rolls
  * Stores individual die values
@@ -14,65 +19,72 @@ import java.util.Random;
  */
 public class TestMultiDice {
 
-    /** Default timeout for each test in ms */
+    /**
+     * Default timeout for each test in ms
+     */
     private static final int TIMEOUT = 2000;
 
     /**
      * Boundary test: after rolling many times, die 1 must stay within valid range.
      */
-    @Test(timeout = TIMEOUT)
+    @Test()
+    @Timeout(value = TIMEOUT)
     public void die1Range() {
         MultiDice dice = new MultiDice(123);
         for (int i = 0; i < 200; i++) {
             dice.roll();
             int d1 = dice.getLastDie1();
-            assertTrue("die 1 stays in valid range", d1 >= 1 && d1 <= 6);
+            assertTrue(d1 >= 1 && d1 <= 6, "die 1 stays in valid range");
         }
     }
 
     /**
      * Boundary test: after rolling many times, die 2 must stay within valid range.
      */
-    @Test(timeout = TIMEOUT)
+    @Test()
+    @Timeout(value = TIMEOUT)
     public void die2Range() {
         MultiDice dice = new MultiDice(123);
         for (int i = 0; i < 200; i++) {
             dice.roll();
             int d2 = dice.getLastDie2();
-            assertTrue("die 2 stays in valid range", d2 >= 1 && d2 <= 6);
+            assertTrue(d2 >= 1 && d2 <= 6, "die 2 stays in valid range");
         }
     }
 
     /**
      * Boundary test: the sum of two dice should always stay in [2, 12].
      */
-    @Test(timeout = TIMEOUT)
+    @Test()
+    @Timeout(value = TIMEOUT)
     public void sumRange() {
         MultiDice dice = new MultiDice(123);
 
         for (int i = 0; i < 200; i++) {
             int sum = dice.roll();
-            assertTrue("sum stays in valid range", sum >= 2 && sum <= 12);
+            assertTrue(sum >= 2 && sum <= 12, "sum stays in valid range");
         }
     }
 
     /**
      * Contract test: roll() should equal the sum of the stored dice values.
      */
-    @Test(timeout = TIMEOUT)
+    @Test()
+    @Timeout(value = TIMEOUT)
     public void rollMatchesDice() {
         MultiDice dice = new MultiDice(456);
 
         for (int i = 0; i < 100; i++) {
             int sum = dice.roll();
-            assertEquals("roll returns stored die sum", dice.getLastDie1() + dice.getLastDie2(), sum);
+            assertEquals(dice.getLastDie1() + dice.getLastDie2(), sum, "roll returns stored die sum");
         }
     }
 
     /**
      * Determinism test: With a seed, MultiDice should match Java's Random sequence exactly.
      */
-    @Test(timeout = TIMEOUT)
+    @Test()
+    @Timeout(value = TIMEOUT)
     public void seededFirstRoll() {
         int seed = 999;
 
@@ -83,8 +95,8 @@ public class TestMultiDice {
 
         MultiDice dice = new MultiDice(seed);
         int actualSum = dice.roll();
-        assertEquals("Seeded sum should match expected rand result", expectedSum, actualSum);
-        assertEquals("Seeded die1 should match expected rand result", expectedDie1, dice.getLastDie1());
-        assertEquals("Seeded die2 should match expected rand result", expectedDie2, dice.getLastDie2());
+        assertEquals(expectedSum, actualSum, "Seeded sum should match expected rand result");
+        assertEquals(expectedDie1, dice.getLastDie1(), "Seeded die1 should match expected rand result");
+        assertEquals(expectedDie2, dice.getLastDie2(), "Seeded die2 should match expected rand result");
     }
 }
