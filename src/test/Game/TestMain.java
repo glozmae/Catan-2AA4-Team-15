@@ -8,7 +8,7 @@ import org.junit.Test;
  *
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
-public class MainTest {
+public class TestMain {
 
     private static final int TIMEOUT = 5000;
 

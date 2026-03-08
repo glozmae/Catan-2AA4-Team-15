@@ -6,7 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="bac97711-e4b1-41f5-8fd8-6e0183f183a8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/Game/GameTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../test/Game/GameTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/Game/GameTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/Game/MainTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../test/Game/MainTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/Game/MultiDiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../target/surefire-reports/Game.GameTest.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../target/surefire-reports/Game.MultiDiceTest.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../target/surefire-reports/TEST-Game.GameTest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../target/surefire-reports/TEST-Game.MultiDiceTest.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

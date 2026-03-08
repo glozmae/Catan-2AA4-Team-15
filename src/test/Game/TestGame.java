@@ -17,7 +17,7 @@ import Player.Player;
  * Unit tests for Game.
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
-public class GameTest {
+public class TestGame {
     private static final int TIMEOUT = 2000;
 
     @Before

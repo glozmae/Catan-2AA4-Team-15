@@ -35,7 +35,7 @@ target/
 .idea/
 *.iml
 
-
+target/
 #OS files
 .DS_Store
 Thumbs.db
