@@ -8,21 +8,47 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  sonarqube:
-    name: SonarQube
+  build:
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '24'
+          cache: maven
+      
+      - name: Build and run tests
+        run: mvn -B verify
+      
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: catan-jar
+          path: target/*.jar
 
-      - name: Compile Java (Papyrus)
-        run: |
-          mkdir -p build/classes
-          find . -name "*.java" > sources.txt
-          javac -Xlint:none -d build/classes @sources.txt
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '24'
+          cache: maven
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
+        run: mvn -B verify sonar:sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
