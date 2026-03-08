@@ -9,7 +9,7 @@ import Player.Player;
  * Entry point for launching and simulation Catan game
  * Initializes players, dice, and game parameters
  * Builds a game instance and runs a simulation
- * 
+ *
  * @author Elizabeth Glozman, 400559660, McMaster University
  */
 public class Main {
@@ -18,7 +18,7 @@ public class Main {
      * Program entry point
      * Creates 4 computer players, initializes dice, builds the board,
      * runs the simulation, and prints the winner
-     * 
+     *
      * @param args - command line arguments
      */
     public static void main(String[] args) {
