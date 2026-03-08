@@ -12,7 +12,7 @@ import java.util.Random;
  *
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
-public class MultiDiceTest {
+public class TestMultiDice {
 
     /** Default timeout for each test in ms */
     private static final int TIMEOUT = 2000;
