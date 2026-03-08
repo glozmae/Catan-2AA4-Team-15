@@ -1,11 +1,12 @@
 package test.Board;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-
 import Board.Board;
 import Board.DiceNum;
 import Board.Tile;
+import Board.Node;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -37,6 +38,9 @@ class TestBoard {
 
     @Test
     void getNodes() {
-
+        Board board = new Board();
+        List<Node> nodes = board.getNodes();
+        assertNotNull(nodes, "Nodes list should not be null");
+        assertEquals(19, nodes.size(), "There should be 19 nodes on the board");
     }
 }
