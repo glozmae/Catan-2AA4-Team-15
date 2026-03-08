@@ -9,17 +9,16 @@ import java.util.Random;
  * Represent a pair of six-sided dice for this game version
  * This implementation generates two independent dice rolls
  * Stores individual die values
- * 
+ *
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public class MultiDiceTest {
 
-    /**Defualt timeout for each test in ms */
-    private static fina
-    int TIMEOUT = 2000;
+    /** Default timeout for each test in ms */
+    private static final int TIMEOUT = 2000;
 
     /**
-     * Boundry test: after rolling many times, values must stay within valid ranges
+     * Boundary test: after rolling many times, die 1 must stay within valid range.
      */
     @Test(timeout = TIMEOUT)
     public void die1Range() {
@@ -27,36 +26,20 @@ public class MultiDiceTest {
         for (int i = 0; i < 200; i++) {
             dice.roll();
             int d1 = dice.getLastDie1();
-            //Each die must be between 1 and 6
-            assertTrue("die 1 stays in valid range", die1 >= 1 && die1 <= 6);
+            assertTrue("die 1 stays in valid range", d1 >= 1 && d1 <= 6);
         }
     }
 
     /**
-     * Boundary test: die 2 should always stay in the valid range [1, 6].
+     * Boundary test: after rolling many times, die 2 must stay within valid range.
      */
     @Test(timeout = TIMEOUT)
-    public void die1Range() {
+    public void die2Range() {
         MultiDice dice = new MultiDice(123);
         for (int i = 0; i < 200; i++) {
             dice.roll();
-            int d2 = dice.getLastDie1();
-            //Each die must be between 1 and 6
-            assertTrue("die 2 stays in valid range", die2 >= 1 && die2 <= 6);
-        }
-    }
-
-    /**
-     * Boundary test: die 2 should always stay in the valid range [1, 6].
-     */
-    @Test(timeout = TIMEOUT)
-    public void die1Range() {
-        MultiDice dice = new MultiDice(123);
-        for (int i = 0; i < 200; i++) {
-            dice.roll();
-            int d2 = dice.getLastDie1();
-            //Each die must be between 1 and 6
-            assertTrue("die 2 stays in valid range", die2 >= 1 && die2 <= 6);
+            int d2 = dice.getLastDie2();
+            assertTrue("die 2 stays in valid range", d2 >= 1 && d2 <= 6);
         }
     }
 
@@ -74,7 +57,7 @@ public class MultiDiceTest {
     }
 
     /**
-     * Boundary test: the sum of two dice should always stay in [2, 12].
+     * Contract test: roll() should equal the sum of the stored dice values.
      */
     @Test(timeout = TIMEOUT)
     public void rollMatchesDice() {
@@ -86,15 +69,13 @@ public class MultiDiceTest {
         }
     }
 
-
     /**
      * Determinism test: With a seed, MultiDice should match Java's Random sequence exactly.
      */
-    @Test
-    public void seededFirstRoll(){
+    @Test(timeout = TIMEOUT)
+    public void seededFirstRoll() {
         int seed = 999;
 
-        //Expected values from Java
         Random rand = new Random(seed);
         int expectedDie1 = rand.nextInt(6) + 1;
         int expectedDie2 = rand.nextInt(6) + 1;

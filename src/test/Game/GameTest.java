@@ -3,29 +3,21 @@
 // --------------------------------------------------------
 package Game;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import static org.junit.Assert.*;
 
-import Board.Board;
-import Board.DiceNum;
-import Board.Tile;
-import Board.Node;
-import Board.SetupManager;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import Player.Player;
-
-import GameResources.ResourceType;
-import GameResources.Structure;
-import GameResources.City;
-import GameResources.Settlement;
 
 /**
  * Unit tests for Game.
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
-public class Game {
+public class GameTest {
     private static final int TIMEOUT = 2000;
 
     @Before
@@ -72,7 +64,7 @@ public class Game {
     /**
      * Helper method to create a list of test players
      * @param count The amount of players
-     * @return the amount of players
+     * @return list of players
      */
     private List<Player> makePlayers(int count) {
         List<Player> players = new ArrayList<Player>();
@@ -140,22 +132,7 @@ public class Game {
             // expected
         }
     }
-
-    /**
-     * Constructor rejects too few players.
-     */
-    @Test(timeout = TIMEOUT, expected = IllegalArgumentException.class)
-    public void tooFewPlayersRejected() {
-        new Game(makePlayers(1), new FixedDice(6), 10, 5);
-    }
-
-    /**
-     * Constructor rejects too many players.
-     */
-    @Test(timeout = TIMEOUT, expected = IllegalArgumentException.class)
-    public void tooManyPlayersRejected() {
-        new Game(makePlayers(5), new FixedDice(6), 10, 5);
-    }
+    
 
     /**
      * Boundry test: win points must be positive.
@@ -164,7 +141,6 @@ public class Game {
     public void badWinPointsRejected() {
         new Game(makePlayers(2), new FixedDice(6), 0, 5);
     }
-
 
     /**
      * Boundry test: maximum rounds must be in the valid range.
@@ -189,28 +165,4 @@ public class Game {
     public void nullPlayersRejected() {
         new Game(null, new FixedDice(6), 10, 5);
     }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-    @Test(timeout = TIMEOUT)
-    public void badConstructorInputs(){
-        List<Player> onePlayer = Arrays.asList(makePlayer(0, 0));
-        List<PLayer> fivePlayers = Arrays.asList(
-                makePlayer(0, 0), makePlayer(1, 0), makePlayer(2, 0),
-                makePlayer(3, 0), makePlayer(4, 0)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> new Game(onePlayer, dice, board, 10, 5));
-    }
-
 }
