@@ -41,6 +41,6 @@ public class TestTile {
         Node node5 = new Node(5);
         Node[] nodes = {node0, node1, node2, node3, node4, node5};
         Tile tile = new Tile(0, nodes, ResourceType.DESERT);
-        assertEquals(6, tile.getNodes(), "Tile should have 6 nodes");
+        assertEquals(6, tile.getNodes().length, "Tile should have 6 nodes");
     }
 }
