@@ -23,5 +23,19 @@
 hs_err_pid*
 replay_pid*
 
-.idea/*
+#Maven build folder
+target/
+
+#Eclipse
+.classpath
+.project
+.settings/
+
+#IntelliJ
+.idea/
 *.iml
+
+
+#OS files
+.DS_Store
+Thumbs.db
