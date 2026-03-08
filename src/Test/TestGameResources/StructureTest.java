@@ -1,4 +1,4 @@
-package Test.GameResources;
+package TestGameResources;
 
 import GameResources.Structure;
 import Player.ComputerPlayer;
