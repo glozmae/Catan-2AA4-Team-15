@@ -3,7 +3,10 @@ package TestBoard;
 import Board.DiceNum;
 import Board.Node;
 import Board.Tile;
+import Player.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,11 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version Winter, 2026
  */
 public class TestDiceNum {
+    private static final int TIMEOUT = 2000;
 
     /**
      * Tests that the constructor sets the number and tile list correctly.
      */
     @Test
+    @Timeout(TIMEOUT)
     public void testConstructor() {
         Node[] dummyNodes = { new Node(0), new Node(1), new Node(2), new Node(3), new Node(4), new Node(5) };
         Tile tile = new Tile(0, dummyNodes, null);

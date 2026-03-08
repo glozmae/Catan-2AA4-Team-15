@@ -5,7 +5,9 @@ import Board.SetupManager;
 import GameResources.ResourceType;
 import Player.Player;
 import Player.ComputerPlayer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.ArrayList;
 
@@ -18,12 +20,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version Winter, 2026
  */
 public class TestSetupManager {
+    private static final int TIMEOUT = 2000;
+
+    @BeforeEach
+    public void resetPlayers() {
+        Player.resetNumPlayers();
+    }
     /**
      * Running setup should yield two settlements, two roads, and some resources for the players
      */
     @Test
+    @Timeout(value = TIMEOUT)
     public void run() {
-        Player.resetNumPlayers();
         Player dummyPlayer = new ComputerPlayer();
         ArrayList<Player> players = new ArrayList<>();
         players.add(dummyPlayer);

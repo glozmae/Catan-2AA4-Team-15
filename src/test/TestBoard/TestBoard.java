@@ -4,7 +4,10 @@ import Board.Board;
 import Board.DiceNum;
 import Board.Tile;
 import Board.Node;
+import Player.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,15 +15,23 @@ import java.util.List;
 
 /**
  * Tests the Board class
- * 
+ *
  * @author Yojith Sai Biradavolu, McMaster University
  * @version Winter, 2026
  */
 public class TestBoard {
+    private static final int TIMEOUT = 2000;
+
+    @BeforeEach
+    public void resetPlayers() {
+        Player.resetNumPlayers();
+    }
+
     /**
      * Check getTilesForRoll returns a matching DiceNum for each valid roll.
      */
-    @Test
+    @Test()
+    @Timeout(value = TIMEOUT)
     public void getTilesForRoll() {
         Board board = new Board();
         for (int i = 2; i < 6; i++) {
@@ -39,6 +50,7 @@ public class TestBoard {
      * Ensure getTiles returns a non-null list of size 19.
      */
     @Test
+    @Timeout(value = TIMEOUT)
     public void getTiles() {
         Board board = new Board();
         List<Tile> tiles = board.getTiles();
@@ -51,6 +63,7 @@ public class TestBoard {
      * Ensure getNodes returns a non-null list of size 54.
      */
     @Test
+    @Timeout(value = TIMEOUT)
     public void getNodes() {
         Board board = new Board();
         List<Node> nodes = board.getNodes();

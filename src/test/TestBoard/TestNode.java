@@ -4,7 +4,9 @@ import Board.Node;
 import GameResources.Road;
 import Player.Player;
 import Player.ComputerPlayer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,14 +17,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version Winter, 2026
  */
 public class TestNode {
+    private static final int TIMEOUT = 2000;
+
+    @BeforeEach
+    public void resetPlayers() {
+        Player.resetNumPlayers();
+    }
 
     /**
      * Tests that a node is buildable only with a connected road and if unoccupied.
      */
     @Test
+    @Timeout(value = TIMEOUT)
     public void canBuildSettlement() {
         Node node = new Node(0);
-        Player.resetNumPlayers();
         Player dummyPlayer = new ComputerPlayer();
         Player dummyPlayer2 = new ComputerPlayer();
         Road dummyRoad = new Road();
@@ -39,11 +47,11 @@ public class TestNode {
      * Tests that adjacent occupied node prevents building a settlement.
      */
     @Test
+    @Timeout(value = TIMEOUT)
     void canBuildSettlement2() {
         Node node = new Node(0);
         Node node2 = new Node(1);
         node.setLeft(node2);
-        Player.resetNumPlayers();
         Player dummyPlayer = new ComputerPlayer();
         node2.setPlayer(dummyPlayer);
 
@@ -54,12 +62,12 @@ public class TestNode {
      * Tests if buildable road neighbours are properly identified based on occupied spots
      */
     @Test
+    @Timeout(value = TIMEOUT)
     public void getBuildableRoadNeighbors() {
         Node node = new Node(0);
         node.setLeft(new Node(1));
         node.setRight(new Node(2));
         node.setVert(new Node(3));
-        Player.resetNumPlayers();
         Player dummyPlayer = new ComputerPlayer();
 
         assertEquals(0, node.getBuildableRoadNeighbors(dummyPlayer).size(), "Unoccupied node has no buildable roads");

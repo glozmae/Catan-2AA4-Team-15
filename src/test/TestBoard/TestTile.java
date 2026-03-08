@@ -3,7 +3,10 @@ package TestBoard;
 import Board.Node;
 import Board.Tile;
 import GameResources.ResourceType;
+import Player.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,11 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version Winter, 2026
  */
 public class TestTile {
+    private static final int TIMEOUT = 2000;
 
     /**
      * Checks that constructor throws IllegalArgumentException with null nodes.
      */
     @Test
+    @Timeout(TIMEOUT)
     public void testConstructor() {
         try {
             new Tile(0, null, ResourceType.ORE);
