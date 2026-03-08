@@ -1,4 +1,4 @@
-package Game;
+package TestGame;
 import static org.junit.Assert.*;
 import org.junit.*;
 import java.util.Random;
