@@ -139,7 +139,7 @@ public abstract class Player {
 	public int calculateVictoryPoints() {
         int total = 0;
         for (Structure structure : structures){
-            total += sructure.getVictoryPoints();
+            total += structure.getVictoryPoints();
         }
 		return total;
 	}
