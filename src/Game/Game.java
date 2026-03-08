@@ -22,7 +22,10 @@ import GameResources.City;
 import GameResources.Settlement;
 
 /**
- * Unit tests for Game.
+ * Orchestrates a Catan game session.
+ * Coordinates board creation and set up, turn order and progression, dice
+ * rolling,
+ * resource distribution, and victory point checking
  *
  * @author Elizabeth Glozman, 400559660 McMaster University
  * @author Taihan Mobasshir, 400578506, McMaster University

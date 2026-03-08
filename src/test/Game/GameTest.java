@@ -22,17 +22,14 @@ import GameResources.City;
 import GameResources.Settlement;
 
 /**
- * Coordinates board creation and set up, turn order and progression, dice
- * rolling,
- * resource distribution, and victory point checking
- *
+ * Unit tests for Game.
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public class Game {
     private static final int TIMEOUT = 2000;
 
     @Before
-    public void resetPlayerIds() {
+    public void resetPlayers() {
         Player.resetNumPlayers();
     }
 
@@ -42,7 +39,7 @@ public class Game {
     private static class FixedDice implements Dice {
         private final int value;
 
-        FixedDice(int value) {
+        public FixedDice(int value) {
             this.value = value;
         }
 
@@ -53,24 +50,40 @@ public class Game {
     }
 
     /**
-     * Simple test player used only for JUnit tests.
+     * Simple player used for testing.
      */
     private static class TestPlayer extends Player {
+
         public TestPlayer() {
             super();
         }
 
         @Override
         public void takeTurn(Game game) {
+            // no action needed
         }
 
         @Override
         public void setup(Game game) {
+            // no action needed
         }
     }
 
     /**
-     * Boundary test: constructor accepts the minimum valid number of players.
+     * Helper method to create a list of test players
+     * @param count The amount of players
+     * @return the amount of players
+     */
+    private List<Player> makePlayers(int count) {
+        List<Player> players = new ArrayList<Player>();
+        for (int i = 0; i < count; i++) {
+            players.add(new TestPlayer());
+        }
+        return players;
+    }
+
+    /**
+     * Boundary test: constructor accepts minimum valid number of players.
      */
     @Test(timeout = TIMEOUT)
     public void minPlayersAccepted() {
@@ -79,20 +92,15 @@ public class Game {
     }
 
     /**
-     * Boundry test: constrcutor accepts the maximum valid number of players .
+     * Boundary test: constructor accepts maximum valid number of players.
      */
     @Test(timeout = TIMEOUT)
-    public void maxPlayerAccepted() {
-        Dice dice = mock(Dice.class);
-        List<Player> players = Arrays.asList(
-                makePlayer(0, 0),
-                makePlayer(1, 0),
-                makePlayer(2, 0),
-                makePlayer(3, 0)
-        );
-        Game game = makeGame(players, dice, 10, 5);
-        assertEquals("game stores four players", 4, game.getPlayers().size());
+    public void maxPlayersAccepted() {
+        Game game = new Game(makePlayers(4), new FixedDice(6), 10, 5);
+        assertEquals("game stores 4 players", 4, game.getPlayers().size());
     }
+
+    
 
     /**
      * Tests the initial state right after construction.
