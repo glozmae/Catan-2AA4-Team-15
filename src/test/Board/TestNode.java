@@ -8,8 +8,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests the Node class
+ * 
+ * @author Yojith Sai Biradavolu, McMaster University
+ * @version Winter, 2026
+ */
 public class TestNode {
 
+    /**
+     * Tests that a node is buildable only with a connected road and if unoccupied.
+     */
     @Test
     public void canBuildSettlement() {
         Node node = new Node(0);
@@ -26,6 +35,9 @@ public class TestNode {
         assertFalse(node.canBuildSettlement(dummyPlayer2), "Occupied node should not be buildable by player");
     }
 
+    /**
+     * Tests that adjacent occupied node prevents building a settlement.
+     */
     @Test
     void canBuildSettlement2() {
         Node node = new Node(0);
@@ -38,6 +50,9 @@ public class TestNode {
         assertFalse(node.canBuildSettlement(dummyPlayer), "Node should not be buildable if neighbor is occupied");
     }
 
+    /**
+     * Tests if buildable road neighbours are properly identified based on occupied spots
+     */
     @Test
     public void getBuildableRoadNeighbors() {
         Node node = new Node(0);

@@ -6,11 +6,21 @@ import Board.Tile;
 import Board.Node;
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+/**
+ * Tests the Board class
+ * 
+ * @author Yojith Sai Biradavolu, McMaster University
+ * @version Winter, 2026
+ */
 public class TestBoard {
+    /**
+     * Check getTilesForRoll returns a matching DiceNum for each valid roll.
+     */
     @Test
     public void getTilesForRoll() {
         Board board = new Board();
@@ -26,6 +36,9 @@ public class TestBoard {
         }
     }
 
+    /**
+     * Ensure getTiles returns a non-null list of size 19.
+     */
     @Test
     public void getTiles() {
         Board board = new Board();
@@ -35,6 +48,9 @@ public class TestBoard {
 
     }
 
+    /**
+     * Ensure getNodes returns a non-null list of size 54.
+     */
     @Test
     public void getNodes() {
         Board board = new Board();

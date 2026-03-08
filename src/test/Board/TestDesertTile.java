@@ -8,7 +8,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests the DesertTile class
+ * 
+ * @author Yojith Sai Biradavolu, McMaster University
+ * @version Winter, 2026
+ */
 public class TestDesertTile {
+    /**
+     * DesertTile constructor should set resource type to DESERT.
+     */
     @Test
     public void testConstructor() {
         Node[] nodes = {new Node(0), new Node(1), new Node(2), new Node(3), new Node(4), new Node(5)};

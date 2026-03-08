@@ -11,8 +11,16 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests the SetupManager class
+ * 
+ * @author Yojith Sai Biradavolu, McMaster University
+ * @version Winter, 2026
+ */
 public class TestSetupManager {
-
+    /**
+     * Running setup should yield two settlements, two roads, and some resources for the players
+     */
     @Test
     public void run() {
         Player.resetNumPlayers();

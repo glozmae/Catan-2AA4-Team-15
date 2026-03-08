@@ -7,8 +7,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests the Tile class
+ * 
+ * @author Yojith Sai Biradavolu, McMaster University
+ * @version Winter, 2026
+ */
 public class TestTile {
 
+    /**
+     * Checks that constructor throws IllegalArgumentException with null nodes.
+     */
     @Test
     public void testConstructor() {
         try {
@@ -19,6 +28,9 @@ public class TestTile {
         }
     }
 
+    /**
+     * Checks that getNodes returns nodes for a properly constructed tile.
+     */
     @Test
     public void getNodes() {
         Node node0 = new Node(0);
@@ -29,6 +41,6 @@ public class TestTile {
         Node node5 = new Node(5);
         Node[] nodes = {node0, node1, node2, node3, node4, node5};
         Tile tile = new Tile(0, nodes, ResourceType.DESERT);
-        assertNotNull(tile.getNodes(), "Tile should have nodes");
+        assertEquals(6, tile.getNodes(), "Tile should have 6 nodes");
     }
 }
