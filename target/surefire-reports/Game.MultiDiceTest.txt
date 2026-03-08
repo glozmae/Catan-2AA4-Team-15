@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: Game.MultiDiceTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.119 s -- in Game.MultiDiceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.115 s -- in Game.MultiDiceTest

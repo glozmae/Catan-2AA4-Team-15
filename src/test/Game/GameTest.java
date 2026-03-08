@@ -132,7 +132,7 @@ public class GameTest {
             // expected
         }
     }
-    
+
 
     /**
      * Boundry test: win points must be positive.
