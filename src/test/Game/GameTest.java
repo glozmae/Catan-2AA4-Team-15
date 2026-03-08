@@ -91,6 +91,63 @@ public class Game {
         assertEquals("game stores four players", 4, game.getPlayers().size());
     }
 
+    /**
+     * Tests the initial state right after construction.
+     */
+    @Test(timeout = TIMEOUT)
+    public void initialState() {
+        List<Player> players = makePlayers(2);
+        Game game = new Game(players, new FixedDice(8), 10, 5);
+
+        assertEquals("round starts at 0", 0, game.getRound());
+        assertEquals("last roll starts at -1", -1, game.getLastRoll());
+        assertEquals("first player starts first", players.get(0), game.getCurrentPlayer());
+        assertFalse("game is not over at start", game.isOver());
+        assertNull("winner starts as null", game.getWinner());
+        assertNotNull("board is created", game.getBoard());
+        assertNotNull("dice is stored", game.getDice());
+    }
+
+    /**
+     * Tests that rollMultiDice delegates to the dice object.
+     */
+    @Test(timeout = TIMEOUT)
+    public void multiDiceReturnsDiceRoll(){
+        Game game = new Game(makePlayers(2), new FixedDice(9), 10, 5);
+        assertEquals("rollMultiDice returns dice roll", 9, game.rollMultiDice());
+    }
+
+    /**
+     * Tests that player list returned is not changable.
+     */
+    @Test(timeout = TIMEOUT)
+    public void playersListIsUnmodifiable() {
+        Game game = new Game(makePlayers(2), new FixedDice(6), 10, 5);
+
+        try {
+            game.getPlayers().add(new TestPlayer());
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // expected
+        }
+    }
+
+    /**
+     * Constructor rejects too few players.
+     */
+    Test(timeout = TIMEOUT, expected = IllegalArgumentException.class){
+        public void fewPlayerRejected() {
+            Game(makePlayers(1), new FixedDice(6), 10, 5);
+    }
+
+
+
+
+
+
+
+
+
     @Test(timeout = TIMEOUT)
     public void badConstructorInputs(){
         List<Player> onePlayer = Arrays.asList(makePlayer(0, 0));
@@ -101,5 +158,5 @@ public class Game {
 
         assertThrows(IllegalArgumentException.class, () -> new Game(onePlayer, dice, board, 10, 5));
     }
-    
+
 }
