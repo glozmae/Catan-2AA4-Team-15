@@ -218,7 +218,7 @@ public abstract class Player {
 	 */
 	@Override
 	public String toString() {
-		return "Player " + (this.id + 1)+ ", color: " + getColor();
+		return "main/Player " + (this.id + 1)+ ", color: " + getColor();
 	}
 
 	/**

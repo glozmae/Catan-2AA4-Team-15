@@ -26,7 +26,7 @@ import GameResources.Settlement;
  * Coordinates board creation and set up, turn order and progression, dice
  * rolling,
  * resource distribution, and victory point checking
- * 
+ *
  * @author Elizabeth Glozman, 400559660 McMaster University
  * @author Taihan Mobasshir, 400578506, McMaster University
  */
@@ -61,7 +61,7 @@ public class Game {
 
     /**
      * Construct game with provided board
-     * 
+     *
      * @param players   - list of players
      * @param dice      - dice impelmentation
      * @param board     - board for the game
@@ -71,7 +71,7 @@ public class Game {
      * @throws NullPointerException     if players, dice, or boad are null
      */
     public Game(List<Player> players, Dice dice, Board board,
-            int winPoints, int maxRounds) {
+                int winPoints, int maxRounds) {
 
         this.players = new ArrayList<>(Objects.requireNonNull(players));
         this.dice = Objects.requireNonNull(dice);
@@ -92,21 +92,21 @@ public class Game {
 
     /**
      * Auto created board
-     * 
+     *
      * @param players   - list of players
      * @param dice      - dice impelmentation
      * @param winPoints - victory point target
      * @param maxRounds - maximum rounds before stopping
      */
     public Game(List<Player> players, Dice dice,
-            int winPoints, int maxRounds) {
+                int winPoints, int maxRounds) {
 
         this(players, dice, new Board(), winPoints, maxRounds);
     }
 
     /**
      * roll dice using implementation
-     * 
+     *
      * @return - dice roll value
      */
     public int rollMultiDice() {
@@ -151,7 +151,7 @@ public class Game {
 
     /**
      * Executes players turn
-     * 
+     *
      * Rolls dice and prints output
      * prints tiles that produce resources for the roll
      * distributes resources to all adjacent owners
@@ -205,7 +205,7 @@ public class Game {
 
     /**
      * Resource distribution:
-     * 
+     *
      * Robber ignored
      * Finds tiles with roll number
      * pays 1 resource per settlement, 2 for city
@@ -275,7 +275,7 @@ public class Game {
 
     /**
      * Print which tiles produce a resources
-     * 
+     *
      * @param roll - dice roll value
      */
     private void printProduction(int roll) {
@@ -320,7 +320,7 @@ public class Game {
 
     /**
      * reutrn board used by game
-     * 
+     *
      * @return - board used by game
      */
     public Board getBoard() {
@@ -329,7 +329,7 @@ public class Game {
 
     /**
      * reutrns dice used in game
-     * 
+     *
      * @return dice object
      */
     public Dice getDice() {
@@ -338,7 +338,7 @@ public class Game {
 
     /**
      * returns most recent dice roll total
-     * 
+     *
      * @return last roll value
      */
     public int getLastRoll() {
@@ -347,7 +347,7 @@ public class Game {
 
     /**
      * return completed rounds
-     * 
+     *
      * @return number of completed rounds
      */
     public int getRound() {
@@ -356,7 +356,7 @@ public class Game {
 
     /**
      * returns unmodifable view of player list
-     * 
+     *
      * @return unmodifiable list of players
      */
     public List<Player> getPlayers() {
@@ -365,7 +365,7 @@ public class Game {
 
     /**
      * Reutrn player whose turn it is
-     * 
+     *
      * @return current player
      */
     public Player getCurrentPlayer() {
@@ -374,7 +374,7 @@ public class Game {
 
     /**
      * indicates if game has ended
-     * 
+     *
      * @return true if game is over
      */
     public boolean isOver() {
@@ -383,7 +383,7 @@ public class Game {
 
     /**
      * Reutrn winning player or null if game unifnished
-     * 
+     *
      * @return winning player or null
      */
     public Player getWinner() {

@@ -11,6 +11,7 @@ import GameResources.City;
 import GameResources.ResourceType;
 import GameResources.Road;
 import GameResources.Settlement;
+import Player.Player;
 
 /**
  * JUnit tests for the Player abstract class,

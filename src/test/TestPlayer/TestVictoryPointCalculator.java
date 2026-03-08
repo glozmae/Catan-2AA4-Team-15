@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import Game.Game;
 import GameResources.City;
 import GameResources.Settlement;
+import Player.Player;
+import Player.VictoryPointCalculator;
 
 /**
  * JUnit tests for VictoryPointCalculator.

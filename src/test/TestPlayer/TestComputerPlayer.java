@@ -12,6 +12,8 @@ import Game.Game;
 import GameResources.City;
 import GameResources.ResourceType;
 import GameResources.Settlement;
+import Player.ComputerPlayer;
+import Player.Player;
 
 /**
  * JUnit 5 tests for ComputerPlayer.
