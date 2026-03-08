@@ -26,8 +26,7 @@ import GameResources.Settlement;
  * rolling,
  * resource distribution, and victory point checking
  *
- * @author Elizabeth Glozman, 400559660 McMaster University
- * @author Taihan Mobasshir, 400578506, McMaster University
+ * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public class Game {
     private static final int TIMEOUT = 2000;
@@ -42,9 +41,11 @@ public class Game {
      */
     private static class FixedDice implements Dice {
         private final int value;
+
         FixedDice(int value) {
             this.value = value;
         }
+
         @Override
         public int roll() {
             return value;
@@ -58,9 +59,11 @@ public class Game {
         public TestPlayer() {
             super();
         }
+
         @Override
         public void takeTurn(Game game) {
         }
+
         @Override
         public void setup(Game game) {
         }
@@ -79,7 +82,7 @@ public class Game {
      * Boundry test: constrcutor accepts the maximum valid number of players .
      */
     @Test(timeout = TIMEOUT)
-    public void maxPlayerAccepted(){
+    public void maxPlayerAccepted() {
         Dice dice = mock(Dice.class);
         List<Player> players = Arrays.asList(
                 makePlayer(0, 0),
@@ -112,7 +115,7 @@ public class Game {
      * Tests that rollMultiDice delegates to the dice object.
      */
     @Test(timeout = TIMEOUT)
-    public void multiDiceReturnsDiceRoll(){
+    public void multiDiceReturnsDiceRoll() {
         Game game = new Game(makePlayers(2), new FixedDice(9), 10, 5);
         assertEquals("rollMultiDice returns dice roll", 9, game.rollMultiDice());
     }
@@ -135,10 +138,59 @@ public class Game {
     /**
      * Constructor rejects too few players.
      */
-    Test(timeout = TIMEOUT, expected = IllegalArgumentException.class){
-        public void fewPlayerRejected() {
-            Game(makePlayers(1), new FixedDice(6), 10, 5);
+    Test(timeout =TIMEOUT, expected =IllegalArgumentException.class)
+
+    public void fewPlayerRejected() {
+        new Game(makePlayers(1), new FixedDice(6), 10, 5);
     }
+
+    /**
+     * Constructor rejects too many players.
+     */
+    Test(timeout =TIMEOUT, expected =IllegalArgumentException.class)
+
+    public void fewPlayerRejected() {
+        new Game(makePlayers(4), new FixedDice(6), 10, 5);
+        new Game(makePlayers(4), new FixedDice(6), 10, 5);
+    }
+
+    /**
+     * Boundry test: win points must be positive.
+     */
+    Test(timeout =TIMEOUT, expected =IllegalArgumentException.class)
+
+    public void badWinPointsRejected() {
+        new Game(makePlayers(2), new FixedDice(6), 0, 5);
+    }
+
+    /**
+     * Boundry test: maximum rounds must be in the valid range.
+     */
+    Test(timeout =TIMEOUT, expected =IllegalArgumentException.class)
+
+    public void badWinPointsRejected() {
+        new Game(makePlayers(2), new FixedDice(6), 10, 0);
+    }
+
+    /**
+     * Tests that null dice is rejected.
+     */
+    @Test(timeout = TIMEOUT, expected = NullPointerException.class)
+    public void nullDiceRejected() {
+        new Game(makePlayers(2), null, 10, 5);
+    }
+
+    /**
+     * Tests that null players list is rejected.
+     */
+    @Test(timeout = TIMEOUT, expected = NullPointerException.class)
+    public void nullPlayersRejected() {
+        new Game(null, new FixedDice(6), 10, 5);
+    }
+}
+
+
+
 
 
 
