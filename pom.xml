@@ -25,7 +25,7 @@
         </dependency>
     </dependencies>
     <build>
-        <sourceDirectory>src</sourceDirectory>
+        <sourceDirectory>src/main</sourceDirectory>
         <testSourceDirectory>src/test</testSourceDirectory>
         <plugins>
             <plugin>
@@ -49,7 +49,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>Game.Main</mainClass>
+                                    <mainClass>main.Game.Main</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

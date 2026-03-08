@@ -1,11 +1,10 @@
-package test.Board;
+package TestBoard;
 
 import Board.Board;
 import Board.DiceNum;
 import Board.Tile;
 import Board.Node;
 import org.junit.jupiter.api.Test;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 

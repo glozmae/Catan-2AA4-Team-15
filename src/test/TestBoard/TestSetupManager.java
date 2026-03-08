@@ -1,4 +1,4 @@
-package test.Board;
+package TestBoard;
 
 import Board.Board;
 import Board.SetupManager;

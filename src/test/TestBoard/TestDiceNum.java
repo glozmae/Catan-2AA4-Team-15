@@ -1,4 +1,4 @@
-package test.Board;
+package TestBoard;
 
 import Board.DiceNum;
 import Board.Node;
