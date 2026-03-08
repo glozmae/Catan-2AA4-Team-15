@@ -36,6 +36,9 @@ dependency-reduced-pom.xml
 .idea/
 *.iml
 
+#VS Code
+.vscode/
+
 #OS files
 .DS_Store
 Thumbs.db
