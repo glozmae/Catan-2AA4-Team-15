@@ -100,8 +100,6 @@ public class Game {
         assertEquals("game stores 4 players", 4, game.getPlayers().size());
     }
 
-    
-
     /**
      * Tests the initial state right after construction.
      */
@@ -146,37 +144,33 @@ public class Game {
     /**
      * Constructor rejects too few players.
      */
-    Test(timeout =TIMEOUT, expected =IllegalArgumentException.class)
-
-    public void fewPlayerRejected() {
+    @Test(timeout = TIMEOUT, expected = IllegalArgumentException.class)
+    public void tooFewPlayersRejected() {
         new Game(makePlayers(1), new FixedDice(6), 10, 5);
     }
 
     /**
      * Constructor rejects too many players.
      */
-    Test(timeout =TIMEOUT, expected =IllegalArgumentException.class)
-
-    public void fewPlayerRejected() {
-        new Game(makePlayers(4), new FixedDice(6), 10, 5);
-        new Game(makePlayers(4), new FixedDice(6), 10, 5);
+    @Test(timeout = TIMEOUT, expected = IllegalArgumentException.class)
+    public void tooManyPlayersRejected() {
+        new Game(makePlayers(5), new FixedDice(6), 10, 5);
     }
 
     /**
      * Boundry test: win points must be positive.
      */
-    Test(timeout =TIMEOUT, expected =IllegalArgumentException.class)
-
+    @Test(timeout = TIMEOUT, expected = IllegalArgumentException.class)
     public void badWinPointsRejected() {
         new Game(makePlayers(2), new FixedDice(6), 0, 5);
     }
 
+
     /**
      * Boundry test: maximum rounds must be in the valid range.
      */
-    Test(timeout =TIMEOUT, expected =IllegalArgumentException.class)
-
-    public void badWinPointsRejected() {
+    @Test(timeout = TIMEOUT, expected = IllegalArgumentException.class)
+    public void badRoundsRejected() {
         new Game(makePlayers(2), new FixedDice(6), 10, 0);
     }
 
