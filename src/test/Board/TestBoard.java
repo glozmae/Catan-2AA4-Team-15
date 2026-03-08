@@ -1,11 +1,7 @@
-package test.Board;
+package Board;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-
-import Board.Board;
-import Board.DiceNum;
-import Board.Tile;
 
 import java.util.List;
 
