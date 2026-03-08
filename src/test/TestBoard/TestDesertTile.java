@@ -4,8 +4,6 @@ import Board.DesertTile;
 import Board.Node;
 import Board.Tile;
 import GameResources.ResourceType;
-import Player.Player;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
