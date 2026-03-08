@@ -8,11 +8,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestNode {
+public class TestNode {
 
     @Test
-    void canBuildSettlement() {
+    public void canBuildSettlement() {
         Node node = new Node(0);
+        Player.resetNumPlayers();
         Player dummyPlayer = new ComputerPlayer();
         Player dummyPlayer2 = new ComputerPlayer();
         Road dummyRoad = new Road();
@@ -30,6 +31,7 @@ class TestNode {
         Node node = new Node(0);
         Node node2 = new Node(1);
         node.setLeft(node2);
+        Player.resetNumPlayers();
         Player dummyPlayer = new ComputerPlayer();
         node2.setPlayer(dummyPlayer);
 
@@ -37,11 +39,12 @@ class TestNode {
     }
 
     @Test
-    void getBuildableRoadNeighbors() {
+    public void getBuildableRoadNeighbors() {
         Node node = new Node(0);
         node.setLeft(new Node(1));
         node.setRight(new Node(2));
         node.setVert(new Node(3));
+        Player.resetNumPlayers();
         Player dummyPlayer = new ComputerPlayer();
 
         assertEquals(0, node.getBuildableRoadNeighbors(dummyPlayer).size(), "Unoccupied node has no buildable roads");

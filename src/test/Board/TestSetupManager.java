@@ -11,10 +11,11 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestSetupManager {
+public class TestSetupManager {
 
     @Test
-    void run() {
+    public void run() {
+        Player.resetNumPlayers();
         Player dummyPlayer = new ComputerPlayer();
         ArrayList<Player> players = new ArrayList<>();
         players.add(dummyPlayer);

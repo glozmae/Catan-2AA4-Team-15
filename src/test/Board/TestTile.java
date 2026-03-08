@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestTile {
+public class TestTile {
 
     @Test
-    void testConstructor() {
+    public void testConstructor() {
         try {
             new Tile(0, null, ResourceType.ORE);
             fail("Tile should not be created with null nodes");
@@ -20,7 +20,7 @@ class TestTile {
     }
 
     @Test
-    void getNodes() {
+    public void getNodes() {
         Node node0 = new Node(0);
         Node node1 = new Node(1);
         Node node2 = new Node(2);

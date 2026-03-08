@@ -10,10 +10,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-class TestBoard {
-
+public class TestBoard {
     @Test
-    void getTilesForRoll() {
+    public void getTilesForRoll() {
         Board board = new Board();
         for (int i = 2; i < 6; i++) {
             DiceNum diceNum = board.getTilesForRoll(i);
@@ -28,7 +27,7 @@ class TestBoard {
     }
 
     @Test
-    void getTiles() {
+    public void getTiles() {
         Board board = new Board();
         List<Tile> tiles = board.getTiles();
         assertNotNull(tiles, "Tiles list should not be null");
@@ -37,10 +36,10 @@ class TestBoard {
     }
 
     @Test
-    void getNodes() {
+    public void getNodes() {
         Board board = new Board();
         List<Node> nodes = board.getNodes();
         assertNotNull(nodes, "Nodes list should not be null");
-        assertEquals(19, nodes.size(), "There should be 19 nodes on the board");
+        assertEquals(54, nodes.size(), "There should be 54 nodes on the board");
     }
 }

@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestDiceNum {
+public class TestDiceNum {
 
     @Test
-    void testConstructor() {
+    public void testConstructor() {
         Node[] dummyNodes = {new Node(0), new Node(1), new Node(2), new Node(3), new Node(4), new Node(5)};
         Tile tile = new Tile(0, dummyNodes, null);
         DiceNum diceNum = new DiceNum(1);
