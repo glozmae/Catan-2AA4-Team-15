@@ -30,8 +30,8 @@ public class TestBoard {
     /**
      * Check getTilesForRoll returns a matching DiceNum for each valid roll.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void getTilesForRoll() {
         Board board = new Board();
         for (int i = 2; i < 6; i++) {
@@ -50,7 +50,7 @@ public class TestBoard {
      * Ensure getTiles returns a non-null list of size 19.
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     public void getTiles() {
         Board board = new Board();
         List<Tile> tiles = board.getTiles();
@@ -63,7 +63,7 @@ public class TestBoard {
      * Ensure getNodes returns a non-null list of size 54.
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     public void getNodes() {
         Board board = new Board();
         List<Node> nodes = board.getNodes();

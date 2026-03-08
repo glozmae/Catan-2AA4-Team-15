@@ -79,6 +79,7 @@ public class SetupManager {
 
         // Track on player
         player.addStructure(s);
+        player.addNode(node);
 
         return node;
     }

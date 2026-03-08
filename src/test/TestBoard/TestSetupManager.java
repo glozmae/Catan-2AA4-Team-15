@@ -30,7 +30,7 @@ public class TestSetupManager {
      * Running setup should yield two settlements, two roads, and some resources for the players
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     public void run() {
         Player dummyPlayer = new ComputerPlayer();
         ArrayList<Player> players = new ArrayList<>();
