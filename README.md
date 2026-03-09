@@ -70,3 +70,21 @@ javac -d out src/**/*.java
 
 # 2. Run the Main class (Entry Point)
 java -cp out Game.Main
+```
+
+### Using the visualizer
+Create a new python venv using the command `python -m venv .venv` and activate it using `.\.venv\Scripts\activate`.
+Install the required dependencies using `pip install -r requirements.txt`.
+
+#### Run the script
+The script supports two execution modes.
+#### (1) Single-render mode
+Render a single board image from a given state JSON file:
+```bash
+python light_visualizer.py base_map.json state.json
+```
+#### (2) Watch mode
+Continuously watch ```state.json``` and re-render the board whenever the file changes:
+```bash
+python light_visualizer.py base_map.json --watch
+```

@@ -2,8 +2,7 @@ annotated-doc==0.0.4
 asgiref==3.11.1
 black==26.3.0
 blinker==1.9.0
-# Editable install with no version control (catanatron==3.3.0)
--e c:\users\yojit\documents\yojith_work\year_2\sfwreng_2aa4\catan-2aa4-team-15\2aa4-2026-base\assignments\visualize\catanatron
+-e git+ssh://git@github-biradavy/glozmae/Catan-2AA4-Team-15.git@9d485d968e4a28a4e4786ff4293c11461e0a9bdd#egg=catanatron&subdirectory=visualize\catanatron
 certifi==2026.2.25
 charset-normalizer==3.4.5
 click==8.3.1
