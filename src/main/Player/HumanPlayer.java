@@ -114,8 +114,13 @@ public class HumanPlayer extends Player{
                 }
                 continue;
             }
-            System.out.println("Unknow command.");
+            System.out.println("Unknown command.");
         }
+    }
+
+    @Override
+    public void setup(Game game){
+        //this should be handled somewhere else
     }
 
     /**
@@ -134,7 +139,7 @@ public class HumanPlayer extends Player{
      * @param game game being played
      * @param nodeID target node id
      */
-    private void buildSettlement(Game game, int nodeID){
+    private void buildSettlement(Game game, int nodeId){
         Node node = findNode(game, nodeId);
 
         if (node == null){
@@ -147,6 +152,7 @@ public class HumanPlayer extends Player{
         }
         if (!node.canBuildSettlement(this)){
             System.out.println("You cannot build a settlement there.");
+            return;
         }
 
         Settlement settlement = new Settlement();
@@ -181,9 +187,10 @@ public class HumanPlayer extends Player{
             System.out.println("You have already built the maximum number of cities.");
             return;
         }
-        Structure currrentStructure = node.getStructure();
-        if (!node.getPlayer() != this || !(currentStructure instanceof Settlement)){
+        Structure currentStructure = node.getStructure();
+        if (node.getPlayer() != this || !(currentStructure instanceof Settlement)) {
             System.out.println("You can only upgrade one of your own settlements.");
+            return;
         }
 
         City city = new City();
@@ -210,19 +217,20 @@ public class HumanPlayer extends Player{
         }
 
         Node beginNode = findNode(game, fromNodeId);
-        Node endNode = findNode(game toNodeId);
+        Node endNode = findNode(game, toNodeId);
 
         if(beginNode == null || endNode == null){
             System.out.println("Invalid node id.");
             return;
         }
-        if (getRoads().size >= Road.getMax()){
+        if (getRoads().size() >= Road.getMax()){
             System.out.println("You have already built the maximum number of roads.");
             return;
         }
 
-        //mak it easier too long
-       boolean canBuild = beginNode.getBuildableNeighbors(this).contains(endNode) || endNode.getBuildableRoadNeighbors(this).contains(beginNode);
+        boolean canBuildFromStart = beginNode.getBuildableRoadNeighbors(this).contains(endNode);
+        boolean canBuildFromEnd = endNode.getBuildableRoadNeighbors(this).contains(beginNode);
+        boolean canBuild = canBuildFromStart || canBuildFromEnd;
 
         if(!canBuild){
             System.out.println("You cannot build a road on that edge.");
@@ -232,8 +240,9 @@ public class HumanPlayer extends Player{
         Road road = new Road();
         Cost cost = road.getCost();
 
-        if(!affordable(cost)){
-            System.out.println("Not enough resources to build a road");
+        if (!affordable(cost)) {
+            System.out.println("Not enough resources to build a road.");
+            return;
         }
 
         payCost(cost);
@@ -284,7 +293,7 @@ public class HumanPlayer extends Player{
      */
     private void removeResourceAmount(ResourceType type, int amount){
         for (int i = 0; i < amount; i++) {
-            removeResourceAmount(type);
+            removeResource(type);
         }
     }
 
@@ -317,11 +326,11 @@ public class HumanPlayer extends Player{
         }
     }
 
-    private int[] readRoadNodeIds(String text){
+    private int[] readRoadNodeId(String text){
         String cleanedText = text.replace("[", "").replace("]", "").trim();
         String[] parts = cleanedText.split(",");
 
-        if (parts.legnth != 2){
+        if (parts.length != 2){
             return null;
         }
         try {
