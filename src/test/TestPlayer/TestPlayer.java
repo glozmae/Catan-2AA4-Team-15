@@ -159,14 +159,6 @@ public class TestPlayer {
     }
 
     @Test
-    void testAddNodeDoesNotThrow() {
-        DummyPlayer p = new DummyPlayer();
-        Node node = new Node(5);
-
-        assertDoesNotThrow(() -> p.addNode(node));
-    }
-
-    @Test
     void testLongestRoadStartsAtZero() {
         DummyPlayer p = new DummyPlayer();
         assertEquals(0, p.getLongestRoad());

@@ -45,7 +45,7 @@ public abstract class Player {
 
 	/** The player's longest road length **/
 	private int longestRoad;
-    
+
 	/**
 	 * Constructor for a player, whether it be a human or a computer.
 	 */
@@ -137,10 +137,10 @@ public abstract class Player {
 	 * @return Player's total victory points
 	 */
 	public int calculateVictoryPoints() {
-        int total = 0;
-        for (Structure structure : structures){
-            total += structure.getVictoryPoints();
-        }
+		int total = 0;
+		for (Structure structure : structures) {
+			total += structure.getVictoryPoints();
+		}
 		return total;
 	}
 
@@ -208,7 +208,7 @@ public abstract class Player {
 	 */
 	@Override
 	public String toString() {
-		return "main/Player " + (this.id + 1)+ ", color: " + getColor();
+		return "main/Player " + (this.id + 1) + ", color: " + getColor();
 	}
 
 	/**
