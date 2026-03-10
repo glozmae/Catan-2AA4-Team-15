@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import Board.Board;
-import Board.DiceNum;
 import Board.Node;
 import Board.SetupManager;
 import Board.Tile;
@@ -65,6 +65,12 @@ public class Game {
 
     /** whether the current player has rolled this turn */
     private boolean currentTurnRolled = false;
+
+    /** current robber location */
+    private Tile robberTile;
+
+    /** random for simplified robber behavior */
+    private final Random robberRandom = new Random();
 
     /**
      * Construct game with provided board
@@ -145,6 +151,7 @@ public class Game {
         SetupManager setup = new SetupManager(board, System.currentTimeMillis());
         setup.run(players);
         currentPlayerIndex = 0;
+        robberTile = findDesertTile();
     }
 
     /**
@@ -209,21 +216,26 @@ public class Game {
     /**
      * Distributes resources for a roll.
      *
-     * Robber is still ignored in this version.
+     * Robber uses the simplified A2 behavior.
      */
     private void distributeResources(int roll) {
         if (roll == 7) {
+            handleRobber();
             return;
         }
 
-        DiceNum dn = board.getTilesForRoll(roll);
-        if (dn == null) {
+        List<Tile> tiles = board.getTilesForRoll(roll);
+        if (tiles.isEmpty()) {
             return;
         }
 
-        for (Tile tile : dn.getTiles()) {
+        for (Tile tile : tiles) {
+            if (tile == robberTile) {
+                continue;
+            }
+
             ResourceType type = tile.getType();
-            if (type == null || type == ResourceType.DESERT) {
+            if (type == ResourceType.DESERT) {
                 continue;
             }
 
@@ -245,6 +257,127 @@ public class Game {
                 }
             }
         }
+    }
+
+    /**
+     * Handles the simplified robber behavior for A2.
+     */
+    private void handleRobber() {
+        for (Player p : players) {
+            int total = totalResourceCards(p);
+            if (total > 7) {
+                int toDiscard = total / 2;
+                for (int i = 0; i < toDiscard; i++) {
+                    removeRandomResource(p);
+                }
+            }
+        }
+
+        moveRobberToRandomTile();
+        stealRandomResourceFromAdjacentPlayer();
+    }
+
+    /**
+     * Moves robber to a random tile.
+     */
+    private void moveRobberToRandomTile() {
+        if (board.getTiles().isEmpty()) {
+            return;
+        }
+
+        if (board.getTiles().size() == 1) {
+            robberTile = board.getTiles().get(0);
+            return;
+        }
+
+        Tile newTile;
+        do {
+            newTile = board.getTiles().get(robberRandom.nextInt(board.getTiles().size()));
+        } while (newTile == robberTile);
+
+        robberTile = newTile;
+    }
+
+    /**
+     * Steals one random resource from a random qualifying adjacent player.
+     */
+    private void stealRandomResourceFromAdjacentPlayer() {
+        if (robberTile == null) {
+            return;
+        }
+
+        List<Player> eligible = new ArrayList<>();
+        Player thief = getCurrentPlayer();
+
+        for (Node node : robberTile.getNodes()) {
+            Player owner = node.getPlayer();
+            if (owner != null && owner != thief && !eligible.contains(owner) && totalResourceCards(owner) > 0) {
+                eligible.add(owner);
+            }
+        }
+
+        if (eligible.isEmpty()) {
+            return;
+        }
+
+        Player victim = eligible.get(robberRandom.nextInt(eligible.size()));
+        ResourceType stolen = removeRandomResource(victim);
+
+        if (stolen != null) {
+            thief.addResource(stolen);
+        }
+    }
+
+    /**
+     * Removes and returns a random resource from the given player.
+     */
+    private ResourceType removeRandomResource(Player player) {
+        List<ResourceType> available = new ArrayList<>();
+
+        for (ResourceType type : ResourceType.values()) {
+            if (type == ResourceType.DESERT) {
+                continue;
+            }
+
+            if (player.getResourceAmount(type) > 0) {
+                available.add(type);
+            }
+        }
+
+        if (available.isEmpty()) {
+            return null;
+        }
+
+        ResourceType chosen = available.get(robberRandom.nextInt(available.size()));
+        player.removeResource(chosen);
+        return chosen;
+    }
+
+    /**
+     * Counts the total number of resource cards a player has.
+     */
+    private int totalResourceCards(Player player) {
+        int total = 0;
+
+        for (ResourceType type : ResourceType.values()) {
+            if (type != ResourceType.DESERT) {
+                total += player.getResourceAmount(type);
+            }
+        }
+
+        return total;
+    }
+
+    /**
+     * Finds the desert tile on the board.
+     */
+    private Tile findDesertTile() {
+        for (Tile tile : board.getTiles()) {
+            if (tile.getType() == ResourceType.DESERT) {
+                return tile;
+            }
+        }
+        return null;
     }
 
     /**
@@ -284,9 +417,9 @@ public class Game {
             return;
         }
 
-        DiceNum dn = board.getTilesForRoll(roll);
+        List<Tile> tiles = board.getTilesForRoll(roll);
 
-        if (dn == null || dn.getTiles().isEmpty()) {
+        if (tiles.isEmpty()) {
             System.out.print("Producing: [] || ");
             return;
         }
@@ -296,9 +429,13 @@ public class Game {
 
         boolean first = true;
 
-        for (Tile t : dn.getTiles()) {
+        for (Tile t : tiles) {
+            if (t == robberTile) {
+                continue;
+            }
+
             ResourceType rt = t.getType();
-            if (rt == null || rt == ResourceType.DESERT) {
+            if (rt == ResourceType.DESERT) {
                 continue;
             }
 
@@ -306,7 +443,10 @@ public class Game {
                 sb.append(" | ");
             }
 
-            sb.append(rt).append(" from Tile ").append(t.getId());
+            sb.append(rt)
+                    .append(" from Tile ")
+                    .append(t.getId());
+
             first = false;
         }
 
