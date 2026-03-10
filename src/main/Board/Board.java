@@ -168,6 +168,7 @@ public class Board {
 		return null;
 	}
 
+	public List<DiceNum> getDiceNumbers() { return diceNumbers; }
 	public List<Tile> getTiles() { return tiles; }
 	public List<Node> getNodes() { return nodes; }
 }
