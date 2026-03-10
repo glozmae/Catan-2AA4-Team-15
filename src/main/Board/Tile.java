@@ -31,6 +31,10 @@ public class Tile {
 	 */
 	private int id;
 
+	/**
+	 * The production number assigned to this tile.
+	 * Desert tiles have no production number.
+	 */
 	private Integer productionNumber;
 
 	/**
@@ -43,13 +47,12 @@ public class Tile {
 	public Tile(int id, Node[] nodes, ResourceType type) {
 		this.id = id;
 
-		// VALIDATION: Ensure the passed array is the correct size for a hexagon.
 		if (nodes == null || nodes.length != 6) {
 			throw new IllegalArgumentException("A tile requires exactly 6 valid nodes.");
 		}
 		this.nodes = nodes;
 
-		// Automatically establish the directional links between the provided nodes.
+		//Automatically determine the directional links between the provided nodes
 		nodeConnector();
 		this.type = type;
 		this.productionNumber = null;
@@ -83,14 +86,17 @@ public class Tile {
 	}
 
 	/**
-	 * Gets the production number assigned to this tile.
-	 *
-	 * @return production number or null
+	 * Gets the production number of the tile.
+	 * @return integer production number or null for desert.
 	 */
 	public Integer getProductionNumber() {
 		return productionNumber;
 	}
 
+	/**
+	 * Sets the production number of the tile.
+	 * @param productionNumber the assigned number token
+	 */
 	public void setProductionNumber(Integer productionNumber) {
 		this.productionNumber = productionNumber;
 	}
@@ -105,7 +111,7 @@ public class Tile {
 
 	/**
 	 * Returns a formatted string representation of the tile for debugging.
-	 * @return A string showing the ID, the resource type, and the production number.
+	 * @return A string showing the ID, the resource type, and production number.
 	 */
 	@Override
 	public String toString() {
