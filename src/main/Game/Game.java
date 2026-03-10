@@ -10,16 +10,17 @@ import java.util.Objects;
 
 import Board.Board;
 import Board.DiceNum;
-import Board.Tile;
 import Board.Node;
 import Board.SetupManager;
+import Board.Tile;
 
+import Player.HumanPlayer;
 import Player.Player;
 
-import GameResources.ResourceType;
-import GameResources.Structure;
 import GameResources.City;
+import GameResources.ResourceType;
 import GameResources.Settlement;
+import GameResources.Structure;
 
 /**
  * Orchestrates a Catan game session.
@@ -36,7 +37,7 @@ public class Game {
     private final List<Player> players;
 
     /** Dice for rolling */
-    private final Dice dice; // depends on dice interface
+    private final Dice dice;
 
     /** board of tiles and nodes for game */
     private final Board board;
@@ -44,7 +45,7 @@ public class Game {
     /** victory point threshold */
     private final int winPoints;
 
-    /** maximum numbe rof rounds before simulation ends */
+    /** maximum number of rounds before simulation ends */
     private final int maxRounds;
 
     /** index of current player in list */
@@ -59,16 +60,20 @@ public class Game {
     /** winner of the game (null until winner) */
     private Player winner = null;
 
+    /** number of turns played */
+    private int turnCounter = 0;
+
+    /** whether the current player has rolled this turn */
+    private boolean currentTurnRolled = false;
+
     /**
      * Construct game with provided board
      *
-     * @param players   - list of players
-     * @param dice      - dice impelmentation
-     * @param board     - board for the game
-     * @param winPoints - victory point target
-     * @param maxRounds - maximum rounds before stopping
-     * @throws IllegalArgumentException if parameters are out of bounds
-     * @throws NullPointerException     if players, dice, or boad are null
+     * @param players   list of players
+     * @param dice      dice implementation
+     * @param board     board for the game
+     * @param winPoints victory point target
+     * @param maxRounds maximum rounds before stopping
      */
     public Game(List<Player> players, Dice dice, Board board,
                 int winPoints, int maxRounds) {
@@ -77,26 +82,29 @@ public class Game {
         this.dice = Objects.requireNonNull(dice);
         this.board = Objects.requireNonNull(board);
 
-        if (players.size() < 2 || players.size() > 4)
+        if (players.size() < 2 || players.size() > 4) {
             throw new IllegalArgumentException("Need 2–4 players.");
+        }
 
-        if (winPoints <= 0)
+        if (winPoints <= 0) {
             throw new IllegalArgumentException("winPoints must be positive.");
+        }
 
-        if (maxRounds < 1 || maxRounds > 8192)
+        if (maxRounds < 1 || maxRounds > 8192) {
             throw new IllegalArgumentException("Rounds must be 1–8192.");
+        }
 
         this.winPoints = winPoints;
         this.maxRounds = maxRounds;
     }
 
     /**
-     * Auto created board
+     * Auto created board.
      *
-     * @param players   - list of players
-     * @param dice      - dice impelmentation
-     * @param winPoints - victory point target
-     * @param maxRounds - maximum rounds before stopping
+     * @param players   list of players
+     * @param dice      dice implementation
+     * @param winPoints victory point target
+     * @param maxRounds maximum rounds before stopping
      */
     public Game(List<Player> players, Dice dice,
                 int winPoints, int maxRounds) {
@@ -105,9 +113,9 @@ public class Game {
     }
 
     /**
-     * roll dice using implementation
+     * Rolls dice using implementation.
      *
-     * @return - dice roll value
+     * @return dice roll value
      */
     public int rollMultiDice() {
         return dice.roll();
@@ -117,28 +125,21 @@ public class Game {
      * Runs simulation until winner or max rounds.
      */
     public void simulate() {
-
         setup();
-
         printBoard();
 
-        System.out.println(
-                ">>> STARTING DICE ROLL SIMULATION <<<\n");
+        System.out.println(">>> STARTING DICE ROLL SIMULATION <<<\n");
 
         while (winner == null && round < maxRounds) {
-
             for (int i = 0; i < players.size() && winner == null; i++) {
-
                 playOneTurn();
             }
-
             round++;
         }
     }
 
     /**
-     * Setup phase by delegating to SetUpManager
-     * time-based seed to randomized placements
+     * Setup phase by delegating to SetupManager.
      */
     private void setup() {
         SetupManager setup = new SetupManager(board, System.currentTimeMillis());
@@ -146,57 +147,59 @@ public class Game {
         currentPlayerIndex = 0;
     }
 
-    /** One player turn. */
-    private int turnCounter = 0;
-
     /**
-     * Executes players turn
-     *
-     * Rolls dice and prints output
-     * prints tiles that produce resources for the roll
-     * distributes resources to all adjacent owners
-     * calls players decision logic
-     * advances current player index
+     * Executes one player's turn.
      */
     private void nextTurn() {
-
-        // roll dice and store value
-        lastRoll = rollMultiDice();
-
-        // increment turn counter
+        Player current = getCurrentPlayer();
         turnCounter++;
+        currentTurnRolled = false;
+
+        if (current instanceof HumanPlayer) {
+            current.takeTurn(this);
+        } else {
+            executeHumanRoll();
+            current.takeTurn(this);
+        }
+
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+    }
+
+    /**
+     * Lets the current player perform the roll for this turn.
+     *
+     * @return true if a roll happened, false if already rolled
+     */
+    public boolean executeHumanRoll() {
+        if (currentTurnRolled) {
+            return false;
+        }
 
         Player current = getCurrentPlayer();
+        lastRoll = rollMultiDice();
+        currentTurnRolled = true;
 
-        // multiple dice display
         if (dice instanceof MultiDice md) {
             System.out.print("Turn " + turnCounter +
                     "/ Player " + (current.getId() + 1) +
                     ": rolled " + md.getLastDie1() + " + " + md.getLastDie2() +
                     " -> ");
         } else {
-            // single dice display
             System.out.print("Turn " + turnCounter +
                     ": Player " + (current.getId() + 1) +
                     " rolled " + lastRoll +
                     " -> ");
         }
 
-        // display tiles with resources
         printProduction(lastRoll);
-
-        // distribute resources
         distributeResources(lastRoll);
+        System.out.println();
 
-        // actions for the turn
-        current.takeTurn(this);
-
-        // advance to next player
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        return true;
     }
 
     /**
-     * play turn + check win.
+     * Plays a turn and checks for a winner.
      */
     public void playOneTurn() {
         nextTurn();
@@ -204,37 +207,36 @@ public class Game {
     }
 
     /**
-     * Resource distribution:
+     * Distributes resources for a roll.
      *
-     * Robber ignored
-     * Finds tiles with roll number
-     * pays 1 resource per settlement, 2 for city
+     * Robber is still ignored in this version.
      */
     private void distributeResources(int roll) {
-
-        // Robber ignored
-        if (roll == 7)
+        if (roll == 7) {
             return;
+        }
 
         DiceNum dn = board.getTilesForRoll(roll);
-        if (dn == null)
+        if (dn == null) {
             return;
+        }
 
         for (Tile tile : dn.getTiles()) {
-
             ResourceType type = tile.getType();
-            if (type == null || type == ResourceType.DESERT)
+            if (type == null || type == ResourceType.DESERT) {
                 continue;
+            }
 
             for (Node node : tile.getNodes()) {
-
                 Structure s = node.getStructure();
-                if (s == null)
+                if (s == null) {
                     continue;
+                }
 
                 Player owner = s.getOwner();
-                if (owner == null)
+                if (owner == null) {
                     continue;
+                }
 
                 int payout = (s instanceof City) ? 2 : (s instanceof Settlement) ? 1 : 0;
 
@@ -246,13 +248,11 @@ public class Game {
     }
 
     /**
-     * Check victory condition.
+     * Checks victory condition.
      */
     private void checkWin() {
-
         for (Player p : players) {
             int vp = p.calculateVictoryPoints();
-
             if (vp >= winPoints) {
                 winner = p;
                 return;
@@ -261,7 +261,7 @@ public class Game {
     }
 
     /**
-     * Print generated board tiles
+     * Prints generated board tiles.
      */
     private void printBoard() {
         System.out.println("\n=== GENERATED BOARD (Random Desert) ===");
@@ -274,12 +274,11 @@ public class Game {
     }
 
     /**
-     * Print which tiles produce a resources
+     * Prints which tiles produce resources.
      *
-     * @param roll - dice roll value
+     * @param roll dice roll value
      */
     private void printProduction(int roll) {
-
         if (roll == 7) {
             System.out.print("Producing: [ROBBER — no production] || ");
             return;
@@ -298,37 +297,34 @@ public class Game {
         boolean first = true;
 
         for (Tile t : dn.getTiles()) {
-
             ResourceType rt = t.getType();
-            if (rt == null || rt == ResourceType.DESERT)
+            if (rt == null || rt == ResourceType.DESERT) {
                 continue;
+            }
 
-            if (!first)
+            if (!first) {
                 sb.append(" | ");
+            }
 
-            sb.append(rt)
-                    .append(" from Tile ")
-                    .append(t.getId());
-
+            sb.append(rt).append(" from Tile ").append(t.getId());
             first = false;
         }
 
         sb.append("] || ");
-
         System.out.print(sb.toString());
     }
 
     /**
-     * reutrn board used by game
+     * Returns board used by game.
      *
-     * @return - board used by game
+     * @return board used by game
      */
     public Board getBoard() {
         return board;
     }
 
     /**
-     * reutrns dice used in game
+     * Returns dice used in game.
      *
      * @return dice object
      */
@@ -337,7 +333,7 @@ public class Game {
     }
 
     /**
-     * returns most recent dice roll total
+     * Returns most recent dice roll total.
      *
      * @return last roll value
      */
@@ -346,7 +342,7 @@ public class Game {
     }
 
     /**
-     * return completed rounds
+     * Returns completed rounds.
      *
      * @return number of completed rounds
      */
@@ -355,7 +351,7 @@ public class Game {
     }
 
     /**
-     * returns unmodifable view of player list
+     * Returns unmodifiable view of player list.
      *
      * @return unmodifiable list of players
      */
@@ -364,7 +360,7 @@ public class Game {
     }
 
     /**
-     * Reutrn player whose turn it is
+     * Returns player whose turn it is.
      *
      * @return current player
      */
@@ -373,7 +369,7 @@ public class Game {
     }
 
     /**
-     * indicates if game has ended
+     * Indicates if game has ended.
      *
      * @return true if game is over
      */
@@ -382,7 +378,7 @@ public class Game {
     }
 
     /**
-     * Reutrn winning player or null if game unifnished
+     * Returns winning player or null if unfinished.
      *
      * @return winning player or null
      */

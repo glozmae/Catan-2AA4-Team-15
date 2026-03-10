@@ -1,6 +1,8 @@
 package Player;
 
-import java.util.*;
+import java.util.List;
+import java.util.Scanner;
+
 import Board.Node;
 import Game.Game;
 import GameResources.City;
@@ -15,25 +17,21 @@ import GameResources.Structure;
  *
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
-public class HumanPlayer extends Player{
+public class HumanPlayer extends Player {
+
     /** Reads commands from the console for this human player. */
     private final Scanner commandReader;
 
     /**
      * Constructor for a human player.
      */
-    public HumanPlayer(){
+    public HumanPlayer() {
         super();
         this.commandReader = new Scanner(System.in);
     }
 
     /**
      * Runs the human player's turn.
-     *
-     * Note:
-     * In the current Game class, the roll already happens before this method is
-     * called. So for now, the "roll" command confirms that the player has seen
-     * the roll result.
      *
      * @param game current game
      */
@@ -44,7 +42,8 @@ public class HumanPlayer extends Player{
 
         System.out.println();
         System.out.println("Human Player " + (getId() + 1) + " turn.");
-        System.out.println("Commands: roll | list | build settlement <nodeId> | build city <nodeId> | build road <fromNodeId,toNodeId> | go");
+        System.out.println(
+                "Commands: roll | list | build settlement <nodeId> | build city <nodeId> | build road <fromNodeId,toNodeId> | go");
 
         while (!turnFinished) {
             System.out.print("> ");
@@ -59,8 +58,10 @@ public class HumanPlayer extends Player{
                 if (hasRolledThisTurn) {
                     System.out.println("You already rolled this turn.");
                 } else {
-                    hasRolledThisTurn = true;
-                    System.out.println("Current roll: " + game.getLastRoll());
+                    boolean rolled = game.executeHumanRoll();
+                    if (rolled) {
+                        hasRolledThisTurn = true;
+                    }
                 }
                 continue;
             }
@@ -114,19 +115,20 @@ public class HumanPlayer extends Player{
                 }
                 continue;
             }
+
             System.out.println("Unknown command.");
         }
     }
 
     @Override
-    public void setup(Game game){
-        //this should be handled somewhere else
+    public void setup(Game game) {
+        // Setup is handled elsewhere for now.
     }
 
     /**
-     * Prints the current resource counts in the player's hand
+     * Prints the current resource counts in the player's hand.
      */
-    private void printHand(){
+    private void printHand() {
         System.out.println("Hand: BRICK=" + getResourceAmount(ResourceType.BRICK)
                 + " | LUMBER=" + getResourceAmount(ResourceType.LUMBER)
                 + " | WOOL=" + getResourceAmount(ResourceType.WOOL)
@@ -135,22 +137,25 @@ public class HumanPlayer extends Player{
     }
 
     /**
-     * Build a settelment on the given node.
+     * Builds a settlement on the given node.
+     *
      * @param game game being played
-     * @param nodeID target node id
+     * @param nodeId target node id
      */
-    private void buildSettlement(Game game, int nodeId){
+    private void buildSettlement(Game game, int nodeId) {
         Node node = findNode(game, nodeId);
 
-        if (node == null){
+        if (node == null) {
             System.out.println("Invalid node id entered.");
             return;
         }
-        if(getSettlements().size() >= Settlement.getMax()){
+
+        if (getSettlements().size() >= Settlement.getMax()) {
             System.out.println("You have already built the maximum number of settlements.");
             return;
         }
-        if (!node.canBuildSettlement(this)){
+
+        if (!node.canBuildSettlement(this)) {
             System.out.println("You cannot build a settlement there.");
             return;
         }
@@ -158,7 +163,7 @@ public class HumanPlayer extends Player{
         Settlement settlement = new Settlement();
         Cost cost = settlement.getCost();
 
-        if(!affordable(cost)){
+        if (!affordable(cost)) {
             System.out.println("Not enough resources to build a settlement.");
             return;
         }
@@ -167,11 +172,12 @@ public class HumanPlayer extends Player{
         node.setPlayer(this);
         node.setStructure(settlement);
         addStructure(settlement);
-        System.out.println("Build settlement at node " + nodeId + ".");
+
+        System.out.println("Built settlement at node " + nodeId + ".");
     }
 
     /**
-     * Upgrade one of the player's settlements to a city.
+     * Upgrades one of the player's settlements to a city.
      *
      * @param game game being played
      * @param nodeId target node id
@@ -219,7 +225,7 @@ public class HumanPlayer extends Player{
      * @param toNodeId end node id
      */
     private void buildRoad(Game game, int fromNodeId, int toNodeId) {
-        if (fromNodeId == toNodeId){
+        if (fromNodeId == toNodeId) {
             System.out.println("A road must have two different node ids.");
             return;
         }
@@ -227,11 +233,12 @@ public class HumanPlayer extends Player{
         Node beginNode = findNode(game, fromNodeId);
         Node endNode = findNode(game, toNodeId);
 
-        if(beginNode == null || endNode == null){
+        if (beginNode == null || endNode == null) {
             System.out.println("Invalid node id.");
             return;
         }
-        if (getRoads().size() >= Road.getMax()){
+
+        if (getRoads().size() >= Road.getMax()) {
             System.out.println("You have already built the maximum number of roads.");
             return;
         }
@@ -240,7 +247,7 @@ public class HumanPlayer extends Player{
         boolean canBuildFromEnd = endNode.getBuildableRoadNeighbors(this).contains(beginNode);
         boolean canBuild = canBuildFromStart || canBuildFromEnd;
 
-        if(!canBuild){
+        if (!canBuild) {
             System.out.println("You cannot build a road on that edge.");
             return;
         }
@@ -255,26 +262,28 @@ public class HumanPlayer extends Player{
 
         payCost(cost);
 
-        if(beginNode.getLeft() == endNode){
+        if (beginNode.getLeft() == endNode) {
             beginNode.setLeftRoad(road);
             endNode.setRightRoad(road);
-        }else if (beginNode.getRight() == endNode){
+        } else if (beginNode.getRight() == endNode) {
             beginNode.setRightRoad(road);
             endNode.setLeftRoad(road);
-        }else if (beginNode.getVert() == endNode){
+        } else if (beginNode.getVert() == endNode) {
             beginNode.setVertRoad(road);
             endNode.setVertRoad(road);
         }
+
         addRoad(road);
         System.out.println("Built road from node " + fromNodeId + " to node " + toNodeId + ".");
     }
 
     /**
-     * This method checks if the player can afford a cost.
+     * Checks if the player can afford a cost.
+     *
      * @param cost required cost
      * @return true if the player has enough resources, otherwise false
      */
-    private boolean affordable(Cost cost){
+    private boolean affordable(Cost cost) {
         return getResourceAmount(ResourceType.BRICK) >= cost.getBrick()
                 && getResourceAmount(ResourceType.LUMBER) >= cost.getLumber()
                 && getResourceAmount(ResourceType.WOOL) >= cost.getWool()
@@ -283,8 +292,9 @@ public class HumanPlayer extends Player{
     }
 
     /**
-     * This method removes the requires resources from the player's hand.
-     * @param cost
+     * Removes the required resources from the player's hand.
+     *
+     * @param cost cost to pay
      */
     private void payCost(Cost cost) {
         removeResourceAmount(ResourceType.BRICK, cost.getBrick());
@@ -295,35 +305,39 @@ public class HumanPlayer extends Player{
     }
 
     /**
-     * Removes a resource in a specific amount of time.
+     * Removes a resource a specific number of times.
+     *
      * @param type resource type
-     * @param amount to remove
+     * @param amount number to remove
      */
-    private void removeResourceAmount(ResourceType type, int amount){
+    private void removeResourceAmount(ResourceType type, int amount) {
         for (int i = 0; i < amount; i++) {
             removeResource(type);
         }
     }
 
     /**
-     * Returns the node with the given id
+     * Returns the node with the given id.
+     *
      * @param game current game
      * @param nodeId node id
      * @return the matching node or null
      */
-    private Node findNode(Game game, int nodeId){
+    private Node findNode(Game game, int nodeId) {
         List<Node> nodes = game.getBoard().getNodes();
 
-        if(nodeId < 0 || nodeId >= nodes.size()){
+        if (nodeId < 0 || nodeId >= nodes.size()) {
             return null;
         }
+
         return nodes.get(nodeId);
     }
 
     /**
-     * Readsa single node id from a command.
-     * @param command
-     * @param prefix
+     * Reads a single node id from a command.
+     *
+     * @param command full command
+     * @param prefix command prefix
      * @return parsed node id, or null if invalid
      */
     private Integer readSingleNodeId(String command, String prefix) {
@@ -334,13 +348,20 @@ public class HumanPlayer extends Player{
         }
     }
 
-    private int[] readRoadNodeId(String text){
+    /**
+     * Reads two node ids from a road command.
+     *
+     * @param text text after "build road "
+     * @return two node ids, or null if invalid
+     */
+    private int[] readRoadNodeId(String text) {
         String cleanedText = text.replace("[", "").replace("]", "").trim();
         String[] parts = cleanedText.split(",");
 
-        if (parts.length != 2){
+        if (parts.length != 2) {
             return null;
         }
+
         try {
             int firstNodeId = Integer.parseInt(parts[0].trim());
             int secondNodeId = Integer.parseInt(parts[1].trim());
