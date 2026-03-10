@@ -139,7 +139,33 @@ public class HumanPlayer extends Player{
      * @param nodeID target node id
      */
     private void buildSettlement(Game game, int nodeID){
-        //
+        Node node = findNode(game, nodeId);
+
+        if (node == null){
+            System.out.println("Invalid node id entered.");
+            return;
+        }
+        if(getSettlements().size() >= Settlement.getMax()){
+            System.out.println("You have already built the maximum number of settlements.");
+            return;
+        }
+        if (!node.canBuildSettlement(this)){
+            System.out.println("You cannot build a settlement there.");
+        }
+
+        Settlement settlement = new Settlement();
+        Cost cost = settlement.getCost();
+
+        if(!affordable(cost)){
+            System.out.println("Not enough resources to build a settlement.");
+            return;
+        }
+
+        payCost(cost);
+        node.setPlayer(this);
+        node.setStructure(settlement);
+        addStructure(settlement);
+        System.out.println("Build settlement at node " + nodeId + ".");
     }
 
     /**
@@ -149,7 +175,29 @@ public class HumanPlayer extends Player{
      * @param nodeId target node id
      */
     private void buildCity(Game game, int nodeId) {
-        //
+        Node node = findNode(game, nodeId);
+
+        if (node == null){
+            System.out.println("Invalid node id entered.");
+            return;
+        }
+        if(getCities().size() >= City.getMax()){
+            System.out.println("You have already built the maximum number of cities.");
+            return;
+        }
+        Structure currrentStructure = node.getStructure();
+        if (!node.getPlayer() != this || !(currentStructure instanceof Settlement)){
+            System.out.println("You can only upgrade one of your own settlements.");
+        }
+
+        City city = new City();
+        Cost cost = city.getCost();
+
+        if(!affordable(cost)){
+            System.out.println("Not enough resources to build a city.");
+            return;
+        }
+        System.out.println("City upgrade will be completed after the next Node/Game update.");
     }
 
     /**
@@ -160,6 +208,66 @@ public class HumanPlayer extends Player{
      * @param toNodeId end node id
      */
     private void buildRoad(Game game, int fromNodeId, int toNodeId) {
-        //
+        if (fromNodeId == toNodeId){
+            System.out.println("A road must have two different node ids.");
+            return;
+        }
+
+        Node beginNode = findNode(game, fromNodeId);
+        Node endNode = findNode(game toNodeId);
+
+        if(beginNode == null || endNode == null){
+            System.out.println("Invalid node id.");
+            return;
+        }
+        if (getRoads().size >= Road.getMax()){
+            System.out.println("You have already built the maximum number of roads.");
+            return;
+        }
+
+        //mak it easier too long
+       boolean canBuild = beginNode.getBuildableNeighbors(this).contains(endNode) || endNode.getBuildableRoadNeighbors(this).contains(beginNode);
+
+        if(!canBuild){
+            System.out.println("You cannot build a road on that edge.");
+            return;
+        }
+
+        Road road = new Road();
+        Cost cost = road.getCost();
+
+        if(!affordable(cost)){
+            System.out.println("Not enough resources to build a road");
+        }
+
+        payCost(cost);
+
+        if(beginNode.getLeft() == endNode){
+            beginNode.setLeftRoad(road);
+            endNode.setRightRoad(road);
+        }else if (beginNode.getRight() == endNode){
+            beginNode.setRightRoad(road);
+            endNode.setLeftRoad(road);
+        }else if (beginNode.getVert() == endNode){
+            beginNode.setVertRoad(road);
+            endNode.setVertRoad(road);
+        }
+        addRoad(road);
+        System.out.println("Built road from node " + fromNodeId + " to node " + toNodeId + ".");
     }
+
+    /**
+     * This method checks if the player can afford a cost.
+     * @param cost required cost
+     * @return true if the player has enough resources, otherwise false
+     */
+    private boolean affordable(Cost cost){
+        return getResourceAmount(ResourceType.BRICK) >= cost.getBrick()
+                && getResourceAmount(ResourceType.LUMBER) >= cost.getLumber()
+                && getResourceAmount(ResourceType.WOOL) >= cost.getWool()
+                && getResourceAmount(ResourceType.GRAIN) >= cost.getGrain()
+                && getResourceAmount(ResourceType.ORE) >= cost.getOre();
+    }
+
+
 }
