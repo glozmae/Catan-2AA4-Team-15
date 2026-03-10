@@ -179,14 +179,16 @@ public class HumanPlayer extends Player{
     private void buildCity(Game game, int nodeId) {
         Node node = findNode(game, nodeId);
 
-        if (node == null){
+        if (node == null) {
             System.out.println("Invalid node id entered.");
             return;
         }
-        if(getCities().size() >= City.getMax()){
+
+        if (getCities().size() >= City.getMax()) {
             System.out.println("You have already built the maximum number of cities.");
             return;
         }
+
         Structure currentStructure = node.getStructure();
         if (node.getPlayer() != this || !(currentStructure instanceof Settlement)) {
             System.out.println("You can only upgrade one of your own settlements.");
@@ -196,11 +198,17 @@ public class HumanPlayer extends Player{
         City city = new City();
         Cost cost = city.getCost();
 
-        if(!affordable(cost)){
+        if (!affordable(cost)) {
             System.out.println("Not enough resources to build a city.");
             return;
         }
-        System.out.println("City upgrade will be completed after the next Node/Game update.");
+
+        payCost(cost);
+        removeStructure(currentStructure);
+        node.setStructure(city);
+        addStructure(city);
+
+        System.out.println("Built city at node " + nodeId + ".");
     }
 
     /**

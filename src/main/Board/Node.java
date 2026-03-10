@@ -101,10 +101,10 @@ public class Node {
 	 * @param node The Node to link to the left.
 	 */
 	public void setLeft(Node node) {
-    if (node == null) return;
+		if (node == null) return;
 
-    if (this.left == null) this.left = node;
-    if (node.right == null) node.right = this;
+		if (this.left == null) this.left = node;
+		if (node.right == null) node.right = this;
 	}
 
 	public void setRight(Node node) {
@@ -165,9 +165,7 @@ public class Node {
 	 * Sets the structure for this node. Only works if no structure is currently assigned.
 	 */
 	public void setStructure(Structure structure) {
-		if (this.structure == null) {
-			this.structure = structure;
-		}
+		this.structure = structure;
 	}
 
 	/**
