@@ -165,9 +165,7 @@ public class Node {
 	 * Sets the structure for this node. Only works if no structure is currently assigned.
 	 */
 	public void setStructure(Structure structure) {
-		if (this.structure == null) {
-			this.structure = structure;
-		}
+		this.structure = structure;
 	}
 
 	/**
