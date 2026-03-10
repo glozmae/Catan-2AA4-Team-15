@@ -269,5 +269,17 @@ public class HumanPlayer extends Player{
                 && getResourceAmount(ResourceType.ORE) >= cost.getOre();
     }
 
+    /**
+     * This method removes the requires resources from the player's hand.
+     * @param cost
+     */
+    private void payCost(Cost cost) {
+        removeResourceAmount(ResourceType.BRICK, cost.getBrick());
+        removeResourceAmount(ResourceType.LUMBER, cost.getLumber());
+        removeResourceAmount(ResourceType.WOOL, cost.getWool());
+        removeResourceAmount(ResourceType.GRAIN, cost.getGrain());
+        removeResourceAmount(ResourceType.ORE, cost.getOre());
+    }
+
 
 }
