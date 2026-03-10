@@ -281,5 +281,59 @@ public class HumanPlayer extends Player{
         removeResourceAmount(ResourceType.ORE, cost.getOre());
     }
 
+    /**
+     * Removes a resource in a specific amount of time.
+     * @param type resource type
+     * @param amount to remove
+     */
+    private void removeResourceAmount(ResourceType type, int amount){
+        for (int i = 0; i < amount; i++) {
+            removeResourceAmount(type);
+        }
+    }
 
+    /**
+     * Returns the node with the given id
+     * @param game current game
+     * @param nodeId node id
+     * @return the matching node or null
+     */
+    private Node findNode(Game game, int nodeId){
+        List<Node> nodes = game.getBoard().getNodes();
+
+        if(nodeId < 0 || nodeId >= nodes.size()){
+            return null;
+        }
+        return nodes.get(nodeId);
+    }
+
+    /**
+     * Readsa single node id from a command.
+     * @param command
+     * @param prefix
+     * @return parsed node id, or null if invalid
+     */
+    private Integer readSingleNodeId(String command, String prefix) {
+        try {
+            return Integer.parseInt(command.substring(prefix.length()).trim());
+        } catch (NumberFormatException exception) {
+            return null;
+        }
+    }
+
+    private int[] readRoadNodeIds(String text){
+        String cleanedText = text.replace("[", "").replace("]", "").trim();
+        String[] parts = cleanedText.split(",");
+
+        if (parts.legnth != 2){
+            return null;
+        }
+        try {
+            int firstNodeId = Integer.parseInt(parts[0].trim());
+            int secondNodeId = Integer.parseInt(parts[1].trim());
+            return new int[] { firstNodeId, secondNodeId };
+        } catch (NumberFormatException exception) {
+            return null;
+        }
+    }
 }
