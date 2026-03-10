@@ -24,6 +24,7 @@ public class HumanPlayer extends Player{
      */
     public HumanPlayer(){
         super();
+        this.commandReader = new Scanner(System.in);
     }
 
     /**
@@ -84,18 +85,13 @@ public class HumanPlayer extends Player{
                 continue;
             }
 
-            if (command.equalsIgnoreCase("go")) {
-                if (!hasRolledThisTurn) {
-                    System.out.println("You must enter 'roll' before ending your turn.");
+            if (command.startsWith("build settlement ")) {
+                Integer nodeId = readSingleNodeId(command, "build settlement ");
+                if (nodeId == null) {
+                    System.out.println("Invalid command. Usage: build settlement <nodeId>");
                 } else {
-                    turnFinished = true;
-                    System.out.println("Turn ended.");
+                    buildSettlement(game, nodeId);
                 }
-                continue;
-            }
-
-            if (!hasRolledThisTurn) {
-                System.out.println("You must enter 'roll' before building.");
                 continue;
             }
 
@@ -110,7 +106,7 @@ public class HumanPlayer extends Player{
             }
 
             if (command.startsWith("build road ")) {
-                int[] roadEnds = readRoadNodeId(command.substring("build road ".length()).trim()); //shoudl make this simpler
+                int[] roadEnds = readRoadNodeId(command.substring("build road ".length()).trim());
                 if (roadEnds == null) {
                     System.out.println("Invalid command. Usage: build road <fromNodeId,toNodeId>");
                 } else {
