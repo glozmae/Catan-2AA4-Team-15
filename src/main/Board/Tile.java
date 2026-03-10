@@ -16,8 +16,7 @@ import GameResources.ResourceType;
 public class Tile {
 
 	/**
-	 * The type of resource this tile produces (e.g., WOOD, WHEAT).
-	 * Typically null for the Desert tile.
+	 * The type of resource this tile produces (e.g., WOOD, WHEAT, DESERT).
 	 */
 	private ResourceType type;
 
@@ -31,6 +30,8 @@ public class Tile {
 	 * Unique identifier for the tile, usually assigned during board generation.
 	 */
 	private int id;
+
+	private Integer productionNumber;
 
 	/**
 	 * Constructor for a Tile.
@@ -51,6 +52,7 @@ public class Tile {
 		// Automatically establish the directional links between the provided nodes.
 		nodeConnector();
 		this.type = type;
+		this.productionNumber = null;
 	}
 
 	/**
@@ -60,14 +62,10 @@ public class Tile {
 	 * in the perimeter array.
 	 */
 	private void nodeConnector() {
-		// Node 0 and 1 are connected vertically
 		nodes[0].setVert(nodes[1]);
-		// Nodes 1, 2, and 3 form the "leftward" side of the hex
 		nodes[1].setLeft(nodes[2]);
 		nodes[2].setLeft(nodes[3]);
-		// Nodes 3 and 4 are connected vertically
 		nodes[3].setVert(nodes[4]);
-		// Nodes 4, 5, and 0 form the "rightward" side of the hex
 		nodes[4].setRight(nodes[5]);
 		nodes[5].setRight(nodes[0]);
 	}
@@ -81,7 +79,20 @@ public class Tile {
 	}
 
 	public Node[] getNodes() {
-    	return nodes;
+		return nodes;
+	}
+
+	/**
+	 * Gets the production number assigned to this tile.
+	 *
+	 * @return production number or null
+	 */
+	public Integer getProductionNumber() {
+		return productionNumber;
+	}
+
+	public void setProductionNumber(Integer productionNumber) {
+		this.productionNumber = productionNumber;
 	}
 
 	/**
@@ -94,11 +105,11 @@ public class Tile {
 
 	/**
 	 * Returns a formatted string representation of the tile for debugging.
-	 * @return A string showing the ID and the resource type.
+	 * @return A string showing the ID, the resource type, and the production number.
 	 */
 	@Override
 	public String toString() {
-		String typeStr = (this.type == null) ? "DESERT" : this.type.toString();
-		return String.format("Tile ID: %-2d | Resource: %-8s", id, typeStr);
+		String numberStr = (this.productionNumber == null) ? "-" : this.productionNumber.toString();
+		return String.format("Tile ID: %-2d | Resource: %-8s | Number: %s", id, this.type, numberStr);
 	}
 }

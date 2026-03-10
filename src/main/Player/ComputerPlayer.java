@@ -9,6 +9,7 @@ import Game.Game;
 import GameResources.City;
 import GameResources.ResourceType;
 import GameResources.Road;
+import GameResources.Structure;
 import GameResources.Settlement;
 
 /************************************************************/
@@ -197,18 +198,16 @@ public class ComputerPlayer extends Player {
         node.setPlayer(this);       // Mark board node as owned
         node.setStructure(s);       // Place structure on board
         this.addStructure(s);       // Add to player inventory
-        try {
-            this.addNode(node);     // Add to player's list of owned nodes
-        } catch (NullPointerException e) {
-            // Safety catch: Your Player class might not have initialized 'nodes' list
-            System.err.println("Warning: Player nodes list not initialized.");
-        }
     }
 
     /**
      * Helper to update the Board State and Player Inventory when upgrading to a City.
      */
     private void placeCity(Node node, City c) {
+        Structure oldStructure = node.getStructure();
+        if (oldStructure instanceof Settlement) {
+            this.removeStructure(oldStructure);
+        }
         node.setStructure(c);
         this.addStructure(c);
     }
