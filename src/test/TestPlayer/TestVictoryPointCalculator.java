@@ -2,6 +2,7 @@ package TestPlayer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import Board.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,8 @@ import GameResources.City;
 import GameResources.Settlement;
 import Player.Player;
 import Player.VictoryPointCalculator;
+
+import java.util.List;
 
 /**
  * JUnit tests for VictoryPointCalculator.
@@ -26,6 +29,16 @@ public class TestVictoryPointCalculator {
 
         @Override
         public void setup(Game game) {}
+
+        @Override
+        public void robberDiscard() {
+
+        }
+
+        @Override
+        public Tile setRobber(List<Tile> tiles) {
+            return null;
+        }
     }
 
     @BeforeEach
