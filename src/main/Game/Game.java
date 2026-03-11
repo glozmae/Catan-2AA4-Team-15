@@ -259,18 +259,22 @@ public class Game {
      * Handles the simplified robber behavior for A2.
      */
     private void handleRobber() {
-        for (Player p : players) {
-            int total = totalResourceCards(p);
+        Player roller = getCurrentPlayer();
+        System.out.println(turnCounter + " / " + (roller.getId() + 1) + ": robber activated");
+
+        for (Player player : players) {
+            int total = totalResourceCards(player);
             if (total > 7) {
                 int toDiscard = total / 2;
                 for (int i = 0; i < toDiscard; i++) {
-                    removeRandomResource(p);
+                    removeRandomResource(player);
                 }
+                System.out.println(turnCounter + " / " + (player.getId() + 1) + ": discarded " + toDiscard + " card(s)");
             }
         }
-
         moveRobberToRandomTile();
-        stealRandomResourceFromAdjacentPlayer();
+        System.out.println(turnCounter + " / " + (roller.getId() + 1) + ": robber moved to tile " + robberTile.getId());
+        stealRandomResourceFromAdjacentPlayer(roller);
     }
 
     /**
