@@ -5,7 +5,7 @@ package Board;
  * Represents the robber entity that occupies a specific tile on the board.
  * Allows tracking and updating the robber's current location during the game.
  *
- * @author [Your Name], [Your Student Number], McMaster University
+ * @author Taihan Mobasshir, 400578506, McMaster University
  */
 public class Robber {
 

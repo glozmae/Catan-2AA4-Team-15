@@ -284,9 +284,8 @@ public class ComputerPlayer extends Player {
     public void robberDiscard() {
         while (getHand().getCount() > 7) {
             ResourceType[] types = ResourceType.values();
-            Random random = new Random();
 
-            int randomIndex = random.nextInt(types.length);
+            int randomIndex = randomizer.nextInt(types.length);
             if (getHand().getCount(types[randomIndex]) > 0) {
                 getHand().removeCard(types[randomIndex], 1);
             }

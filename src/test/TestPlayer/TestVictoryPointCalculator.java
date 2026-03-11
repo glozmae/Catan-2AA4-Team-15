@@ -25,14 +25,18 @@ public class TestVictoryPointCalculator {
     private static class DummyPlayer extends Player {
 
         @Override
-        public void takeTurn(Game game) {}
+        public void takeTurn(Game game) {
+            // not required
+        }
 
         @Override
-        public void setup(Game game) {}
+        public void setup(Game game) {
+            // not required
+        }
 
         @Override
         public void robberDiscard() {
-
+            // not required
         }
 
         @Override
