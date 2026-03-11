@@ -1,9 +1,7 @@
 package Board;
 
-import GameResources.ResourceType;
 import GameResources.Road;
 import GameResources.Structure;
-import Player.Player;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -13,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class that creates the base map JSON and updates the state JSON for the python visualizer
+ * Class that creates the base map JSON and updates the state JSON for the
+ * python visualizer
  *
  * @author Yojith Sai Biradavolu, McMaster University
  */
@@ -25,26 +24,10 @@ public class Visualizer {
      * Maps each tile from 0-18 to a qsr coordinate
      **/
     private static final int[][] TILE_COORDS = {
-            {0, 0, 0},
-            {0, -1, 1},
-            {-1, 0, 1},
-            {-1, 1, 0},
-            {0, 1, -1},
-            {1, 0, -1},
-            {1, -1, 0},
-            {0, -2, 2},
-            {-1, -1, 2},
-            {-2, 0, 2},
-            {-2, 1, 1},
-            {-2, 2, 0},
-            {-1, 2, -1},
-            {0, 2, -2},
-            {1, 1, -2},
-            {2, 0, -2},
-            {2, -1, -1},
-            {2, -2, 0},
-            {1, -2, 1}
-    };
+            {0, 0, 0}, {1, -1, 0}, {0, -1, 1}, {-1, 0, 1}, {-1, 1, 0},
+            {0, 1, -1}, {1, 0, -1}, {2, -2, 0}, {1, -2, 1}, {0, -2, 2},
+            {-1, -1, 2}, {-2, 0, 2}, {-2, 1, 1}, {-2, 2, 0}, {-1, 2, -1},
+            {0, 2, -2}, {1, 1, -2}, {2, 0, -2}, {2, -1, -1},};
 
     /**
      * Creates the base map JSON based on provided tiles
@@ -52,8 +35,8 @@ public class Visualizer {
      * @param board Board from which to generate JSON
      */
     public static void setupJSON(Board board) {
+        debugAdjacency(board);
         List<Tile> tiles = board.getTiles();
-        List<DiceNum> diceNumbers = board.getDiceNumbers();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode baseMap = objectMapper.createObjectNode();
         List<ObjectNode> tileNodes = new ArrayList<>();
@@ -72,14 +55,7 @@ public class Visualizer {
             tileNode.put("r", coordinates[2]);
             tileNode.put("resource", tileType);
 
-            for (DiceNum dn : diceNumbers) {
-                for (Tile t : dn.getTiles()) {
-                    if (t.getId() == tile.getId()) {
-                        tileNode.put("number", dn.getNumber());
-                        break;
-                    }
-                }
-            }
+            tileNode.put("number", tile.getProductionNumber());
             tileNodes.add(tileNode);
         }
         baseMap.set("tiles", objectMapper.valueToTree(tileNodes));
@@ -92,6 +68,7 @@ public class Visualizer {
     }
 
     public static void updateJSON(Board board) {
+//        debugAdjacency(board);
         List<Node> nodes = board.getNodes();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode state = objectMapper.createObjectNode();
@@ -112,14 +89,16 @@ public class Visualizer {
             Road[] roads = {node.getLeftRoad(), node.getRightRoad(), node.getVertRoad()};
             Node[] destinations = {node.getLeft(), node.getRight(), node.getVert()};
             for (int i = 0; i < roads.length; i++) {
-                if (roads[i] != null) {
+                if (roads[i] != null && destinations[i] != null) {
                     int destination = destinations[i].getId();
-                    String owner = roads[i].getOwner().getColor().toString();
-                    ObjectNode roadNode = objectMapper.createObjectNode();
-                    roadNode.put("a", fixNodeIndex(node.getId()));
-                    roadNode.put("b", fixNodeIndex(destination));
-                    roadNode.put("owner", owner);
-                    roadNodes.add(roadNode);
+                    if (node.getId() < destination) {
+                        String owner = roads[i].getOwner().getColor().toString();
+                        ObjectNode roadNode = objectMapper.createObjectNode();
+                        roadNode.put("a", (node.getId()));
+                        roadNode.put("b", (destination));
+                        roadNode.put("owner", owner);
+                        roadNodes.add(roadNode);
+                    }
                 }
             }
         }
@@ -133,6 +112,24 @@ public class Visualizer {
         }
     }
 
+    public static void debugAdjacency(Board board) {
+        List<Node> nodes = board.getNodes();
+        System.out.println("=== JAVA BOARD ADJACENCY ===");
+        for (Node node : nodes) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Java node ").append(node.getId()).append(" -> neighbors: [");
+            Node[] neighbors = {node.getLeft(), node.getRight(), node.getVert()};
+            String[] dirs = {"L", "R", "V"};
+            for (int i = 0; i < neighbors.length; i++) {
+                if (neighbors[i] != null) {
+                    sb.append(dirs[i]).append(":").append(neighbors[i].getId()).append(" ");
+                }
+            }
+            sb.append("]");
+            System.out.println(sb);
+        }
+    }
+
     /**
      * The visualizer has node ID mapping differently from the Board class.
      * Using a simple array, the mapping is corrected.
@@ -141,11 +138,10 @@ public class Visualizer {
      * @return Corrected id of the node
      */
     private static int fixNodeIndex(int nodeId) {
-        int[] MAP = {
-                5, 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 15, 14, 14, 18, 16, 17, 21, 19, 20, 22, 23, 24, 25, 26,
-                27, 28, 29, 30, 31, 32, 33, 34, 37, 35, 36, 38, 39, 40, 42, 41, 44, 43, 45, 47, 46, 48, 49, 50, 51, 52, 53
-        };
+        int[] MAP = {5, 0, 1, 2, 3, 4, 20, 22, 23, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+                17, 18, 16, 21, 19, 49, 50, 51, 52, 53, 24, 25, 26, 27, 28, 29, 30, 31,
+                32, 33, 34, 35, 36, 37, 38, 39, 41, 42, 40, 44, 43, 45, 47, 46, 48,};
 
-        return MAP[nodeId];
+        return nodeId;
     }
 }
