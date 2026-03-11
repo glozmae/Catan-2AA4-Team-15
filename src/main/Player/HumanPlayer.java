@@ -67,8 +67,7 @@ public class HumanPlayer extends Player {
                 System.out.println("Enter a command.");
                 continue;
             }
-
-            if (command.equalsIgnoreCase("roll")) {
+            if (rollCommand(command)) {
                 if (hasRolledThisTurn) {
                     System.out.println("You already rolled this turn.");
                 } else {
@@ -80,12 +79,12 @@ public class HumanPlayer extends Player {
                 continue;
             }
 
-            if (command.equalsIgnoreCase("list")) {
+            if (listCommand(command)) {
                 printHand();
                 continue;
             }
 
-            if (command.equalsIgnoreCase("go")) {
+            if (goCommand(command)) {
                 if (!hasRolledThisTurn) {
                     System.out.println("You must enter 'roll' before ending your turn.");
                 } else {
@@ -100,39 +99,29 @@ public class HumanPlayer extends Player {
                 continue;
             }
 
-            if (command.startsWith("build settlement ")) {
-                Integer nodeId = readSingleNodeId(command, "build settlement ");
-                if (nodeId == null) {
-                    System.out.println("Invalid command. Usage: build settlement <nodeId>");
-                } else {
-                    buildSettlement(game, nodeId);
-                }
+            Integer settlementNodeId = parseSettlementNodeId(command);
+            if (settlementNodeId != null) {
+                buildSettlement(game, settlementNodeId);
                 continue;
             }
 
-            if (command.startsWith("build city ")) {
-                Integer nodeId = readSingleNodeId(command, "build city ");
-                if (nodeId == null) {
-                    System.out.println("Invalid command. Usage: build city <nodeId>");
-                } else {
-                    buildCity(game, nodeId);
-                }
+            Integer cityNodeId = parseCityNodeId(command);
+            if (cityNodeId != null) {
+                buildCity(game, cityNodeId);
                 continue;
             }
 
-            if (command.startsWith("build road ")) {
-                int[] roadEnds = readRoadNodeId(command.substring("build road ".length()).trim());
-                if (roadEnds == null) {
-                    System.out.println("Invalid command. Usage: build road <fromNodeId,toNodeId>");
-                } else {
-                    buildRoad(game, roadEnds[0], roadEnds[1]);
-                }
+            int[] roadNodeIds = parseRoadNodeIds(command);
+            if (roadNodeIds != null) {
+                buildRoad(game, roadNodeIds[0], roadNodeIds[1]);
                 continue;
             }
 
             System.out.println("Unknown command.");
         }
     }
+
+
 
     @Override
     public void setup(Game game) {
@@ -347,41 +336,43 @@ public class HumanPlayer extends Player {
         return nodes.get(nodeId);
     }
 
-    /**
-     * Reads a single node id from a command.
-     *
-     * @param command full command
-     * @param prefix command prefix
-     * @return parsed node id, or null if invalid
-     */
-    private Integer readSingleNodeId(String command, String prefix) {
-        try {
-            return Integer.parseInt(command.substring(prefix.length()).trim());
-        } catch (NumberFormatException exception) {
-            return null;
-        }
+
+    private boolean rollCommand(String command) {
+        return ROLL_PATTERN.matcher(command).matches();
     }
 
-    /**
-     * Reads two node ids from a road command.
-     *
-     * @param text text after "build road "
-     * @return two node ids, or null if invalid
-     */
-    private int[] readRoadNodeId(String text) {
-        String cleanedText = text.replace("[", "").replace("]", "").trim();
-        String[] parts = cleanedText.split(",");
+    private boolean goCommand(String command) {
+        return GO_PATTERN.matcher(command).matches();
+    }
 
-        if (parts.length != 2) {
+    private boolean listCommand(String command) {
+        return LIST_PATTERN.matcher(command).matches();
+    }
+
+    private Integer parseSettlementNodeId(String command) {
+        Matcher matcher = BUILD_SETTLEMENT.matcher(command);
+        if (!matcher.matches()) {
+            return null;
+        }
+        return Integer.parseInt(matcher.group(1));
+    }
+
+    private Integer parseCityNodeId(String command) {
+        Matcher matcher = BUILD_CITY.matcher(command);
+        if (!matcher.matches()) {
+            return null;
+        }
+        return Integer.parseInt(matcher.group(1));
+    }
+
+    private int[] parseRoadNodeIds(String command) {
+        Matcher matcher = BUILD_ROAD.matcher(command);
+        if (!matcher.matches()) {
             return null;
         }
 
-        try {
-            int firstNodeId = Integer.parseInt(parts[0].trim());
-            int secondNodeId = Integer.parseInt(parts[1].trim());
-            return new int[] { firstNodeId, secondNodeId };
-        } catch (NumberFormatException exception) {
-            return null;
-        }
+        int fromNodeId = Integer.parseInt(matcher.group(1));
+        int toNodeId = Integer.parseInt(matcher.group(2));
+        return new int[] { fromNodeId, toNodeId };
     }
 }
