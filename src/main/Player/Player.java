@@ -222,8 +222,9 @@ public abstract class Player {
 	}
 
 	/**
+	 * Returns the player's hand of resource cards
 	 *
-	 * @return
+	 * @return Player's hand of resource cards
 	 */
 	public PlayerHand getHand() {
 		return this.hand;
