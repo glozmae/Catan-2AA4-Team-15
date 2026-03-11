@@ -33,14 +33,19 @@ public class TestNode {
     @Timeout(TIMEOUT)
     public void canBuildSettlement() {
         Node node = new Node(0);
+        Node node2 = new Node(1);
+        Node node3 = new Node(2);
         Player dummyPlayer = new ComputerPlayer();
-        Player dummyPlayer2 = new ComputerPlayer();
         Road dummyRoad = new Road();
         dummyRoad.setOwner(dummyPlayer);
 
         assertFalse(node.canBuildSettlement(dummyPlayer), "Node should not be buildable by player without connecting road");
         node.setLeftRoad(dummyRoad);
         assertTrue(node.canBuildSettlement(dummyPlayer), "Node should be buildable by player");
+        node2.setRightRoad(dummyRoad);
+        assertTrue(node2.canBuildSettlement(dummyPlayer), "Node should be buildable by player");
+        node3.setVertRoad(dummyRoad);
+        assertTrue(node3.canBuildSettlement(dummyPlayer), "Node should be buildable by player");
     }
 
     /**
