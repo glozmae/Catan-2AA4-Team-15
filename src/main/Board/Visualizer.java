@@ -78,7 +78,7 @@ public class Visualizer {
                 String owner = structure.getOwner().getColor().toString();
                 String type = structure.getClass().getSimpleName().toUpperCase();
                 ObjectNode buildingNode = objectMapper.createObjectNode();
-                buildingNode.put("node", fixNodeIndex(node.getId()));
+                buildingNode.put("node", node.getId());
                 buildingNode.put("owner", owner);
                 buildingNode.put("type", type);
                 buildingNodes.add(buildingNode);
