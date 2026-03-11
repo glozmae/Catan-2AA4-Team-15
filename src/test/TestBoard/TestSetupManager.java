@@ -40,6 +40,7 @@ public class TestSetupManager {
         setupManager.run(players);
         int totalResources = 0;
         for (ResourceType type : ResourceType.values()) {
+            if (type == ResourceType.DESERT) continue;
             totalResources += dummyPlayer.getResourceAmount(type);
         }
         assertEquals(2, dummyPlayer.getSettlements().size(), "Player should have 2 settlements after setup");

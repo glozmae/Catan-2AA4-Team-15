@@ -197,12 +197,6 @@ public class ComputerPlayer extends Player {
         node.setPlayer(this);       // Mark board node as owned
         node.setStructure(s);       // Place structure on board
         this.addStructure(s);       // Add to player inventory
-        try {
-            this.addNode(node);     // Add to player's list of owned nodes
-        } catch (NullPointerException e) {
-            // Safety catch: Your Player class might not have initialized 'nodes' list
-            System.err.println("Warning: Player nodes list not initialized.");
-        }
     }
 
     /**

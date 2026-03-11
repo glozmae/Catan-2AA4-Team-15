@@ -14,7 +14,6 @@ import GameResources.ResourceType;
 import GameResources.Road;
 import GameResources.Settlement;
 import GameResources.Structure;
-import Board.Node;
 
 /************************************************************/
 /**
@@ -48,12 +47,6 @@ public abstract class Player {
 	/** The player's longest road length **/
 	private int longestRoad;
 
-	/** The nodes the player owns and can build in and around **/
-	private List<Node> nodes;
-
-	/** The player's victory point calculator **/
-	public VictoryPointCalculator victorypointcalculator; // Consider deleting
-
 	/**
 	 * Constructor for a player, whether it be a human or a computer.
 	 */
@@ -69,8 +62,6 @@ public abstract class Player {
 		this.structures = new ArrayList<Structure>();
 		this.hand = new PlayerHand();
 		this.roads = new ArrayList<Road>();
-		this.nodes = new ArrayList<Node>();
-		this.victorypointcalculator = new VictoryPointCalculator();
 	}
 
 	/**
@@ -93,11 +84,6 @@ public abstract class Player {
 	public static void resetNumPlayers() {
 		num_players = 0;
 	}
-
-	/**
-	 *
-	 */
-	public void addNode(Node node) {this.nodes.add(node);}
 
 	/**
 	 * Adds a new card to the player's hand
@@ -152,7 +138,11 @@ public abstract class Player {
 	 * @return Player's total victory points
 	 */
 	public int calculateVictoryPoints() {
-		return VictoryPointCalculator.calculate(this);
+		int total = 0;
+		for (Structure structure : structures) {
+			total += structure.getVictoryPoints();
+		}
+		return total;
 	}
 
 	/**
@@ -218,7 +208,7 @@ public abstract class Player {
 	 */
 	@Override
 	public String toString() {
-		return "main/Player " + (this.id + 1)+ ", color: " + getColor();
+		return "main/Player " + (this.id + 1) + ", color: " + getColor();
 	}
 
 	/**
