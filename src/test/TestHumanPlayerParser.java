@@ -1,9 +1,19 @@
-Package Player;
+package Player;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-public class TestHumanPlayer {
+public class TestHumanPlayerParser {
 
+    //Test commands like Roll and go
+    @Test
+    void testRoll() {
+        assertTrue(HumanPlayer.rollCommand("roll"));
+    }
+
+    @Test
+    void testGo() {
+        assertTrue(HumanPlayer.goCommand("go"));
+    }
 
     @Test
     void testRoad() {
