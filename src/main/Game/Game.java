@@ -298,15 +298,32 @@ public class Game {
      * Steals one random resource from a random qualifying adjacent player.
      */
     private void stealRandomResourceFromAdjacentPlayer(Player roller) {
-        List<Player> eligible = new ArrayList<>();
+        if (robber == null) {
+            return;
+        }
 
-        for (Node node : robberTile.getNodes()) {
+        List<Player> eligible = new ArrayList<>();
+        Tile robberLocation = null;
+
+        for (Tile tile : board.getTiles()) {
+            if (robber.hasRobber(tile)) {
+                robberLocation = tile;
+                break;
+            }
+        }
+
+        if (robberLocation == null) {
+            return;
+        }
+
+        for (Node node : robberLocation.getNodes()) {
             Player owner = node.getPlayer();
             if (owner != null && owner != roller && !eligible.contains(owner)
                     && totalResourceCards(owner) > 0) {
                 eligible.add(owner);
             }
         }
+
         if (eligible.isEmpty()) {
             System.out.println(turnCounter + " / " + (roller.getId() + 1) + ": no player to steal from");
             return;
@@ -317,9 +334,11 @@ public class Game {
 
         if (stolenType != null) {
             roller.addResource(stolenType);
-            System.out.println(turnCounter + " / " + (roller.getId() + 1) + ": stole " + stolenType + " from Player " + (victim.getId() + 1));
+            System.out.println(turnCounter + " / " + (roller.getId() + 1)
+                    + ": stole " + stolenType + " from Player " + (victim.getId() + 1));
         }
     }
+
 
     /**
      * Removes and returns a random resource from the given player.
@@ -357,17 +376,6 @@ public class Game {
         return total;
     }
 
-    /**
-     * Finds the desert tile on the board.
-     */
-    private Tile findDesertTile() {
-        for (Tile tile : board.getTiles()) {
-            if (tile.getType() == ResourceType.DESERT) {
-                return tile;
-            }
-        }
-        return null;
-    }
 
     /**
      * Checks victory condition.
@@ -413,11 +421,14 @@ public class Game {
                     + ": no tiles produced");
             return;
         }
-
         StringBuilder sb = new StringBuilder();
 
         for (Tile tile : tiles) {
-            if (tile == robberTile || tile.getType() == ResourceType.DESERT) {
+            if (robber != null && robber.hasRobber(tile)) {
+                continue;
+            }
+
+            if (tile.getType() == ResourceType.DESERT) {
                 continue;
             }
 
@@ -429,9 +440,11 @@ public class Game {
         }
 
         if (sb.length() == 0) {
-            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1) + ": no tiles produced");
+            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
+                    + ": no tiles produced");
         } else {
-            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1) + ": producing [" + sb + "]");
+            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
+                    + ": producing [" + sb + "]");
         }
     }
 
