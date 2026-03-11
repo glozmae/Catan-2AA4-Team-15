@@ -204,17 +204,36 @@ public class Game {
     }
 
     /**
+     * Executes the robber event sequence.
+     * Forces all players with more than 7 resource cards in their hand to discard.
+     * Then, prompts the current player to select a new tile to place the robber on.
+     */
+    private void robberRoll () {
+
+        // ------ MORE THAN 7 PLAYER DISCARD -----------
+        for (Player p : players) {
+            if (p.getHand().getCount() > 7) {
+                p.robberDiscard();
+            }
+        }
+
+        // ------ Roller Sets new Robber ------------
+        board.getRobber().newRobber(getCurrentPlayer().setRobber(getBoard().getTiles()));
+    }
+
+    /**
      * Resource distribution:
      *
-     * Robber ignored
+     * if tile not a desert or doesn't have a robber, according resources are distributed
      * Finds tiles with roll number
      * pays 1 resource per settlement, 2 for city
      */
     private void distributeResources(int roll) {
 
-        // Robber ignored
-        if (roll == 7)
+        if (roll == 7) {
+            robberRoll();
             return;
+        }
 
         DiceNum dn = board.getTilesForRoll(roll);
         if (dn == null)
@@ -223,7 +242,7 @@ public class Game {
         for (Tile tile : dn.getTiles()) {
 
             ResourceType type = tile.getType();
-            if (type == null || type == ResourceType.DESERT)
+            if (type == null || type == ResourceType.DESERT || getBoard().getRobber().hasRobber(tile))
                 continue;
 
             for (Node node : tile.getNodes()) {
@@ -281,7 +300,7 @@ public class Game {
     private void printProduction(int roll) {
 
         if (roll == 7) {
-            System.out.print("Producing: [ROBBER — no production] || ");
+            System.out.print("Producing: [ROBBER ACTIVATED — no production] || ");
             return;
         }
 
@@ -300,7 +319,7 @@ public class Game {
         for (Tile t : dn.getTiles()) {
 
             ResourceType rt = t.getType();
-            if (rt == null || rt == ResourceType.DESERT)
+            if (rt == null || rt == ResourceType.DESERT || getBoard().getRobber().hasRobber(t))
                 continue;
 
             if (!first)

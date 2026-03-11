@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import Board.Node;
+import Board.Tile;
 import Game.Game;
 import GameResources.City;
 import GameResources.ResourceType;
@@ -271,5 +272,37 @@ public class ComputerPlayer extends Player {
         removeResource(ResourceType.ORE);
         removeResource(ResourceType.ORE);
         removeResource(ResourceType.ORE);
+    }
+
+    /**
+     *
+     * Implementation details: This player randomly selects resource types
+     * and discards one card of that type (if they have it) until their total
+     * hand size is reduced to 7 cards or fewer.
+     */
+    @Override
+    public void robberDiscard() {
+        while (getHand().getCount() > 7) {
+            ResourceType[] types = ResourceType.values();
+            Random random = new Random();
+
+            int randomIndex = random.nextInt(types.length);
+            if (getHand().getCount(types[randomIndex]) > 0) {
+                getHand().removeCard(types[randomIndex], 1);
+            }
+        }
+    }
+
+    /**
+     * Implementation details: This player chooses the robber's new location
+     * purely at random from the provided list of tiles.
+     *
+     * @param tiles the list of available tiles on the board to choose from
+     * @return a randomly selected tile to place the robber on
+     */
+    @Override
+    public Tile setRobber(List<Tile> tiles) {
+        int randomIndex = randomizer.nextInt(tiles.size());
+        return tiles.get(randomIndex);
     }
 }

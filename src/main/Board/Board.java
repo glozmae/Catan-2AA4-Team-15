@@ -32,6 +32,11 @@ public class Board {
 	private List<DiceNum> diceNumbers;
 
 	/**
+	 * Robber entity, allows robber functionalities
+	 */
+	private Robber robber;
+
+	/**
 	 * Constructor: Builds the standard Catan board layout with RANDOMIZED resources.
 	 */
 	public Board() {
@@ -92,6 +97,13 @@ public class Board {
 		tiles.add(createTile(17, n(50, 51, 52, 23, 22, 49), resourceDeck.get(17)));
 		tiles.add(createTile(18, n(52, 53, 24, 7, 6, 23), resourceDeck.get(18)));
 
+		for (Tile t : tiles) {
+			if (t.getType() == ResourceType.DESERT) {
+				this.robber = new Robber(t);
+				break;
+			}
+		}
+
 		// 4. Distribute Dice Numbers
 		// This will automatically skip whichever tile is the Desert
 		setupDiceNumbers();
@@ -106,6 +118,14 @@ public class Board {
 		} else {
 			return new Tile(id, nodes, type);
 		}
+	}
+
+	/**
+	 * Returns the robber to manipulate its position or check its presence
+	 * @return Robber
+	 */
+	public Robber getRobber() {
+		return robber;
 	}
 
 	/**

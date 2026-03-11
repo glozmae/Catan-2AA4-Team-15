@@ -4,6 +4,7 @@
 
 package Player;
 
+import java.util.Collections;
 import java.util.Map;
 
 import GameResources.ResourceType;
@@ -47,6 +48,15 @@ public class PlayerHand {
 	 */
 	public int getCount(ResourceType type) {
 		return this.count.getOrDefault(type, 0);
+	}
+
+	/**
+	 * returns the number of cards the player has in their hand
+	 *
+	 * @return size of hand
+	 */
+	public int getCount() {
+		return this.count.size();
 	}
 
 	/**

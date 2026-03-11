@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import Board.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -63,6 +64,17 @@ public class TestGame {
         public void setup(Game game) {
             // no action needed
         }
+
+        @Override
+        public void robberDiscard() {
+            // no action needed
+        }
+
+        @Override
+        public Tile setRobber(List<Tile> tiles) {
+            return null;
+        }
+
     }
 
     /**
