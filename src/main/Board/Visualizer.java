@@ -104,7 +104,7 @@ public class Visualizer {
                 String owner = structure.getOwner().getColor().toString();
                 String type = structure.getClass().getSimpleName().toUpperCase();
                 ObjectNode buildingNode = objectMapper.createObjectNode();
-                buildingNode.put("node", node.getId());
+                buildingNode.put("node", fixNodeIndex(node.getId()));
                 buildingNode.put("owner", owner);
                 buildingNode.put("type", type);
                 buildingNodes.add(buildingNode);
@@ -116,8 +116,8 @@ public class Visualizer {
                     int destination = destinations[i].getId();
                     String owner = roads[i].getOwner().getColor().toString();
                     ObjectNode roadNode = objectMapper.createObjectNode();
-                    roadNode.put("a", node.getId());
-                    roadNode.put("b", destination);
+                    roadNode.put("a", fixNodeIndex(node.getId()));
+                    roadNode.put("b", fixNodeIndex(destination));
                     roadNode.put("owner", owner);
                     roadNodes.add(roadNode);
                 }
@@ -131,5 +131,21 @@ public class Visualizer {
             System.err.println("Error: Could not create state JSON");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * The visualizer has node ID mapping differently from the Board class.
+     * Using a simple array, the mapping is corrected.
+     *
+     * @param nodeId Initial id of the node
+     * @return Corrected id of the node
+     */
+    private static int fixNodeIndex(int nodeId) {
+        int[] MAP = {
+                5, 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 15, 14, 14, 18, 16, 17, 21, 19, 20, 22, 23, 24, 25, 26,
+                27, 28, 29, 30, 31, 32, 33, 34, 37, 35, 36, 38, 39, 40, 42, 41, 44, 43, 45, 47, 46, 48, 49, 50, 51, 52, 53
+        };
+
+        return MAP[nodeId];
     }
 }
