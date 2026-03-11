@@ -8,8 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+
 import Board.Board;
-import Board.DiceNum;
 import Board.Tile;
 import Board.Node;
 import Board.SetupManager;
@@ -213,17 +213,19 @@ public class Game {
     private void distributeResources(int roll) {
 
         // Robber ignored
-        if (roll == 7)
+        if (roll == 7) {
             return;
-
-        DiceNum dn = board.getTilesForRoll(roll);
-        if (dn == null)
+        }
+        
+        List<Tile> tiles = board.getTilesForRoll(roll);
+        if(tiles.isEmpty()){
             return;
+        }
 
-        for (Tile tile : dn.getTiles()) {
+        for (Tile tile : tiles) {
 
             ResourceType type = tile.getType();
-            if (type == null || type == ResourceType.DESERT)
+            if (type == ResourceType.DESERT)
                 continue;
 
             for (Node node : tile.getNodes()) {
@@ -252,7 +254,6 @@ public class Game {
 
         for (Player p : players) {
             int vp = p.calculateVictoryPoints();
-
             if (vp >= winPoints) {
                 winner = p;
                 return;
@@ -285,9 +286,8 @@ public class Game {
             return;
         }
 
-        DiceNum dn = board.getTilesForRoll(roll);
-
-        if (dn == null || dn.getTiles().isEmpty()) {
+        List<Tile> tiles = board.getTilesForRoll(roll);
+        if (tiles.isEmpty()){
             System.out.print("Producing: [] || ");
             return;
         }
@@ -296,25 +296,18 @@ public class Game {
         sb.append("Producing: [");
 
         boolean first = true;
-
-        for (Tile t : dn.getTiles()) {
-
+        for (Tile t : tiles) {
             ResourceType rt = t.getType();
-            if (rt == null || rt == ResourceType.DESERT)
+            if (rt == ResourceType.DESERT)
                 continue;
 
             if (!first)
                 sb.append(" | ");
-
-            sb.append(rt)
-                    .append(" from Tile ")
-                    .append(t.getId());
-
+            sb.append(rt).append(" from Tile ").append(t.getId());
             first = false;
         }
 
         sb.append("] || ");
-
         System.out.print(sb.toString());
     }
 

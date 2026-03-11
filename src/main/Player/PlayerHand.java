@@ -4,11 +4,13 @@
 
 package Player;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import GameResources.ResourceType;
 
 /************************************************************/
+
 /**
  * Represents the hand of a player, tracking the number of each resource type.
  *
@@ -16,70 +18,71 @@ import GameResources.ResourceType;
  * @version Winter, 2026
  */
 public class PlayerHand {
-	/** Map of the count of each resource type in the player's hand **/
-	private Map<ResourceType, Integer> count;
+    /**
+     * Map of the count of each resource type in the player's hand
+     **/
+    private final Map<ResourceType, Integer> count;
 
-	/**
-	 * Creates a new PlayerHand with the given map containing count of each resource
-	 * 
-	 * @param count A map containing count of each resource
-	 */
-	// public void UserHand(Map<ResourceType, Integer> count) {
-	// 	this.count = count;
-	// }
-
-	public PlayerHand() {
-    this.count = new java.util.EnumMap<>(ResourceType.class);
-
-    for (ResourceType type : ResourceType.values()) {
-    if (type != ResourceType.DESERT) {
-        this.count.put(type, 0);
+    /**
+     * Creates a new PlayerHand instance
+     */
+    public PlayerHand() {
+        this.count = new EnumMap<>(ResourceType.class);
+        for (ResourceType type : ResourceType.values()) {
+            if (type != ResourceType.DESERT) {
+                this.count.put(type, 0);
+            }
+        }
     }
-}
 
-}
+    /**
+     * Returns the count of the specified resource type in the hand
+     *
+     * @param type The resource type to count
+     * @return The count of the resource type
+     */
+    public int getCount(ResourceType type) {
+        if (type == ResourceType.DESERT) {
+            throw new IllegalArgumentException("Cannot get count of DESERT from player hand");
+        }
+        return this.count.getOrDefault(type, 0);
+    }
 
-	/**
-	 * Returns the count of the specified resource type in the hand
-	 * 
-	 * @param type The resource type to count
-	 * @return The count of the resource type
-	 */
-	public int getCount(ResourceType type) {
-		return this.count.getOrDefault(type, 0);
-	}
+    /**
+     * Adds the specified amount of the given resource type to the hand
+     *
+     * @param type   The resource type to add
+     * @param amount The amount of the resource type to add
+     */
+    public void addCard(ResourceType type, int amount) {
+        if (type == ResourceType.DESERT) {
+            throw new IllegalArgumentException("Cannot add DESERT to player hand");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Error: Cannot add " + amount + " of " + type + " to player hand");
+        }
+        if (this.count.containsKey(type)) {
+            this.count.put(type, this.count.get(type) + amount);
+        } else {
+            this.count.put(type, amount);
+        }
+    }
 
-	/**
-	 * Adds the specified amount of the given resource type to the hand
-	 * 
-	 * @param type   The resource type to add
-	 * @param amount The amount of the resource type to add
-	 */
-	public void addCard(ResourceType type, int amount) {
-		if (this.count.containsKey(type)) {
-			this.count.put(type, this.count.get(type) + amount);
-		} else {
-			this.count.put(type, amount);
-		}
-	}
-
-	/**
-	 * Removes the specified amount of the given resource type from the hand
-	 * 
-	 * @param type   The resource type to remove
-	 * @param amount The amount of the resource type to remove
-	 */
-	public void removeCard(ResourceType type, int amount) {
-		if (this.count.containsKey(type)) {
-			int inHand = this.count.get(type);
-			if (inHand >= amount) {
-				this.count.put(type, inHand - amount);
-			} else {
-				throw new IllegalArgumentException("Error: Requested " + amount + " of " + type + " to remove but only "
-						+ inHand + " are in hand!");
-			}
-		} else {
-			throw new IllegalArgumentException("Error: No resources of type " + type + " found in the hand!");
-		}
-	}
+    /**
+     * Removes the specified amount of the given resource type from the hand
+     *
+     * @param type   The resource type to remove
+     * @param amount The amount of the resource type to remove
+     */
+    public void removeCard(ResourceType type, int amount) {
+        if (type == ResourceType.DESERT) {
+            throw new IllegalArgumentException("Cannot remove DESERT from player hand");
+        }
+        int inHand = this.count.get(type);
+        if (inHand >= amount) {
+            this.count.put(type, inHand - amount);
+        } else {
+            throw new IllegalArgumentException("Error: Requested " + amount + " of " + type + " to remove but only " + inHand + " are in hand!");
+        }
+    }
 }

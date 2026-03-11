@@ -1,7 +1,6 @@
 package TestBoard;
 
 import Board.Board;
-import Board.DiceNum;
 import Board.Tile;
 import Board.Node;
 import Player.Player;
@@ -35,14 +34,14 @@ public class TestBoard {
     public void getTilesForRoll() {
         Board board = new Board();
         for (int i = 2; i < 6; i++) {
-            DiceNum diceNum = board.getTilesForRoll(i);
-            assertNotNull(diceNum, "DiceNum should not be null for " + i);
-            assertEquals(i, diceNum.getNumber(), "Value of the diceNums in the Board");
+            List<Tile> tiles = board.getTilesForRoll(i);
+            assertNotNull(tiles, "Tiles should not be null for " + i);
+            assertEquals(i, tiles.getFirst().getProductionNumber(), "Dice value of the tiles in the Board");
         }
         for (int i = 8; i <= 12; i++) {
-            DiceNum diceNum = board.getTilesForRoll(i);
-            assertNotNull(diceNum, "DiceNum should not be null for " + i);
-            assertEquals(i, diceNum.getNumber(), "Value of the diceNums in the Board");
+            List<Tile> tiles = board.getTilesForRoll(i);
+            assertNotNull(tiles, "Tiles should not be null for " + i);
+            assertEquals(i, tiles.getFirst().getProductionNumber(), "Dice value of the tiles in the Board");
         }
     }
 
