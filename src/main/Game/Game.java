@@ -16,7 +16,7 @@ import Board.Tile;
 
 import Player.HumanPlayer;
 import Player.Player;
-
+import Board.Robber;
 import GameResources.City;
 import GameResources.ResourceType;
 import GameResources.Settlement;
@@ -35,6 +35,8 @@ public class Game {
 
     /** list of players in game */
     private final List<Player> players;
+
+    private Robber robber;
 
     /** Dice for rolling */
     private final Dice dice;
@@ -65,9 +67,6 @@ public class Game {
 
     /** whether the current player has rolled this turn */
     private boolean currentTurnRolled = false;
-
-    /** current robber location */
-    private Tile robberTile;
 
     /** random for simplified robber behavior */
     private final Random robberRandom = new Random();
@@ -152,9 +151,9 @@ public class Game {
         setup.run(players);
         currentPlayerIndex = 0;
 
-        for(Tile tile : board.getTiles()){
-            if (tile.getType() == ResourceType.DESERT){
-                robberTile = tile;
+        for (Tile tile : board.getTiles()) {
+            if (tile.getType() == ResourceType.DESERT) {
+                robber = new Robber(tile);
                 break;
             }
         }
@@ -226,7 +225,7 @@ public class Game {
         }
 
         for (Tile tile : tiles) {
-            if (tile == robberTile) {
+            if (robber != null && robber.hasRobber(tile)) {
                 continue;
             }
 
@@ -269,11 +268,12 @@ public class Game {
                 for (int i = 0; i < toDiscard; i++) {
                     removeRandomResource(player);
                 }
-                System.out.println(turnCounter + " / " + (player.getId() + 1) + ": discarded " + toDiscard + " card(s)");
+                System.out.println(turnCounter + " / " + (player.getId() + 1)
+                        + ": discarded " + toDiscard + " card(s)");
             }
         }
+
         moveRobberToRandomTile();
-        System.out.println(turnCounter + " / " + (roller.getId() + 1) + ": robber moved to tile " + robberTile.getId());
         stealRandomResourceFromAdjacentPlayer(roller);
     }
 
@@ -281,16 +281,17 @@ public class Game {
      * Moves robber to a random tile.
      */
     private void moveRobberToRandomTile() {
-        if (board.getTiles().size() <= 1) {
+        if (board.getTiles().size() <= 1 || robber == null) {
             return;
         }
 
         Tile newTile;
         do {
             newTile = board.getTiles().get(robberRandom.nextInt(board.getTiles().size()));
-        } while (newTile == robberTile);
+        } while (robber.hasRobber(newTile));
 
-        robberTile = newTile;
+        robber.newRobber(newTile);
+        System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1) + ": robber moved to tile " + newTile.getId());
     }
 
     /**
@@ -428,11 +429,9 @@ public class Game {
         }
 
         if (sb.length() == 0) {
-            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
-                    + ": no tiles produced");
+            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1) + ": no tiles produced");
         } else {
-            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
-                    + ": producing [" + sb + "]");
+            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1) + ": producing [" + sb + "]");
         }
     }
 

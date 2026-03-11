@@ -336,7 +336,6 @@ public class HumanPlayer extends Player {
         return nodes.get(nodeId);
     }
 
-
     private boolean rollCommand(String command) {
         return ROLL_PATTERN.matcher(command).matches();
     }
