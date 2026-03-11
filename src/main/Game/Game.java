@@ -413,45 +413,39 @@ public class Game {
      */
     private void printProduction(int roll) {
         if (roll == 7) {
-            System.out.print("Producing: [ROBBER — no production] || ");
+            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
+                    + ": robber causes no production");
             return;
         }
 
         List<Tile> tiles = board.getTilesForRoll(roll);
-
         if (tiles.isEmpty()) {
-            System.out.print("Producing: [] || ");
+            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
+                    + ": no tiles produced");
             return;
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Producing: [");
 
-        boolean first = true;
-
-        for (Tile t : tiles) {
-            if (t == robberTile) {
+        for (Tile tile : tiles) {
+            if (tile == robberTile || tile.getType() == ResourceType.DESERT) {
                 continue;
             }
 
-            ResourceType rt = t.getType();
-            if (rt == ResourceType.DESERT) {
-                continue;
-            }
-
-            if (!first) {
+            if (sb.length() > 0) {
                 sb.append(" | ");
             }
 
-            sb.append(rt)
-                    .append(" from Tile ")
-                    .append(t.getId());
-
-            first = false;
+            sb.append(tile.getType()).append(" from Tile ").append(tile.getId());
         }
 
-        sb.append("] || ");
-        System.out.print(sb.toString());
+        if (sb.length() == 0) {
+            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
+                    + ": no tiles produced");
+        } else {
+            System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
+                    + ": producing [" + sb + "]");
+        }
     }
 
     /**
