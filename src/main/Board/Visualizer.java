@@ -35,7 +35,6 @@ public class Visualizer {
      * @param board Board from which to generate JSON
      */
     public static void setupJSON(Board board) {
-        debugAdjacency(board);
         List<Tile> tiles = board.getTiles();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode baseMap = objectMapper.createObjectNode();
@@ -68,7 +67,6 @@ public class Visualizer {
     }
 
     public static void updateJSON(Board board) {
-//        debugAdjacency(board);
         List<Node> nodes = board.getNodes();
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode state = objectMapper.createObjectNode();
@@ -109,24 +107,6 @@ public class Visualizer {
         } catch (IOException e) {
             System.err.println("Error: Could not create state JSON");
             e.printStackTrace();
-        }
-    }
-
-    public static void debugAdjacency(Board board) {
-        List<Node> nodes = board.getNodes();
-        System.out.println("=== JAVA BOARD ADJACENCY ===");
-        for (Node node : nodes) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Java node ").append(node.getId()).append(" -> neighbors: [");
-            Node[] neighbors = {node.getLeft(), node.getRight(), node.getVert()};
-            String[] dirs = {"L", "R", "V"};
-            for (int i = 0; i < neighbors.length; i++) {
-                if (neighbors[i] != null) {
-                    sb.append(dirs[i]).append(":").append(neighbors[i].getId()).append(" ");
-                }
-            }
-            sb.append("]");
-            System.out.println(sb);
         }
     }
 
