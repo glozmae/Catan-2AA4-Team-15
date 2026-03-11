@@ -62,7 +62,6 @@ public class Visualizer {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(BASE_MAP_JSON), baseMap);
         } catch (IOException e) {
             System.err.println("Error: Could not create base map JSON");
-            e.printStackTrace();
         }
     }
 
@@ -106,22 +105,6 @@ public class Visualizer {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(STATE_JSON), state);
         } catch (IOException e) {
             System.err.println("Error: Could not create state JSON");
-            e.printStackTrace();
         }
-    }
-
-    /**
-     * The visualizer has node ID mapping differently from the Board class.
-     * Using a simple array, the mapping is corrected.
-     *
-     * @param nodeId Initial id of the node
-     * @return Corrected id of the node
-     */
-    private static int fixNodeIndex(int nodeId) {
-        int[] MAP = {5, 0, 1, 2, 3, 4, 20, 22, 23, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-                17, 18, 16, 21, 19, 49, 50, 51, 52, 53, 24, 25, 26, 27, 28, 29, 30, 31,
-                32, 33, 34, 35, 36, 37, 38, 39, 41, 42, 40, 44, 43, 45, 47, 46, 48,};
-
-        return nodeId;
     }
 }
