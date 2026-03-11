@@ -70,7 +70,6 @@ public class SetupManager {
 
         // Place on board
         node.setStructure(s);
-        node.setPlayer(player);
 
         // Track on player
         player.addStructure(s);

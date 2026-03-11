@@ -2,6 +2,8 @@ package TestBoard;
 
 import Board.Node;
 import GameResources.Road;
+import GameResources.Settlement;
+import GameResources.Structure;
 import Player.Player;
 import Player.ComputerPlayer;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,16 +33,19 @@ public class TestNode {
     @Timeout(TIMEOUT)
     public void canBuildSettlement() {
         Node node = new Node(0);
+        Node node2 = new Node(1);
+        Node node3 = new Node(2);
         Player dummyPlayer = new ComputerPlayer();
-        Player dummyPlayer2 = new ComputerPlayer();
         Road dummyRoad = new Road();
         dummyRoad.setOwner(dummyPlayer);
 
         assertFalse(node.canBuildSettlement(dummyPlayer), "Node should not be buildable by player without connecting road");
         node.setLeftRoad(dummyRoad);
         assertTrue(node.canBuildSettlement(dummyPlayer), "Node should be buildable by player");
-        node.setPlayer(dummyPlayer);
-        assertFalse(node.canBuildSettlement(dummyPlayer2), "Occupied node should not be buildable by player");
+        node2.setRightRoad(dummyRoad);
+        assertTrue(node2.canBuildSettlement(dummyPlayer), "Node should be buildable by player");
+        node3.setVertRoad(dummyRoad);
+        assertTrue(node3.canBuildSettlement(dummyPlayer), "Node should be buildable by player");
     }
 
     /**
@@ -53,9 +58,12 @@ public class TestNode {
         Node node2 = new Node(1);
         node.setLeft(node2);
         Player dummyPlayer = new ComputerPlayer();
-        node2.setPlayer(dummyPlayer);
+        Structure dummySettlement = new Settlement();
+        dummySettlement.setOwner(dummyPlayer);
+        node2.setStructure(dummySettlement);
 
         assertFalse(node.canBuildSettlement(dummyPlayer), "Node should not be buildable if neighbor is occupied");
+        assertFalse(node2.canBuildSettlement(dummyPlayer), "Occupied node should not be buildable by player");
     }
 
     /**
@@ -69,9 +77,11 @@ public class TestNode {
         node.setRight(new Node(2));
         node.setVert(new Node(3));
         Player dummyPlayer = new ComputerPlayer();
+        Structure dummySettlement = new Settlement();
+        dummySettlement.setOwner(dummyPlayer);
 
         assertEquals(0, node.getBuildableRoadNeighbors(dummyPlayer).size(), "Unoccupied node has no buildable roads");
-        node.setPlayer(dummyPlayer);
+        node.setStructure(dummySettlement);
         assertEquals(3, node.getBuildableRoadNeighbors(dummyPlayer).size(), "Occupied node has 3 buildable roads");
         node.setLeftRoad(new Road());
         assertEquals(2, node.getBuildableRoadNeighbors(dummyPlayer).size(), "Occupied node with left road has 2 buildable roads");

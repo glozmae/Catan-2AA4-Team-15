@@ -173,9 +173,8 @@ public class ComputerPlayer extends Player {
      * @param s The settlement object to place.
      */
     private void placeSettlement(Node node, Settlement s) {
-        node.setPlayer(this);
-        node.setStructure(s);
-        this.addStructure(s);
+        node.setStructure(s);       // Place structure on board
+        this.addStructure(s);       // Add to player inventory
     }
 
     /**
