@@ -1,4 +1,4 @@
-package TestPlayer;
+package TestTask3;
 
 import Player.Player;
 import Player.ComputerPlayer;
