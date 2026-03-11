@@ -279,7 +279,7 @@ public class ComputerPlayer extends Player {
             ResourceType[] types = ResourceType.values();
 
             int randomIndex = randomizer.nextInt(types.length);
-            if (getHand().getCount(types[randomIndex]) > 0) {
+            if (types[randomIndex] != ResourceType.DESERT && getHand().getCount(types[randomIndex]) > 0 ) {
                 getHand().removeCard(types[randomIndex], 1);
             }
         }

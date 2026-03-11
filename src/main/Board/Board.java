@@ -101,6 +101,13 @@ public class Board {
         // 4. Distribute Dice Numbers
         // This will automatically skip whichever tile is the Desert
         setupDiceNumbers();
+
+		for (Tile t : tiles) {
+			if (t.getType() == ResourceType.DESERT) {
+				robber = new Robber(t);
+				break;
+			}
+		}
     }
 
     public List<Tile> getTilesForRoll(int roll) {

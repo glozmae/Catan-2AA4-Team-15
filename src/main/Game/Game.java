@@ -218,7 +218,7 @@ public class Game {
         }
 
         // ------ Roller Sets new Robber ------------
-        board.getRobber().newRobber(getCurrentPlayer().setRobber(getBoard().getTiles()));
+        board.getRobber().newRobber(getCurrentPlayer().setRobber(board.getTiles()));
     }
 
     /**
@@ -316,7 +316,7 @@ public class Game {
         boolean first = true;
         for (Tile t : tiles) {
             ResourceType rt = t.getType();
-            if (rt == ResourceType.DESERT || getBoard().getRobber().hasRobber(t))
+            if (rt == ResourceType.DESERT || board.getRobber().hasRobber(t))
                 continue;
 
             if (!first)
