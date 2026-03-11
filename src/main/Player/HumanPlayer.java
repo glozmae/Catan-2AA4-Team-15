@@ -336,19 +336,39 @@ public class HumanPlayer extends Player {
         return nodes.get(nodeId);
     }
 
-    private boolean rollCommand(String command) {
+    /**
+     * Checks whether the command is a valid roll command.
+     * @param command input command
+     * @return tur if the command is "roll", otherwise false
+     */
+    static boolean rollCommand(String command) {
         return ROLL_PATTERN.matcher(command).matches();
     }
 
-    private boolean goCommand(String command) {
+    /**
+     * Checks whether the command is valid go command.
+     * @param command input command
+     * @return tur if the command is "go", otherwise false
+     */
+    static boolean goCommand(String command) {
         return GO_PATTERN.matcher(command).matches();
     }
 
-    private boolean listCommand(String command) {
+    /**
+     * Checks whether the command is valid list command.
+     * @param command input command
+     * @return ture if the command is "list", otherwise false
+     */
+    static boolean listCommand(String command) {
         return LIST_PATTERN.matcher(command).matches();
     }
 
-    private Integer parseSettlementNodeId(String command) {
+    /**
+     * Parses a build settlement command ad returns the target node id.
+     * @param command input command
+     * @return node id if the command is valid, otherwise null
+     */
+    static Integer parseSettlementNodeId(String command) {
         Matcher matcher = BUILD_SETTLEMENT.matcher(command);
         if (!matcher.matches()) {
             return null;
@@ -356,7 +376,12 @@ public class HumanPlayer extends Player {
         return Integer.parseInt(matcher.group(1));
     }
 
-    private Integer parseCityNodeId(String command) {
+    /**
+     * Parses a build city command ad returns the target node id.
+     * @param command input command
+     * @return node id if the command is valid, otherwise null
+     */
+    static Integer parseCityNodeId(String command) {
         Matcher matcher = BUILD_CITY.matcher(command);
         if (!matcher.matches()) {
             return null;
@@ -364,14 +389,19 @@ public class HumanPlayer extends Player {
         return Integer.parseInt(matcher.group(1));
     }
 
-    private int[] parseRoadNodeIds(String command) {
+    /**
+     * Parses a build road command and returns the two endpoint node ids.
+     * @param command input command
+     * @return array containing the two node ids if valid, otherwise null
+     */
+    static int[] parseRoadNodeIds(String command) {
         Matcher matcher = BUILD_ROAD.matcher(command);
         if (!matcher.matches()) {
             return null;
         }
-
         int fromNodeId = Integer.parseInt(matcher.group(1));
         int toNodeId = Integer.parseInt(matcher.group(2));
         return new int[] { fromNodeId, toNodeId };
     }
+
 }

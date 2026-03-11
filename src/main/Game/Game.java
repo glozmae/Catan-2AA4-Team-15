@@ -36,6 +36,7 @@ public class Game {
     /** list of players in game */
     private final List<Player> players;
 
+    /** Robber entity currently on the Board */
     private Robber robber;
 
     /** Dice for rolling */
@@ -375,7 +376,6 @@ public class Game {
 
         return total;
     }
-
 
     /**
      * Checks victory condition.
