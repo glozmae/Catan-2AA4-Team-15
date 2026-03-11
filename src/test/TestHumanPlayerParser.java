@@ -16,6 +16,21 @@ public class TestHumanPlayerParser {
     }
 
     @Test
+    void testList() {
+        assertTrue(HumanPlayer.listCommand("list"));
+    }
+
+    @Test
+    void testSettlement() {
+        assertEquals(12, HumanPlayer.parseSettlementNodeId("build settlement 12"));
+    }
+
+    @Test
+    void testCity() {
+        assertEquals(5, HumanPlayer.parseCityNodeId("build city 5"));
+    }
+
+    @Test
     void testRoad() {
         int[] result = HumanPlayer.parseRoadNodeIds("build road 3,4");
         assertNotNull(result);
