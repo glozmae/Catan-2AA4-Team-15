@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import Board.Board;
 import Board.Node;
+import Board.Tile;
 import Game.Dice;
 import Game.Game;
 import GameResources.City;
@@ -252,5 +253,85 @@ void testTakeTurnCanUpgradeSettlementToCity() {
             return -1;
         }
         return Integer.parseInt(owned.toString());
+    }
+
+    @Test
+    void testTakeTurnBuildsSettlement() {
+        ComputerPlayer ai = new ComputerPlayer(100);
+        ComputerPlayer other = new ComputerPlayer(101);
+
+        Game game = new Game(
+                java.util.List.of(ai, other),
+                new FixedDice(6),
+                new Board(),
+                10,
+                20
+        );
+
+        // Run setup so the AI has a starting Settlement and Road on the board
+        ai.setup(game);
+        int initialSettlements = ai.getSettlements().size();
+
+        // Give the AI exactly enough resources to build ONE settlement
+        ai.addResource(ResourceType.BRICK);
+        ai.addResource(ResourceType.LUMBER);
+        ai.addResource(ResourceType.WOOL);
+        ai.addResource(ResourceType.GRAIN);
+
+        boolean settlementBuilt = false;
+
+        // Give the AI a few turns to execute the move.
+        // Since it also has resources for a road, it might randomly pick road first,
+        // so we replenish resources if it makes the "wrong" random choice.
+        for (int i = 0; i < 20; i++) {
+            ai.takeTurn(game);
+
+            if (ai.getSettlements().size() > initialSettlements) {
+                settlementBuilt = true;
+                break;
+            }
+
+            // If it spent resources on a road instead, give them back for the next attempt
+            if (ai.getResourceAmount(ResourceType.GRAIN) < 1) {
+                ai.addResource(ResourceType.BRICK);
+                ai.addResource(ResourceType.LUMBER);
+                ai.addResource(ResourceType.WOOL);
+                ai.addResource(ResourceType.GRAIN);
+            }
+        }
+
+        assertTrue(settlementBuilt, "AI should eventually build a settlement when it has resources and a valid spot at the end of its road.");
+    }
+
+    @Test
+    void testRobberDiscardReducesHandToSeven() {
+        ComputerPlayer ai = new ComputerPlayer(50);
+
+        // Give the player 10 identical resources (simulating a hand > 7)
+        for (int i = 0; i < 10; i++) {
+            ai.addResource(ResourceType.LUMBER);
+        }
+
+        // Verify initial hand size
+        assertEquals(10, ai.getHand().getCount(), "Hand should start with 10 cards");
+
+        // Trigger the discard logic
+        ai.robberDiscard();
+
+        // Verify the hand was correctly reduced
+        assertEquals(7, ai.getHand().getCount(), "Hand should be reduced to exactly 7 cards");
+    }
+
+    @Test
+    void testSetRobberSelectsValidTile() {
+        ComputerPlayer ai = new ComputerPlayer(99);
+        Board board = new Board(); // Generate a standard board
+
+        // Ask the AI to pick a tile for the robber
+        Tile chosenTile = ai.setRobber(board.getTiles());
+
+        // Verify the choice is valid
+        assertNotNull(chosenTile, "AI should return a valid tile, not null");
+        assertTrue(board.getTiles().contains(chosenTile), "The chosen tile must be from the provided list");
     }
 }
