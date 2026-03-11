@@ -121,8 +121,6 @@ public class HumanPlayer extends Player {
         }
     }
 
-
-
     @Override
     public void setup(Game game) {
         // Setup is handled elsewhere for now.
