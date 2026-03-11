@@ -11,6 +11,8 @@ import GameResources.ResourceType;
 import GameResources.Road;
 import GameResources.Settlement;
 import GameResources.Structure;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class implements the human player.
@@ -18,6 +20,18 @@ import GameResources.Structure;
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
 public class HumanPlayer extends Player {
+
+    private static final Pattern ROLL_PATTERN = Pattern.compile("^roll$", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern GO_PATTERN = Pattern.compile("^go$", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern  LIST_PATTERN = Pattern.compile("^list$", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern  BUILD_SETTLEMENT = Pattern.compile("^build\\s+settlement\\s+(\\d+)$", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern  BUILD_CITY = Pattern.compile("^build\\s+city\\s+(\\d+)$", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern  BUILD_ROAD = Pattern.compile("^build\\s+road\\s+\\[?(\\d+)\\s*,\\s*(\\d+)\\]?$", Pattern.CASE_INSENSITIVE);
 
     /** Reads commands from the console for this human player. */
     private final Scanner commandReader;
