@@ -152,7 +152,7 @@ public class Game {
         SetupManager setup = new SetupManager(board, System.currentTimeMillis());
         setup.run(players);
         currentPlayerIndex = 0;
-        visualizer.setupJSON();
+        visualizer.setup();
     }
 
     /** One player turn. */
@@ -210,7 +210,7 @@ public class Game {
     public void playOneTurn() {
         nextTurn();
         checkWin();
-        this.visualizer.updateJSON();
+        this.visualizer.update();
     }
 
     /**

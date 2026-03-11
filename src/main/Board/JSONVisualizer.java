@@ -41,7 +41,7 @@ public class JSONVisualizer implements Visualizer {
      * Creates the base map JSON based on the board state
      */
     @Override
-    public void setupJSON() {
+    public void setup() {
         List<Tile> tiles = board.getTiles();
         ObjectNode baseMap = objectMapper.createObjectNode();
         List<ObjectNode> tileNodes = new ArrayList<>();
@@ -75,7 +75,7 @@ public class JSONVisualizer implements Visualizer {
      * Updates state JSON based on current board state
      */
     @Override
-    public void updateJSON() {
+    public void update() {
         List<Node> nodes = board.getNodes();
         ObjectNode state = objectMapper.createObjectNode();
         List<ObjectNode> roadNodes = new ArrayList<>();

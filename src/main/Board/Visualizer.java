@@ -2,15 +2,15 @@ package Board;
 
 public interface Visualizer {
     /**
-     * Creates the base map JSON based on current board state
+     * Creates the base map based on current board state
      *
      */
-    public void setupJSON();
+    public void setup();
 
     /**
-     * Updates state JSON based on current board state
+     * Updates state based on current board state
      *
      */
-    public void updateJSON();
+    public void update();
 
 }

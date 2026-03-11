@@ -26,12 +26,12 @@ class TestJSONVisualizer {
     @Test
     void setupJSON() throws IOException {
         Visualizer visualizer = new JSONVisualizer(new ObjectMapper(), new Board());
-        assertDoesNotThrow(() -> visualizer.setupJSON(), "Ensures that JSON is set up without any errors.");
+        assertDoesNotThrow(() -> visualizer.setup(), "Ensures that JSON is set up without any errors.");
     }
 
     @Test
     void updateJSON() {
         Visualizer visualizer = new JSONVisualizer(new ObjectMapper(), new Board());
-        assertDoesNotThrow(() -> visualizer.updateJSON(), "Ensures that JSON is set up without any errors.");
+        assertDoesNotThrow(() -> visualizer.update(), "Ensures that JSON is set up without any errors.");
     }
 }
