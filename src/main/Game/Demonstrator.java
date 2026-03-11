@@ -4,6 +4,7 @@ import java.util.List;
 
 import Player.ComputerPlayer;
 import Player.Player;
+import Player.HumanPlayer;
 
 /**
  * Entry point for launching and simulation Catan game
@@ -12,7 +13,7 @@ import Player.Player;
  *
  * @author Elizabeth Glozman, 400559660, McMaster University
  */
-public class Main {
+public class Demonstrator {
 
     /**
      * Program entry point
@@ -36,7 +37,7 @@ public class Main {
 
         // creaet four computer players based of seed (ensures no repeats)
         List<Player> players = List.of(
-                new ComputerPlayer(seed + 1),
+                new HumanPlayer(),
                 new ComputerPlayer(seed + 2),
                 new ComputerPlayer(seed + 3),
                 new ComputerPlayer(seed + 4));

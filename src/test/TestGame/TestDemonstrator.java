@@ -10,14 +10,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import Game.Main;
+import Game.Demonstrator;
 
 /**
  * Unit test for Main.
  *
  * @author Parnia Yazdinia, 400567795, McMaster University
  */
-public class TestMain {
+public class TestDemonstrator {
     private final PrintStream originalOut = System.out;
     private static final int TIMEOUT = 5000;
 
@@ -38,7 +38,7 @@ public class TestMain {
     @Test
     @Timeout(TIMEOUT)
     public void mainRuns() {
-        Main.main(new String[0]);
+        Demonstrator.main(new String[0]);
         assertTrue(true);
     }
 }
