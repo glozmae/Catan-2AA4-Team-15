@@ -40,12 +40,6 @@ public class Node {
 	 */
 	private Node vert;
 
-//	/**
-//	 * The Player who currently owns a structure on this node.
-//	 * Null if the node is unoccupied.
-//	 */
-//	private Player player;
-
 	/**
 	 * The type of structure built on this node (e.g., SETTLEMENT, CITY).
 	 * Null if no structure exists.
