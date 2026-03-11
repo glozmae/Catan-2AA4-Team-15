@@ -40,11 +40,11 @@ public class Node {
 	 */
 	private Node vert;
 
-	/**
-	 * The Player who currently owns a structure on this node.
-	 * Null if the node is unoccupied.
-	 */
-	private Player player;
+//	/**
+//	 * The Player who currently owns a structure on this node.
+//	 * Null if the node is unoccupied.
+//	 */
+//	private Player player;
 
 	/**
 	 * The type of structure built on this node (e.g., SETTLEMENT, CITY).
@@ -131,7 +131,10 @@ public class Node {
 	 * Gets the player who currently owns the structure on this node.
 	 * @return The Player object, or null if unoccupied.
 	 */
-	public Player getPlayer() { return player; }
+	public Player getPlayer() {
+		if (this.structure != null) return this.structure.getOwner();
+		return null;
+	}
 
 	/**
 	 * Gets the structure details (e.g. type of building) on this node.
@@ -156,15 +159,6 @@ public class Node {
 	 * @return The Road object if one is built, otherwise null.
 	 */
 	public Road getVertRoad() { return vertRoad; }
-
-	/**
-	 * Sets the player for this node. Only works if no player is currently assigned.
-	 */
-	public void setPlayer(Player player) {
-		if (this.player == null) {
-			this.player = player;
-		}
-	}
 
 	/**
 	 * Sets the structure for this node. Only works if no structure is currently assigned.
@@ -209,7 +203,7 @@ public class Node {
 	 */
 	public boolean canBuildSettlement(Player p) {
 		// 1. Occupied Check: Is there already a building here?
-		if (this.player != null) return false;
+		if (this.getPlayer() != null) return false;
 
 		// 2. Distance Rule: Are any immediate neighbors occupied?
 		// (This enforces the "2 nodes away" rule)
@@ -264,9 +258,9 @@ public class Node {
 	 * Returns true if ANY neighbor has a settlement/city.
 	 */
 	private boolean hasOccupiedNeighbor() {
-		if (this.left != null && this.left.player != null) return true;
-		if (this.right != null && this.right.player != null) return true;
-		if (this.vert != null && this.vert.player != null) return true;
+		if (this.left != null && this.left.getPlayer() != null) return true;
+		if (this.right != null && this.right.getPlayer() != null) return true;
+		if (this.vert != null && this.vert.getPlayer() != null) return true;
 		return false;
 	}
 
@@ -287,11 +281,11 @@ public class Node {
 	private boolean canExtendRoadFromHere(Player p) {
 		// Case 1: You own the settlement on this node.
 		// You can always build roads extending from your own house.
-		if (this.player != null && this.player.equals(p)) return true;
+		if (this.getPlayer() != null && this.getPlayer().equals(p)) return true;
 
 		// Case 2: An ENEMY owns the settlement on this node.
 		// Your road is BLOCKED. You cannot extend past their settlement.
-		if (this.player != null && !this.player.equals(p)) return false;
+		if (this.getPlayer() != null && !this.getPlayer().equals(p)) return false;
 
 		// Case 3: The node is empty (no settlement).
 		// You can extend if you have a road reaching this node.
