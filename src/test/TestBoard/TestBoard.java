@@ -1,7 +1,6 @@
 package TestBoard;
 
 import Board.Board;
-import Board.DiceNum;
 import Board.Tile;
 import Board.Node;
 import Player.Player;
@@ -30,19 +29,19 @@ public class TestBoard {
     /**
      * Check getTilesForRoll returns a matching DiceNum for each valid roll.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void getTilesForRoll() {
         Board board = new Board();
         for (int i = 2; i < 6; i++) {
-            DiceNum diceNum = board.getTilesForRoll(i);
-            assertNotNull(diceNum, "DiceNum should not be null for " + i);
-            assertEquals(i, diceNum.getNumber(), "Value of the diceNums in the Board");
+            List<Tile> tiles = board.getTilesForRoll(i);
+            assertNotNull(tiles, "Tiles should not be null for " + i);
+            assertEquals(i, tiles.getFirst().getProductionNumber(), "Dice value of the tiles in the Board");
         }
         for (int i = 8; i <= 12; i++) {
-            DiceNum diceNum = board.getTilesForRoll(i);
-            assertNotNull(diceNum, "DiceNum should not be null for " + i);
-            assertEquals(i, diceNum.getNumber(), "Value of the diceNums in the Board");
+            List<Tile> tiles = board.getTilesForRoll(i);
+            assertNotNull(tiles, "Tiles should not be null for " + i);
+            assertEquals(i, tiles.getFirst().getProductionNumber(), "Dice value of the tiles in the Board");
         }
     }
 
@@ -50,7 +49,7 @@ public class TestBoard {
      * Ensure getTiles returns a non-null list of size 19.
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     public void getTiles() {
         Board board = new Board();
         List<Tile> tiles = board.getTiles();
@@ -63,7 +62,7 @@ public class TestBoard {
      * Ensure getNodes returns a non-null list of size 54.
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     public void getNodes() {
         Board board = new Board();
         List<Node> nodes = board.getNodes();

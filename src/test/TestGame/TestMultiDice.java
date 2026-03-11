@@ -27,8 +27,8 @@ public class TestMultiDice {
     /**
      * Boundary test: after rolling many times, die 1 must stay within valid range.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void die1Range() {
         MultiDice dice = new MultiDice(123);
         for (int i = 0; i < 200; i++) {
@@ -41,8 +41,8 @@ public class TestMultiDice {
     /**
      * Boundary test: after rolling many times, die 2 must stay within valid range.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void die2Range() {
         MultiDice dice = new MultiDice(123);
         for (int i = 0; i < 200; i++) {
@@ -55,8 +55,8 @@ public class TestMultiDice {
     /**
      * Boundary test: the sum of two dice should always stay in [2, 12].
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void sumRange() {
         MultiDice dice = new MultiDice(123);
 
@@ -69,8 +69,8 @@ public class TestMultiDice {
     /**
      * Contract test: roll() should equal the sum of the stored dice values.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void rollMatchesDice() {
         MultiDice dice = new MultiDice(456);
 
@@ -83,8 +83,8 @@ public class TestMultiDice {
     /**
      * Determinism test: With a seed, MultiDice should match Java's Random sequence exactly.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void seededFirstRoll() {
         int seed = 999;
 

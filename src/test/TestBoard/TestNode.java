@@ -28,7 +28,7 @@ public class TestNode {
      * Tests that a node is buildable only with a connected road and if unoccupied.
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     public void canBuildSettlement() {
         Node node = new Node(0);
         Player dummyPlayer = new ComputerPlayer();
@@ -47,7 +47,7 @@ public class TestNode {
      * Tests that adjacent occupied node prevents building a settlement.
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     void canBuildSettlement2() {
         Node node = new Node(0);
         Node node2 = new Node(1);
@@ -62,7 +62,7 @@ public class TestNode {
      * Tests if buildable road neighbours are properly identified based on occupied spots
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     public void getBuildableRoadNeighbors() {
         Node node = new Node(0);
         node.setLeft(new Node(1));

@@ -35,8 +35,8 @@ public class TestMain {
      * Smoke test: main should run without throwing an exception.
      * Suppresses print statements from the game to prevent clutter in test output.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void mainRuns() {
         Main.main(new String[0]);
         assertTrue(true);

@@ -3,8 +3,6 @@ package TestBoard;
 import Board.Node;
 import Board.Tile;
 import GameResources.ResourceType;
-import Player.Player;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -37,6 +35,7 @@ public class TestTile {
      * Checks that getNodes returns nodes for a properly constructed tile.
      */
     @Test
+    @Timeout(TIMEOUT)
     public void getNodes() {
         Node node0 = new Node(0);
         Node node1 = new Node(1);
