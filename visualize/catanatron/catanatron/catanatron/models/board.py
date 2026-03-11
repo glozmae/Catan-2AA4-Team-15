@@ -187,8 +187,10 @@ class Board:
     def build_road(self, color, edge):
         buildable = self.buildable_edges(color)
         inverted_edge = (edge[1], edge[0])
-        if edge not in buildable and inverted_edge not in buildable:
-            raise ValueError("Invalid Road Placement")
+        self.roads[edge] = color
+        self.roads[inverted_edge] = color
+        self.buildable_edges_cache = {}
+        return self.road_color, self.road_color, self.road_lengths
 
         self.roads[edge] = color
         self.roads[inverted_edge] = color
