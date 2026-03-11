@@ -148,42 +148,41 @@ public class ComputerPlayer extends Player {
     @Override
     public void setup(Game game) {
         List<Node> allNodes = game.getBoard().getNodes();
-        Node chosenNode = null;
-        int attempts = 0;
 
-        // 1. Find a valid settlement spot
-        // Note: We cannot use node.canBuildSettlement() here because that method checks
-        // for road connections, which don't exist yet in the setup phase.
-        // We strictly check the Distance Rule manually.
-        while (chosenNode == null && attempts < 500) {
-            Node candidate = allNodes.get(randomizer.nextInt(allNodes.size()));
+        // Loop twice to place 2 starting Settlements and 2 starting Roads
+        for (int i = 0; i < 2; i++) {
+            Node chosenNode = null;
+            int attempts = 0;
 
-            // Check if node is empty AND passes distance rule (no occupied neighbors)
-            if (candidate.getPlayer() == null && !isNeighborOccupied(candidate)) {
-                chosenNode = candidate;
+            // 1. Find a valid settlement spot
+            while (chosenNode == null && attempts < 500) {
+                Node candidate = allNodes.get(randomizer.nextInt(allNodes.size()));
+
+                // Check if node is empty AND passes distance rule (no occupied neighbors)
+                if (candidate.getPlayer() == null && !isNeighborOccupied(candidate)) {
+                    chosenNode = candidate;
+                }
+                attempts++;
             }
-            attempts++;
-        }
 
-        if (chosenNode == null) {
-            System.err.println("Computer could not find a valid setup spot!");
-            return;
-        }
+            if (chosenNode == null) {
+                System.err.println(this + " could not find a valid setup spot!");
+                continue;
+            }
 
-        // 2. Place Settlement
-        placeSettlement(chosenNode, new Settlement());
+            // 2. Place Settlement
+            placeSettlement(chosenNode, new Settlement());
 
-        // 3. Place Road connecting to it
-        // Check which directions actually exist on the grid (handle board edges)
-        List<Node> neighbors = new ArrayList<>();
-        if (chosenNode.getLeft() != null) neighbors.add(chosenNode.getLeft());
-        if (chosenNode.getRight() != null) neighbors.add(chosenNode.getRight());
-        if (chosenNode.getVert() != null) neighbors.add(chosenNode.getVert());
+            // 3. Place Road connecting to it
+            List<Node> neighbors = new ArrayList<>();
+            if (chosenNode.getLeft() != null) neighbors.add(chosenNode.getLeft());
+            if (chosenNode.getRight() != null) neighbors.add(chosenNode.getRight());
+            if (chosenNode.getVert() != null) neighbors.add(chosenNode.getVert());
 
-        // Randomly pick one available direction for the initial road
-        if (!neighbors.isEmpty()) {
-            Node roadTarget = neighbors.get(randomizer.nextInt(neighbors.size()));
-            placeRoad(chosenNode, roadTarget, new Road());
+            if (!neighbors.isEmpty()) {
+                Node roadTarget = neighbors.get(randomizer.nextInt(neighbors.size()));
+                placeRoad(chosenNode, roadTarget, new Road());
+            }
         }
     }
 

@@ -55,9 +55,12 @@ public class PlayerHand {
 	 * @return size of hand
 	 */
 	public int getCount() {
-		return this.count.size();
+		int totalCards = 0;
+		for (int amount : this.count.values()) {
+			totalCards += amount; // <--- This actually adds up your cards!
+		}
+		return totalCards;
 	}
-
 	/**
 	 * Adds the specified amount of the given resource type to the hand
 	 * 

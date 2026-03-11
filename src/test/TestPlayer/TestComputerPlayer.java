@@ -57,7 +57,7 @@ public class TestComputerPlayer {
     }
 
     @Test
-    void testSetupPlacesOneSettlementAndOneRoad() {
+    void testSetupPlacesTwoSettlementsAndTwoRoads() {
         ComputerPlayer ai = new ComputerPlayer(7);
         ComputerPlayer other = new ComputerPlayer(99);
 
@@ -72,24 +72,17 @@ public class TestComputerPlayer {
         ai.setup(game);
 
         int ownedNodes = 0;
-        Node ownedNode = null;
 
         for (Node node : game.getBoard().getNodes()) {
             if (node.getPlayer() == ai) {
                 ownedNodes++;
-                ownedNode = node;
             }
         }
 
-        assertEquals(1, ownedNodes, "Setup should place exactly one settlement node");
-        assertNotNull(ownedNode, "Computer player should own one node after setup");
-        assertTrue(ownedNode.getStructure() instanceof Settlement,
-                "Owned node should contain a Settlement after setup");
-
-        assertEquals(1, ai.getSettlements().size(),
-                "Player should have exactly one settlement after setup");
-        assertEquals(1, ai.getRoads().size(),
-                "Player should have exactly one road after setup");
+        // Updated assertions from 1 to 2!
+        assertEquals(2, ownedNodes, "Setup should place exactly two settlement nodes");
+        assertEquals(2, ai.getSettlements().size(), "Player should have exactly two settlements after setup");
+        assertEquals(2, ai.getRoads().size(), "Player should have exactly two roads after setup");
     }
 
     @Test
@@ -311,5 +304,33 @@ void testTakeTurnCanUpgradeSettlementToCity() {
         // Verify the choice is valid
         assertNotNull(chosenTile, "AI should return a valid tile, not null");
         assertTrue(board.getTiles().contains(chosenTile), "The chosen tile must be from the provided list");
+    }
+
+    @Test
+    void testRobberDiscardReducesHandToSeven() {
+        // Create a player (using a seed for consistent testing)
+        ComputerPlayer ai = new ComputerPlayer(50);
+
+        // 1. Give the player exactly 8 total cards to force the hand size over 7.
+        // We spread them out across different resource types so that the
+        // randomizer inside robberDiscard() easily finds cards to discard.
+        ai.addResource(ResourceType.LUMBER);
+        ai.addResource(ResourceType.LUMBER);
+        ai.addResource(ResourceType.BRICK);
+        ai.addResource(ResourceType.BRICK);
+        ai.addResource(ResourceType.WOOL);
+        ai.addResource(ResourceType.WOOL);
+        ai.addResource(ResourceType.GRAIN);
+        ai.addResource(ResourceType.GRAIN);
+
+        // 2. Pre-condition check: Ensure the hand actually holds 8 cards.
+        // Because you fixed PlayerHand.getCount(), this will now pass perfectly!
+        assertEquals(8, ai.getHand().getCount(), "Pre-condition: Hand must hold exactly 8 cards before discard.");
+
+        // 3. Trigger the method we actually want to test
+        ai.robberDiscard();
+
+        // 4. Post-condition check: The while loop should have stopped exactly at 7.
+        assertEquals(7, ai.getHand().getCount(), "Post-condition: Hand should be reduced to exactly 7 cards.");
     }
 }
