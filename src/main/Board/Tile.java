@@ -19,17 +19,21 @@ public class Tile {
 	 * The type of resource this tile produces (e.g., WOOD, WHEAT, DESERT).
 	 */
 	private ResourceType type;
+    /**
+     * The type of resource this tile produces (e.g., WOOD, WHEAT, DESERT).
+     */
+    private ResourceType type;
 
-	/**
-	 * Array containing the 6 nodes (vertices) surrounding this hex.
-	 * These are stored in a specific order to facilitate neighbor linking.
-	 */
-	private Node[] nodes;
+    /**
+     * Array containing the 6 nodes (vertices) surrounding this hex.
+     * These are stored in a specific order to facilitate neighbor linking.
+     */
+    private Node[] nodes;
 
-	/**
-	 * Unique identifier for the tile, usually assigned during board generation.
-	 */
-	private int id;
+    /**
+     * Unique identifier for the tile, usually assigned during board generation.
+     */
+    private int id;
 
 	/**
 	 * The production number assigned to this tile.
@@ -72,14 +76,44 @@ public class Tile {
 		nodes[4].setRight(nodes[5]);
 		nodes[5].setRight(nodes[0]);
 	}
+    private Integer productionNumber;
 
-	/**
-	 * Gets the resource type this tile provides.
-	 * @return ResourceType enum value.
-	 */
-	public ResourceType getType() {
-		return this.type;
-	}
+    /**
+     * Constructor for a Tile.
+     * * @param id    Unique identifier for the hex.
+     * @param nodes An array of exactly 6 Node objects that form the perimeter.
+     * @param type  The ResourceType associated with this hex.
+     * @throws IllegalArgumentException if the nodes array is not exactly size 6.
+     */
+    public Tile(int id, Node[] nodes, ResourceType type) {
+        this.id = id;
+
+        // VALIDATION: Ensure the passed array is the correct size for a hexagon.
+        if (nodes == null || nodes.length != 6) {
+            throw new IllegalArgumentException("A tile requires exactly 6 valid nodes.");
+        }
+        this.nodes = nodes;
+
+        // Automatically establish the directional links between the provided nodes.
+        nodeConnector();
+        this.type = type;
+        this.productionNumber = null;
+    }
+
+    /**
+     * Internal logic to link the 6 nodes together.
+     * This method defines the physical layout of the hexagon by assigning
+     * neighbors (Left, Right, Vertical) to each node based on its position
+     * in the perimeter array.
+     */
+    private void nodeConnector() {
+        nodes[0].setVert(nodes[1]);
+        nodes[1].setLeft(nodes[2]);
+        nodes[2].setLeft(nodes[3]);
+        nodes[3].setVert(nodes[4]);
+        nodes[4].setRight(nodes[5]);
+        nodes[5].setRight(nodes[0]);
+    }
 
 	public Node[] getNodes() {
 		return nodes;
@@ -100,14 +134,17 @@ public class Tile {
 	public void setProductionNumber(Integer productionNumber) {
 		this.productionNumber = productionNumber;
 	}
+    /**
+     * Gets the resource type this tile provides.
+     * @return ResourceType enum value.
+     */
+    public ResourceType getType() {
+        return this.type;
+    }
 
-	/**
-	 * Gets the unique ID of this tile.
-	 * @return integer ID.
-	 */
-	public int getId() {
-		return id;
-	}
+    public Node[] getNodes() {
+        return nodes;
+    }
 
 	/**
 	 * Returns a formatted string representation of the tile for debugging.
@@ -118,4 +155,34 @@ public class Tile {
 		String numberStr = (this.productionNumber == null) ? "-" : this.productionNumber.toString();
 		return String.format("Tile ID: %-2d | Resource: %-8s | Number: %s", id, this.type, numberStr);
 	}
+    /**
+     * Gets the production number assigned to this tile.
+     *
+     * @return production number or null
+     */
+    public Integer getProductionNumber() {
+        return productionNumber;
+    }
+
+    public void setProductionNumber(Integer productionNumber) {
+        this.productionNumber = productionNumber;
+    }
+
+    /**
+     * Gets the unique ID of this tile.
+     * @return integer ID.
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Returns a formatted string representation of the tile for debugging.
+     * @return A string showing the ID, the resource type, and the production number.
+     */
+    @Override
+    public String toString() {
+        String numberStr = (this.productionNumber == null) ? "-" : this.productionNumber.toString();
+        return String.format("Tile ID: %-2d | Resource: %-8s | Number: %s", id, this.type, numberStr);
+    }
 }

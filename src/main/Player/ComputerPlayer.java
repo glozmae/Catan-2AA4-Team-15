@@ -207,65 +207,67 @@ public class ComputerPlayer extends Player {
         Structure oldStructure = node.getStructure();
         if (oldStructure instanceof Settlement) {
             this.removeStructure(oldStructure);
-        }
-        node.setStructure(c);
-        this.addStructure(c);
-    }
-
-    /**
-     * Helper to place a road on the edge between two nodes.
-     * * IMPORTANT: This method attempts to set the road on both the 'start' node
-     * and the 'end' node to ensure the connection is bidirectional.
-     * *
-     */
-    private void placeRoad(Node start, Node end, Road r) {
-
-        // We must set the road on BOTH nodes involved in the edge
-        if (start.getLeft() == end) {
-            start.setLeftRoad(r);
-            end.setRightRoad(r); // Assumes Left's inverse is Right
-        } else if (start.getRight() == end) {
-            start.setRightRoad(r);
-            end.setLeftRoad(r); // Assumes Right's inverse is Left
-        } else if (start.getVert() == end) {
-            start.setVertRoad(r);
-            end.setVertRoad(r); // Assumes Vert's inverse is Vert
+            if (node.getStructure() instanceof Settlement) {
+                this.removeStructure(node.getStructure());
+            }
+            node.setStructure(c);
+            this.addStructure(c);
         }
 
-        this.addRoad(r);
-    }
+        /**
+         * Helper to place a road on the edge between two nodes.
+         * * IMPORTANT: This method attempts to set the road on both the 'start' node
+         * and the 'end' node to ensure the connection is bidirectional.
+         * *
+         */
+        private void placeRoad(Node start, Node end, Road r) {
 
-    /**
-     * Manual Distance Rule check for Setup Phase.
-     * Returns true if any adjacent node has a player on it.
-     */
-    private boolean isNeighborOccupied(Node n) {
-        if (n.getLeft() != null && n.getLeft().getPlayer() != null) return true;
-        if (n.getRight() != null && n.getRight().getPlayer() != null) return true;
-        if (n.getVert() != null && n.getVert().getPlayer() != null) return true;
-        return false;
-    }
+            // We must set the road on BOTH nodes involved in the edge
+            if (start.getLeft() == end) {
+                start.setLeftRoad(r);
+                end.setRightRoad(r); // Assumes Left's inverse is Right
+            } else if (start.getRight() == end) {
+                start.setRightRoad(r);
+                end.setLeftRoad(r); // Assumes Right's inverse is Left
+            } else if (start.getVert() == end) {
+                start.setVertRoad(r);
+                end.setVertRoad(r); // Assumes Vert's inverse is Vert
+            }
 
-    // --- Payment Helpers ---
-    // These remove the required resources from the player's hand.
+            this.addRoad(r);
+        }
 
-    private void payForRoad() {
-        removeResource(ResourceType.BRICK);
-        removeResource(ResourceType.LUMBER);
-    }
+        /**
+         * Manual Distance Rule check for Setup Phase.
+         * Returns true if any adjacent node has a player on it.
+         */
+        private boolean isNeighborOccupied(Node n) {
+            if (n.getLeft() != null && n.getLeft().getPlayer() != null) return true;
+            if (n.getRight() != null && n.getRight().getPlayer() != null) return true;
+            if (n.getVert() != null && n.getVert().getPlayer() != null) return true;
+            return false;
+        }
 
-    private void payForSettlement() {
-        removeResource(ResourceType.BRICK);
-        removeResource(ResourceType.LUMBER);
-        removeResource(ResourceType.WOOL);
-        removeResource(ResourceType.GRAIN);
-    }
+        // --- Payment Helpers ---
+        // These remove the required resources from the player's hand.
 
-    private void payForCity() {
-        removeResource(ResourceType.GRAIN);
-        removeResource(ResourceType.GRAIN);
-        removeResource(ResourceType.ORE);
-        removeResource(ResourceType.ORE);
-        removeResource(ResourceType.ORE);
+        private void payForRoad() {
+            removeResource(ResourceType.BRICK);
+            removeResource(ResourceType.LUMBER);
+        }
+
+        private void payForSettlement() {
+            removeResource(ResourceType.BRICK);
+            removeResource(ResourceType.LUMBER);
+            removeResource(ResourceType.WOOL);
+            removeResource(ResourceType.GRAIN);
+        }
+
+        private void payForCity() {
+            removeResource(ResourceType.GRAIN);
+            removeResource(ResourceType.GRAIN);
+            removeResource(ResourceType.ORE);
+            removeResource(ResourceType.ORE);
+            removeResource(ResourceType.ORE);
+        }
     }
-}

@@ -82,8 +82,8 @@ public class TestGame {
     /**
      * Boundary test: constructor accepts minimum valid number of players.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void minPlayersAccepted() {
         Game game = new Game(makePlayers(2), new FixedDice(6), 10, 5);
         assertEquals(2, game.getPlayers().size(), "game stores 2 players");
@@ -92,8 +92,8 @@ public class TestGame {
     /**
      * Boundary test: constructor accepts maximum valid number of players.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void maxPlayersAccepted() {
         Game game = new Game(makePlayers(4), new FixedDice(6), 10, 5);
         assertEquals(4, game.getPlayers().size(), "game stores 4 players");
@@ -102,8 +102,8 @@ public class TestGame {
     /**
      * Tests the initial state right after construction.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void initialState() {
         List<Player> players = makePlayers(2);
         Game game = new Game(players, new FixedDice(8), 10, 5);
@@ -120,8 +120,8 @@ public class TestGame {
     /**
      * Tests that rollMultiDice delegates to the dice object.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void multiDiceReturnsDiceRoll() {
         Game game = new Game(makePlayers(2), new FixedDice(9), 10, 5);
         assertEquals(9, game.rollMultiDice(), "rollMultiDice returns dice roll");
@@ -130,8 +130,8 @@ public class TestGame {
     /**
      * Tests that player list returned is not changable.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void playersListIsUnmodifiable() {
         Game game = new Game(makePlayers(2), new FixedDice(6), 10, 5);
 
@@ -147,8 +147,8 @@ public class TestGame {
     /**
      * Boundary test: win points must be positive.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void badWinPointsRejected() {
         assertThrows(IllegalArgumentException.class, () -> new Game(makePlayers(2), new FixedDice(6), 0, 5));
     }
@@ -156,8 +156,8 @@ public class TestGame {
     /**
      * Boundary test: maximum rounds must be in the valid range.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void badRoundsRejected() {
         assertThrows(IllegalArgumentException.class, () -> new Game(makePlayers(2), new FixedDice(6), 10, 0));
     }
@@ -165,8 +165,8 @@ public class TestGame {
     /**
      * Tests that null dice is rejected.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void nullDiceRejected() {
         assertThrows(NullPointerException.class, () -> new Game(makePlayers(2), null, 10, 5));
     }
@@ -174,8 +174,8 @@ public class TestGame {
     /**
      * Tests that null players list is rejected.
      */
-    @Test()
-    @Timeout(value = TIMEOUT)
+    @Test
+    @Timeout(TIMEOUT)
     public void nullPlayersRejected() {
         assertThrows(NullPointerException.class, () -> new Game(null, new FixedDice(6), 10, 5));
     }

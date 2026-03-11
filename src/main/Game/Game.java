@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+
 import Board.Board;
+import Board.Tile;
 import Board.Node;
 import Board.SetupManager;
 import Board.Tile;
@@ -222,6 +224,14 @@ public class Game {
 
         List<Tile> tiles = board.getTilesForRoll(roll);
         if (tiles.isEmpty()) {
+
+        // Robber ignored
+        if (roll == 7) {
+            return;
+        }
+        
+        List<Tile> tiles = board.getTilesForRoll(roll);
+        if(tiles.isEmpty()){
             return;
         }
 
@@ -232,6 +242,9 @@ public class Game {
 
             ResourceType type = tile.getType();
             if (type == ResourceType.DESERT) {
+
+            ResourceType type = tile.getType();
+            if (type == ResourceType.DESERT)
                 continue;
             }
 
@@ -419,12 +432,18 @@ public class Game {
         if (tiles.isEmpty()) {
             System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
                     + ": no tiles produced");
+        if (tiles.isEmpty()){
+            System.out.print("Producing: [] || ");
             return;
         }
         StringBuilder sb = new StringBuilder();
 
         for (Tile tile : tiles) {
             if (robber != null && robber.hasRobber(tile)) {
+        boolean first = true;
+        for (Tile t : tiles) {
+            ResourceType rt = t.getType();
+            if (rt == ResourceType.DESERT)
                 continue;
             }
 
@@ -446,6 +465,12 @@ public class Game {
             System.out.println(turnCounter + " / " + (getCurrentPlayer().getId() + 1)
                     + ": producing [" + sb + "]");
         }
+            sb.append(rt).append(" from Tile ").append(t.getId());
+            first = false;
+        }
+
+        sb.append("] || ");
+        System.out.print(sb.toString());
     }
 
     /**

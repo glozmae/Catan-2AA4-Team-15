@@ -139,6 +139,7 @@ public abstract class Player {
 	public int calculateVictoryPoints() {
 		int total = 0;
 		for (Structure structure : structures){
+		for (Structure structure : structures) {
 			total += structure.getVictoryPoints();
 		}
 		return total;
@@ -209,6 +210,7 @@ public abstract class Player {
 	@Override
 	public String toString() {
 		return "Player " + (this.id + 1)+ ", color: " + getColor();
+		return "main/Player " + (this.id + 1) + ", color: " + getColor();
 	}
 
 	/**

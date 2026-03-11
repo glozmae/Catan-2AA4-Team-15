@@ -30,7 +30,7 @@ public class TestSetupManager {
      * Running setup should yield two settlements, two roads, and some resources for the players
      */
     @Test
-    @Timeout(value = TIMEOUT)
+    @Timeout(TIMEOUT)
     public void run() {
         Player dummyPlayer = new ComputerPlayer();
         ArrayList<Player> players = new ArrayList<>();
@@ -40,6 +40,7 @@ public class TestSetupManager {
         setupManager.run(players);
         int totalResources = 0;
         for (ResourceType type : ResourceType.values()) {
+            if (type == ResourceType.DESERT) continue;
             totalResources += dummyPlayer.getResourceAmount(type);
         }
         assertEquals(2, dummyPlayer.getSettlements().size(), "Player should have 2 settlements after setup");
