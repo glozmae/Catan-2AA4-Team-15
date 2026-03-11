@@ -277,12 +277,7 @@ public class Game {
      * Moves robber to a random tile.
      */
     private void moveRobberToRandomTile() {
-        if (board.getTiles().isEmpty()) {
-            return;
-        }
-
-        if (board.getTiles().size() == 1) {
-            robberTile = board.getTiles().get(0);
+        if (board.getTiles().size() <= 1) {
             return;
         }
 
@@ -297,30 +292,27 @@ public class Game {
     /**
      * Steals one random resource from a random qualifying adjacent player.
      */
-    private void stealRandomResourceFromAdjacentPlayer() {
-        if (robberTile == null) {
-            return;
-        }
-
+    private void stealRandomResourceFromAdjacentPlayer(Player roller) {
         List<Player> eligible = new ArrayList<>();
-        Player thief = getCurrentPlayer();
 
         for (Node node : robberTile.getNodes()) {
             Player owner = node.getPlayer();
-            if (owner != null && owner != thief && !eligible.contains(owner) && totalResourceCards(owner) > 0) {
+            if (owner != null && owner != roller && !eligible.contains(owner)
+                    && totalResourceCards(owner) > 0) {
                 eligible.add(owner);
             }
         }
-
         if (eligible.isEmpty()) {
+            System.out.println(turnCounter + " / " + (roller.getId() + 1) + ": no player to steal from");
             return;
         }
 
         Player victim = eligible.get(robberRandom.nextInt(eligible.size()));
-        ResourceType stolen = removeRandomResource(victim);
+        ResourceType stolenType = removeRandomResource(victim);
 
-        if (stolen != null) {
-            thief.addResource(stolen);
+        if (stolenType != null) {
+            roller.addResource(stolenType);
+            System.out.println(turnCounter + " / " + (roller.getId() + 1) + ": stole " + stolenType + " from Player " + (victim.getId() + 1));
         }
     }
 
@@ -328,23 +320,19 @@ public class Game {
      * Removes and returns a random resource from the given player.
      */
     private ResourceType removeRandomResource(Player player) {
-        List<ResourceType> available = new ArrayList<>();
+        List<ResourceType> availableTypes = new ArrayList<>();
 
         for (ResourceType type : ResourceType.values()) {
-            if (type == ResourceType.DESERT) {
-                continue;
-            }
-
-            if (player.getResourceAmount(type) > 0) {
-                available.add(type);
+            if (type != ResourceType.DESERT && player.getResourceAmount(type) > 0) {
+                availableTypes.add(type);
             }
         }
 
-        if (available.isEmpty()) {
+        if (availableTypes.isEmpty()) {
             return null;
         }
 
-        ResourceType chosen = available.get(robberRandom.nextInt(available.size()));
+        ResourceType chosen = availableTypes.get(robberRandom.nextInt(availableTypes.size()));
         player.removeResource(chosen);
         return chosen;
     }
