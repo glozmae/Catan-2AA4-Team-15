@@ -151,7 +151,13 @@ public class Game {
         SetupManager setup = new SetupManager(board, System.currentTimeMillis());
         setup.run(players);
         currentPlayerIndex = 0;
-        robberTile = findDesertTile();
+
+        for(Tile tile : board.getTiles()){
+            if (tile.getType() == ResourceType.DESERT){
+                robberTile = tile;
+                break;
+            }
+        }
     }
 
     /**
