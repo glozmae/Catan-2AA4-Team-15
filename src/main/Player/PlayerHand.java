@@ -55,8 +55,8 @@ public class PlayerHand {
 	 */
 	public int getCount() {
 		int totalCards = 0;
-		for (int amount : this.count.values()) {
-			totalCards += amount; // <--- This actually adds up your cards!
+		for (int amount : this.cardCounter.values()) {
+			totalCards += amount; 
 		}
 		return totalCards;
 	}

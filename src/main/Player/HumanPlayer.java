@@ -106,7 +106,6 @@ public class HumanPlayer extends Player {
 
                     if (node != null && node.getPlayer() == null && !isNeighborOccupied(node)) {
                         Settlement s = new Settlement();
-                        node.setPlayer(this);
                         node.setStructure(s);
                         addStructure(s);
                         placedNodeId = nodeId;
@@ -208,7 +207,6 @@ public class HumanPlayer extends Player {
         }
 
         payCost(s.getCost());
-        node.setPlayer(this);
         node.setStructure(s);
         addStructure(s);
         logAction(game.getRound(), "Built settlement at node " + nodeId);
