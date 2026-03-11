@@ -2,9 +2,13 @@ package Player;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test cases for Human Player parser.
+ * @author Parnia Yazdinia, 400567795, McMaster University
+ */
 public class TestHumanPlayerParser {
 
-    //Test commands like Roll and go
+    //Test cases that parser accepts the commands
     @Test
     void testRoll() {
         assertTrue(HumanPlayer.rollCommand("roll"));
@@ -30,6 +34,9 @@ public class TestHumanPlayerParser {
         assertEquals(5, HumanPlayer.parseCityNodeId("build city 5"));
     }
 
+    /**
+     * Test that a simple road command returns the correct two node ids.
+     */
     @Test
     void testRoad() {
         int[] result = HumanPlayer.parseRoadNodeIds("build road 3,4");
@@ -38,7 +45,9 @@ public class TestHumanPlayerParser {
         assertEquals(4, result[1]);
     }
 
-    //test Roads
+    /**
+     * Test that a road command with brackets is also accepted.
+     */
     @Test
     void testRoadBrackets() {
         int[] result = HumanPlayer.parseRoadNodeIds("build road [8,9]");
@@ -46,4 +55,22 @@ public class TestHumanPlayerParser {
         assertEquals(8, result[0]);
         assertEquals(9, result[1]);
     }
+
+    //Test cases for invalid settlement, city and road command
+    @Test
+    void testBadSettlement() {
+        assertNull(HumanPlayer.parseSettlementNodeId("build settlement x"));
+    }
+
+    @Test
+    void testBadCity() {
+        assertNull(HumanPlayer.parseCityNodeId("build city"));
+    }
+
+    @Test
+    void testBadRoad() {
+        assertNull(HumanPlayer.parseRoadNodeIds("build road 7"));
+    }
 }
+
+
