@@ -1,8 +1,9 @@
-package TestBoard;
+package TestTask3;
 
 import Board.Board;
 import Board.JSONVisualizer;
 import Board.Visualizer;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 

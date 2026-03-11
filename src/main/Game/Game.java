@@ -14,10 +14,8 @@ import Board.Tile;
 import Board.Node;
 import Board.SetupManager;
 import Board.Visualizer;
-import Board.JSONVisualizer;
-
 import Player.Player;
-
+import Board.JSONVisualizer;
 import GameResources.ResourceType;
 import GameResources.Structure;
 import GameResources.City;
