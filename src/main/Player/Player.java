@@ -7,6 +7,7 @@ package Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import Board.Tile;
 import Game.Game;
 import GameResources.City;
 import GameResources.ResourceType;
@@ -152,7 +153,6 @@ public abstract class Player {
 	public int getId() {
 		return id;
 	}
-
 	/**
 	 * Returns the player's color based on their player id.
 	 *
@@ -238,4 +238,20 @@ public abstract class Player {
 	public int getLongestRoad() {
 		return longestRoad;
 	}
+
+	/**
+	 * Handles the mandatory discarding of resource cards when the robber is activated.
+	 * Called when a 7 is rolled and this player holds more than 7 cards,
+	 * requiring them to discard half of their hand.
+	 */
+	public abstract void robberDiscard();
+
+	/**
+	 * Prompts the player to select a new tile to place the robber.
+	 * Called when this player rolls a 7, allowing them to choose the robber's new location.
+	 *
+	 * @param tiles the list of available tiles on the board to choose from
+	 * @return the specific tile the player selects to place the robber on
+	 */
+	public abstract Tile setRobber(List<Tile> tiles);
 }

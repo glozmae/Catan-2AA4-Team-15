@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import Board.Node;
+import Board.Tile;
 import Game.Game;
 import GameResources.City;
 import GameResources.ResourceType;
@@ -15,32 +16,22 @@ import GameResources.Settlement;
 /**
  * Represents a computer simulation of a player (AI Agent).
  * <p>
- * This AI uses a "Random Valid Move" strategy:
- * 1. It calculates all moves it can legally make based on resources and board state.
- * 2. It collects these moves into a list.
- * 3. It executes one of them at random.
+ * This AI uses a "Priority Action Loop" strategy:
+ * 1. It attempts to build the most valuable structure it can afford (City > Settlement > Road).
+ * 2. It executes that move immediately.
+ * 3. It loops and repeats this process until it runs out of resources or valid moves.
  * * @author Yojith Sai Biradavolu, McMaster University
  * @version Winter, 2026
  */
 public class ComputerPlayer extends Player {
 
-    /** Randomizer used to select moves non-deterministically **/
     private Random randomizer;
 
-    /**
-     * Constructor for a computer player
-     */
     public ComputerPlayer() {
         super();
         this.randomizer = new Random();
     }
 
-    /**
-     * Constructor for a computer player with a seed for the randomizer
-     * (Useful for testing to ensure reproducible behavior)
-     *
-     * @param seed Seed for the randomizer
-     */
     public ComputerPlayer(int seed) {
         super();
         this.randomizer = new Random(seed);
@@ -48,141 +39,113 @@ public class ComputerPlayer extends Player {
 
     /**
      * Initiate the current player's turn.
-     * <p>
-     * The strategy is:
-     * 1. Check current resources to see what types of structures are affordable.
-     * 2. Scan the entire board to find every legal spot to build those structures.
-     * 3. Add every legal move (as a Runnable action) to a list.
-     * 4. Randomly execute one move from the list.
-     *
-     * @param game The current game instance
+     * Uses a while loop to execute multiple actions per turn if resources allow.
      */
     @Override
     public void takeTurn(Game game) {
-        //
-        // We store actions as Runnable objects so we can execute them later
-        List<Runnable> potentialMoves = new ArrayList<>();
-        List<Node> allNodes = game.getBoard().getNodes();
+        boolean madeMove = true;
 
-        // --- STEP 1: RESOURCE CHECKS ---
-        // Determine what the AI can afford this turn
-        boolean canAffordRoad = getResourceAmount(ResourceType.BRICK) >= 1 && getResourceAmount(ResourceType.LUMBER) >= 1;
-        boolean canAffordSettlement = getResourceAmount(ResourceType.BRICK) >= 1 && getResourceAmount(ResourceType.LUMBER) >= 1
-                && getResourceAmount(ResourceType.WOOL) >= 1 && getResourceAmount(ResourceType.GRAIN) >= 1;
-        boolean canAffordCity = getResourceAmount(ResourceType.GRAIN) >= 2 && getResourceAmount(ResourceType.ORE) >= 3;
+        // Loop allows the AI to make multiple purchases per turn (preventing Robber hoarding)
+        while (madeMove) {
+            madeMove = false;
+            List<Node> allNodes = game.getBoard().getNodes();
 
-        // --- STEP 2: SCAN FOR VALID MOVES ---
+            // --- PRIORITY 1: CITIES (Highest VP, Best Resource Gen) ---
+            if (getResourceAmount(ResourceType.GRAIN) >= 2 && getResourceAmount(ResourceType.ORE) >= 3 && getCities().size() < City.getMax()) {
+                List<Node> validCityNodes = new ArrayList<>();
+                for (Node node : allNodes) {
+                    if (node.getPlayer() == this && node.getStructure() instanceof Settlement) {
+                        validCityNodes.add(node);
+                    }
+                }
+                if (!validCityNodes.isEmpty()) {
+                    Node target = validCityNodes.get(randomizer.nextInt(validCityNodes.size()));
+                    System.out.println(this + " upgrading to City at Node " + target.getId());
+                    payForCity();
+                    placeCity(target, new City());
+                    madeMove = true;
+                    continue; // Loop again from the top!
+                }
+            }
 
-        // A. FIND VALID ROADS
-        if (canAffordRoad) {
-            for (Node startNode : allNodes) {
-                // getBuildableRoadNeighbors checks:
-                // 1. Do we have a connection to startNode?
-                // 2. Is the path blocked by an enemy?
-                // 3. Is the edge empty?
-                List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
+            // --- PRIORITY 2: SETTLEMENTS (VP + New Resource Gen) ---
+            if (getResourceAmount(ResourceType.BRICK) >= 1 && getResourceAmount(ResourceType.LUMBER) >= 1
+                    && getResourceAmount(ResourceType.WOOL) >= 1 && getResourceAmount(ResourceType.GRAIN) >= 1
+                    && getSettlements().size() < Settlement.getMax()) {
 
-                for (Node endNode : validTargets) {
-                    // Create a "Move" action and store it
-                    potentialMoves.add(() -> {
-                        System.out.println(this + " building Road from Node " + startNode + " to " + endNode);
-                        payForRoad();
-                        placeRoad(startNode, endNode, new Road());
-                    });
+                List<Node> validSettlementNodes = new ArrayList<>();
+                for (Node node : allNodes) {
+                    if (node.canBuildSettlement(this)) {
+                        validSettlementNodes.add(node);
+                    }
+                }
+                if (!validSettlementNodes.isEmpty()) {
+                    Node target = validSettlementNodes.get(randomizer.nextInt(validSettlementNodes.size()));
+                    System.out.println(this + " building Settlement at Node " + target.getId());
+                    payForSettlement();
+                    placeSettlement(target, new Settlement());
+                    madeMove = true;
+                    continue;
+                }
+            }
+
+            // --- PRIORITY 3: ROADS (Expansion) ---
+            if (getResourceAmount(ResourceType.BRICK) >= 1 && getResourceAmount(ResourceType.LUMBER) >= 1 && getRoads().size() < Road.getMax()) {
+                List<Runnable> validRoadMoves = new ArrayList<>();
+
+                for (Node startNode : allNodes) {
+                    List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
+                    for (Node endNode : validTargets) {
+                        validRoadMoves.add(() -> {
+                            System.out.println(this + " building Road from Node " + startNode.getId() + " to " + endNode.getId());
+                            payForRoad();
+                            placeRoad(startNode, endNode, new Road());
+                        });
+                    }
+                }
+                if (!validRoadMoves.isEmpty()) {
+                    Runnable move = validRoadMoves.get(randomizer.nextInt(validRoadMoves.size()));
+                    move.run();
+                    madeMove = true;
                 }
             }
         }
-
-        // B. FIND VALID SETTLEMENTS
-        if (canAffordSettlement) {
-            for (Node node : allNodes) {
-                // canBuildSettlement checks:
-                // 1. Is node empty?
-                // 2. Distance Rule (no neighbors have buildings)
-                // 3. Connection Rule (we have a road leading here)
-                if (node.canBuildSettlement(this)) {
-                    potentialMoves.add(() -> {
-                        System.out.println(this + " building Settlement at Node " + node);
-                        payForSettlement();
-                        placeSettlement(node, new Settlement());
-                    });
-                }
-            }
-        }
-
-        // C. FIND VALID CITIES
-        if (canAffordCity) {
-            for (Node node : allNodes) {
-                // Rule: Can only build a City by upgrading an existing Settlement we own
-                if (node.getPlayer() == this && node.getStructure() instanceof Settlement) {
-                    potentialMoves.add(() -> {
-                        System.out.println(this + " upgrading to City at Node " + node);
-                        payForCity();
-                        placeCity(node, new City());
-                    });
-                }
-            }
-        }
-
-        // --- STEP 3: EXECUTE RANDOM MOVE ---
-        if (!potentialMoves.isEmpty()) {
-            // Pick a random index from the list of legal moves
-            Runnable move = potentialMoves.get(randomizer.nextInt(potentialMoves.size()));
-            move.run(); // Execute the logic inside the lambda above
-        } else {
-            System.out.println(this + " does nothing this turn.");
-        }
+        System.out.println(this + " ends their turn.");
     }
 
-    /**
-     * Setup of the player's structures at the beginning of the game.
-     * <p>
-     * Logic:
-     * 1. Randomly pick nodes until we find one that satisfies the Distance Rule.
-     * 2. Place a Settlement there.
-     * 3. Pick a random valid neighbor and place a Road.
-     *
-     * @param game The current game
-     */
     @Override
     public void setup(Game game) {
         List<Node> allNodes = game.getBoard().getNodes();
-        Node chosenNode = null;
-        int attempts = 0;
 
-        // 1. Find a valid settlement spot
-        // Note: We cannot use node.canBuildSettlement() here because that method checks
-        // for road connections, which don't exist yet in the setup phase.
-        // We strictly check the Distance Rule manually.
-        while (chosenNode == null && attempts < 500) {
-            Node candidate = allNodes.get(randomizer.nextInt(allNodes.size()));
+        for (int i = 0; i < 2; i++) {
+            Node chosenNode = null;
+            int attempts = 0;
 
-            // Check if node is empty AND passes distance rule (no occupied neighbors)
-            if (candidate.getPlayer() == null && !isNeighborOccupied(candidate)) {
-                chosenNode = candidate;
+            while (chosenNode == null && attempts < 500) {
+                Node candidate = allNodes.get(randomizer.nextInt(allNodes.size()));
+
+                if (candidate.getPlayer() == null && !isNeighborOccupied(candidate)) {
+                    chosenNode = candidate;
+                }
+                attempts++;
             }
-            attempts++;
-        }
 
-        if (chosenNode == null) {
-            System.err.println("Computer could not find a valid setup spot!");
-            return;
-        }
+            if (chosenNode == null) {
+                System.err.println(this + " could not find a valid setup spot!");
+                continue;
+            }
 
-        // 2. Place Settlement
-        placeSettlement(chosenNode, new Settlement());
+            placeSettlement(chosenNode, new Settlement());
 
-        // 3. Place Road connecting to it
-        // Check which directions actually exist on the grid (handle board edges)
-        List<Node> neighbors = new ArrayList<>();
-        if (chosenNode.getLeft() != null) neighbors.add(chosenNode.getLeft());
-        if (chosenNode.getRight() != null) neighbors.add(chosenNode.getRight());
-        if (chosenNode.getVert() != null) neighbors.add(chosenNode.getVert());
+            List<Node> neighbors = new ArrayList<>();
+            if (chosenNode.getLeft() != null) neighbors.add(chosenNode.getLeft());
+            if (chosenNode.getRight() != null) neighbors.add(chosenNode.getRight());
+            if (chosenNode.getVert() != null) neighbors.add(chosenNode.getVert());
 
-        // Randomly pick one available direction for the initial road
-        if (!neighbors.isEmpty()) {
-            Node roadTarget = neighbors.get(randomizer.nextInt(neighbors.size()));
-            placeRoad(chosenNode, roadTarget, new Road());
+            if (!neighbors.isEmpty()) {
+                Node roadTarget = neighbors.get(randomizer.nextInt(neighbors.size()));
+                placeRoad(chosenNode, roadTarget, new Road());
+            }
         }
     }
 
@@ -190,62 +153,40 @@ public class ComputerPlayer extends Player {
     // HELPER METHODS
     // =========================================================================
 
-    /**
-     * Helper to update the Board State and Player Inventory when building a Settlement.
-     */
     private void placeSettlement(Node node, Settlement s) {
-        node.setPlayer(this);       // Mark board node as owned
-        node.setStructure(s);       // Place structure on board
-        this.addStructure(s);       // Add to player inventory
+        node.setPlayer(this);
+        node.setStructure(s);
+        this.addStructure(s);
     }
 
-    /**
-     * Helper to update the Board State and Player Inventory when upgrading to a City.
-     */
     private void placeCity(Node node, City c) {
         if (node.getStructure() instanceof Settlement) {
-        this.removeStructure(node.getStructure());
+            this.removeStructure(node.getStructure());
         }
         node.setStructure(c);
         this.addStructure(c);
     }
 
-    /**
-     * Helper to place a road on the edge between two nodes.
-     * * IMPORTANT: This method attempts to set the road on both the 'start' node
-     * and the 'end' node to ensure the connection is bidirectional.
-     * *
-     */
     private void placeRoad(Node start, Node end, Road r) {
-
-        // We must set the road on BOTH nodes involved in the edge
         if (start.getLeft() == end) {
             start.setLeftRoad(r);
-            end.setRightRoad(r); // Assumes Left's inverse is Right
+            end.setRightRoad(r);
         } else if (start.getRight() == end) {
             start.setRightRoad(r);
-            end.setLeftRoad(r); // Assumes Right's inverse is Left
+            end.setLeftRoad(r);
         } else if (start.getVert() == end) {
             start.setVertRoad(r);
-            end.setVertRoad(r); // Assumes Vert's inverse is Vert
+            end.setVertRoad(r);
         }
-
         this.addRoad(r);
     }
 
-    /**
-     * Manual Distance Rule check for Setup Phase.
-     * Returns true if any adjacent node has a player on it.
-     */
     private boolean isNeighborOccupied(Node n) {
         if (n.getLeft() != null && n.getLeft().getPlayer() != null) return true;
         if (n.getRight() != null && n.getRight().getPlayer() != null) return true;
         if (n.getVert() != null && n.getVert().getPlayer() != null) return true;
         return false;
     }
-
-    // --- Payment Helpers ---
-    // These remove the required resources from the player's hand.
 
     private void payForRoad() {
         removeResource(ResourceType.BRICK);
@@ -265,5 +206,22 @@ public class ComputerPlayer extends Player {
         removeResource(ResourceType.ORE);
         removeResource(ResourceType.ORE);
         removeResource(ResourceType.ORE);
+    }
+
+    @Override
+    public void robberDiscard() {
+        while (getHand().getCount() > 7) {
+            ResourceType[] types = ResourceType.values();
+            int randomIndex = randomizer.nextInt(types.length);
+            if (types[randomIndex] != ResourceType.DESERT && getHand().getCount(types[randomIndex]) > 0 ) {
+                getHand().removeCard(types[randomIndex], 1);
+            }
+        }
+    }
+
+    @Override
+    public Tile setRobber(List<Tile> tiles) {
+        int randomIndex = randomizer.nextInt(tiles.size());
+        return tiles.get(randomIndex);
     }
 }

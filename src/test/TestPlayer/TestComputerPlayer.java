@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import Board.Board;
 import Board.Node;
+import Board.Tile;
 import Game.Dice;
 import Game.Game;
 import GameResources.City;
@@ -82,7 +83,7 @@ public class TestComputerPlayer {
      * Checks that setup places are one settlement and one road
      */
     @Test
-    void testSetupPlacesOneSettlementAndOneRoad() {
+    void testSetupPlacesTwoSettlementsAndTwoRoads() {
         ComputerPlayer ai = new ComputerPlayer(7);
         ComputerPlayer other = new ComputerPlayer(99);
 
@@ -97,24 +98,17 @@ public class TestComputerPlayer {
         ai.setup(game);
 
         int ownedNodes = 0;
-        Node ownedNode = null;
 
         for (Node node : game.getBoard().getNodes()) {
             if (node.getPlayer() == ai) {
                 ownedNodes++;
-                ownedNode = node;
             }
         }
 
-        assertEquals(1, ownedNodes, "Setup should place exactly one settlement node");
-        assertNotNull(ownedNode, "Computer player should own one node after setup");
-        assertTrue(ownedNode.getStructure() instanceof Settlement,
-                "Owned node should contain a Settlement after setup");
-
-        assertEquals(1, ai.getSettlements().size(),
-                "Player should have exactly one settlement after setup");
-        assertEquals(1, ai.getRoads().size(),
-                "Player should have exactly one road after setup");
+        // Updated assertions from 1 to 2!
+        assertEquals(2, ownedNodes, "Setup should place exactly two settlement nodes");
+        assertEquals(2, ai.getSettlements().size(), "Player should have exactly two settlements after setup");
+        assertEquals(2, ai.getRoads().size(), "Player should have exactly two roads after setup");
     }
 
     /**
@@ -289,5 +283,91 @@ public class TestComputerPlayer {
             return -1;
         }
         return Integer.parseInt(owned.toString());
+    }
+
+    @Test
+    void testTakeTurnBuildsSettlement() {
+        ComputerPlayer ai = new ComputerPlayer(100);
+        ComputerPlayer other = new ComputerPlayer(101);
+
+        Game game = new Game(
+                java.util.List.of(ai, other),
+                new FixedDice(6),
+                new Board(),
+                10,
+                20
+        );
+
+        // Run setup so the AI has a starting Settlement and Road on the board
+        ai.setup(game);
+        int initialSettlements = ai.getSettlements().size();
+
+        // Give the AI a massive stockpile of resources
+        // It needs to build at least 1 more road before a settlement spot becomes mathematically legal
+        for (int i = 0; i < 10; i++) {
+            ai.addResource(ResourceType.BRICK);
+            ai.addResource(ResourceType.LUMBER);
+            ai.addResource(ResourceType.WOOL);
+            ai.addResource(ResourceType.GRAIN);
+        }
+
+        boolean settlementBuilt = false;
+
+        // Give the AI plenty of turns to randomly choose road building
+        // until a legal spot opens, and then randomly choose settlement building.
+        for (int i = 0; i < 30; i++) {
+            ai.takeTurn(game);
+
+            if (ai.getSettlements().size() > initialSettlements) {
+                settlementBuilt = true;
+                break;
+            }
+        }
+
+        assertTrue(settlementBuilt, "AI should eventually build a settlement after expanding its roads.");
+    }
+
+    @Test
+    void testSetRobberSelectsValidTile() {
+        // FORCE the player count to reset so we don't accidentally hit the 4-player limit
+        Player.resetNumPlayers();
+
+        ComputerPlayer ai = new ComputerPlayer(99);
+        Board board = new Board(); // Generate a standard board
+
+        // Ask the AI to pick a tile for the robber
+        Tile chosenTile = ai.setRobber(board.getTiles());
+
+        // Verify the choice is valid
+        assertNotNull(chosenTile, "AI should return a valid tile, not null");
+        assertTrue(board.getTiles().contains(chosenTile), "The chosen tile must be from the provided list");
+    }
+
+    @Test
+    void testRobberDiscardReducesHandToSeven() {
+        // Create a player (using a seed for consistent testing)
+        ComputerPlayer ai = new ComputerPlayer(50);
+
+        // 1. Give the player exactly 8 total cards to force the hand size over 7.
+        // We spread them out across different resource types so that the
+        // randomizer inside robberDiscard() easily finds cards to discard.
+        ai.addResource(ResourceType.LUMBER);
+        ai.addResource(ResourceType.LUMBER);
+        ai.addResource(ResourceType.BRICK);
+        ai.addResource(ResourceType.BRICK);
+        ai.addResource(ResourceType.WOOL);
+        ai.addResource(ResourceType.WOOL);
+        ai.addResource(ResourceType.GRAIN);
+        ai.addResource(ResourceType.GRAIN);
+
+        // 2. Pre-condition check: Ensure the hand actually holds 8 cards.
+        // Because you fixed PlayerHand.getCount(), this will now pass perfectly!
+        assertEquals(8, ai.getHand().getCount(), "Pre-condition: Hand must hold exactly 8 cards before discard.");
+
+        // 3. Trigger the method we actually want to test
+        ai.robberDiscard();
+
+        // 4. Post-condition check: The while loop should have stopped exactly at 7.
+        assertEquals(7, ai.getHand().getCount(), "Post-condition: Hand should be reduced to exactly 7 cards.");
     }
 }

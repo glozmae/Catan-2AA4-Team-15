@@ -31,15 +31,20 @@ public class Board {
 
     private Map<Integer, List<Tile>> tilesByRoll;
 
-    /**
-     * Constructor: Builds the standard Catan board layout with RANDOMIZED resources.
-     */
-    public Board() {
-        // 1. Initialize Nodes
-        nodes = new ArrayList<>();
-        for (int i = 0; i <= 53; i++) {
-            nodes.add(new Node(i));
-        }
+	/**
+	 * Robber entity, allows robber functionalities
+	 */
+	private Robber robber;
+
+	/**
+	 * Constructor: Builds the standard Catan board layout with RANDOMIZED resources.
+	 */
+	public Board() {
+		// 1. Initialize Nodes
+		nodes = new ArrayList<>();
+		for (int i = 0; i <= 53; i++) {
+			nodes.add(new Node(i));
+		}
 
         // 2. Setup Resources (The Deck of Terrain Hexes)
         ArrayList<ResourceType> resourceDeck = new ArrayList<>();
@@ -96,6 +101,13 @@ public class Board {
         // 4. Distribute Dice Numbers
         // This will automatically skip whichever tile is the Desert
         setupDiceNumbers();
+
+		for (Tile t : tiles) {
+			if (t.getType() == ResourceType.DESERT) {
+				robber = new Robber(t);
+				break;
+			}
+		}
     }
 
     public List<Tile> getTilesForRoll(int roll) {
@@ -117,16 +129,24 @@ public class Board {
         return new Tile(id, nodes, type);
     }
 
-    /**
-     * Helper method to retrieve references to Node objects by their ID.
-     */
-    private Node[] n(int... indices) {
-        Node[] nodeArray = new Node[indices.length];
-        for (int i = 0; i < indices.length; i++) {
-            nodeArray[i] = nodes.get(indices[i]);
-        }
-        return nodeArray;
-    }
+	/**
+	 * Returns the robber to manipulate its position or check its presence
+	 * @return Robber
+	 */
+	public Robber getRobber() {
+		return robber;
+	}
+
+	/**
+	 * Helper method to retrieve references to Node objects by their ID.
+	 */
+	private Node[] n(int... indices) {
+		Node[] nodeArray = new Node[indices.length];
+		for (int i = 0; i < indices.length; i++) {
+			nodeArray[i] = nodes.get(indices[i]);
+		}
+		return nodeArray;
+	}
 
     /**
      * Assigns number tokens (2-12) to the tiles, skipping the Desert.

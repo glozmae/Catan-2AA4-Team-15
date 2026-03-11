@@ -2,6 +2,7 @@ package TestPlayer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import Board.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,8 @@ import GameResources.ResourceType;
 import GameResources.Road;
 import GameResources.Settlement;
 import Player.Player;
+
+import java.util.List;
 
 /**
  * JUnit tests for the Player abstract class, using a simple concrete test subclass.
@@ -31,6 +34,16 @@ public class TestPlayer {
 
         @Override
         public void setup(Game game) {
+        }
+
+        @Override
+        public void robberDiscard() {
+            // no action needed
+        }
+
+        @Override
+        public Tile setRobber(List<Tile> tiles) {
+            return null;
         }
     }
 
