@@ -16,31 +16,51 @@ import Player.ComputerPlayer;
 import Player.Player;
 
 /**
- * JUnit 5 tests for ComputerPlayer.
+ * JUnit 5 tests for ComputerPlayer
+ * 
+ * @author Elizabeth Glozman, McMaster University 
+ * @version Winter, 2026
+ * 
  */
 public class TestComputerPlayer {
 
     /**
-     * Simple fixed dice stub for testing.
+     * Simple fixed dice stub for testing
      */
     private static class FixedDice implements Dice {
         private final int value;
 
+        /**
+         * Constructs fixed dice object
+         * 
+         * @param value value that is always returned
+         */
         FixedDice(int value) {
             this.value = value;
         }
 
+         /**
+         * Returns the fixed dice value
+         *
+         * @return the predetermined dice roll value
+         */
         @Override
         public int roll() {
             return value;
         }
     }
 
+    /**
+     * Reset the static player counter before each test
+     */
     @BeforeEach
     void resetPlayerCount() {
         Player.resetNumPlayers();
     }
 
+    /**
+     * Checks that default constructor creates non-null player and assigns initial ID
+     */
     @Test
     void testDefaultConstructorCreatesComputerPlayer() {
         ComputerPlayer player = new ComputerPlayer();
@@ -48,6 +68,9 @@ public class TestComputerPlayer {
         assertEquals(0, player.getId());
     }
 
+    /**
+     * Checks that seeded constructor creates non-null player and assigns initial ID
+     */
     @Test
     void testSeededConstructorCreatesComputerPlayer() {
         ComputerPlayer player = new ComputerPlayer(42);
@@ -55,6 +78,9 @@ public class TestComputerPlayer {
         assertEquals(0, player.getId());
     }
 
+    /**
+     * Checks that setup places are one settlement and one road
+     */
     @Test
     void testSetupPlacesOneSettlementAndOneRoad() {
         ComputerPlayer ai = new ComputerPlayer(7);
@@ -91,6 +117,10 @@ public class TestComputerPlayer {
                 "Player should have exactly one road after setup");
     }
 
+    /**
+     * Check that setup is deterministic if the same seed is used
+     * 2 players with the same seed on the same board should have the same setup nodes
+     */
     @Test
     void testSeededSetupIsDeterministic() {
         ComputerPlayer ai1 = new ComputerPlayer(123);
@@ -127,6 +157,9 @@ public class TestComputerPlayer {
                 "Same seed on the same board should choose the same setup node");
     }
 
+    /**
+     * Checks that player does nothing on its turn when it has no resources
+     */
     @Test
     void testTakeTurnDoesNothingWithoutResources() {
         ComputerPlayer ai = new ComputerPlayer(5);
@@ -154,6 +187,9 @@ public class TestComputerPlayer {
                 "No city should be built without resources");
     }
 
+    /**
+     * player can only build a road when it is affordable
+     */
     @Test
     void testTakeTurnBuildsRoadWhenRoadIsOnlyAffordableMove() {
         ComputerPlayer ai = new ComputerPlayer(11);
@@ -184,8 +220,11 @@ public class TestComputerPlayer {
                 "Lumber should be spent after building a road");
     }
 
+    /**
+     * Checks that player can upgrade to a city
+     */
     @Test
-void testTakeTurnCanUpgradeSettlementToCity() {
+    void testTakeTurnCanUpgradeSettlementToCity() {
     ComputerPlayer ai = new ComputerPlayer(17);
     ComputerPlayer other = new ComputerPlayer(18);
 
@@ -222,11 +261,11 @@ void testTakeTurnCanUpgradeSettlementToCity() {
     assertTrue(upgraded, "AI should eventually upgrade settlement to city");
 }
     /**
-     * Finds the node owned by the given player.
+     * Finds the node owned by the given player
      *
-     * @param game the current game
-     * @param player the player whose node is being searched for
-     * @return the owned node, or null if none exists
+     * @param game current game
+     * @param player player whose node is being searched for
+     * @return owned node, or null if none exists
      */
     private Node findOwnedNode(Game game, Player player) {
         for (Node node : game.getBoard().getNodes()) {
@@ -238,13 +277,11 @@ void testTakeTurnCanUpgradeSettlementToCity() {
     }
 
     /**
-     * Finds the integer node id of the node owned by the given player.
+     * Finds the integer node id of the node owned by the given player
      *
-     * Since Node does not expose getId(), we use toString(), which returns the node id as a string.
-     *
-     * @param game the current game
-     * @param player the player whose owned node id is needed
-     * @return the node id, or -1 if no owned node exists
+     * @param game current game
+     * @param player player whose owned node id is needed
+     * @return node id, or -1 if no owned node exists
      */
     private int findOwnedNodeId(Game game, Player player) {
         Node owned = findOwnedNode(game, player);
