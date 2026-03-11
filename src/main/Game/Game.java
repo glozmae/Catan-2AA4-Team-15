@@ -181,27 +181,17 @@ public class Game {
         if (currentTurnRolled) {
             return false;
         }
-
         Player current = getCurrentPlayer();
         lastRoll = rollMultiDice();
         currentTurnRolled = true;
 
         if (dice instanceof MultiDice md) {
-            System.out.print("Turn " + turnCounter +
-                    "/ Player " + (current.getId() + 1) +
-                    ": rolled " + md.getLastDie1() + " + " + md.getLastDie2() +
-                    " -> ");
+            System.out.println(turnCounter + " / " + (current.getId() + 1) + ": rolled " + md.getLastDie1() + " + " + md.getLastDie2() + " = " + lastRoll);
         } else {
-            System.out.print("Turn " + turnCounter +
-                    ": Player " + (current.getId() + 1) +
-                    " rolled " + lastRoll +
-                    " -> ");
+            System.out.println(turnCounter + " / " + (current.getId() + 1) + ": rolled " + lastRoll);
         }
-
         printProduction(lastRoll);
         distributeResources(lastRoll);
-        System.out.println();
-
         return true;
     }
 
