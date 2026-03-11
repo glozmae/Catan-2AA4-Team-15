@@ -14,6 +14,7 @@ import Board.Tile;
 import Board.Node;
 import Board.SetupManager;
 import Board.Visualizer;
+import Board.JSONVisualizer;
 
 import Player.Player;
 
@@ -21,6 +22,7 @@ import GameResources.ResourceType;
 import GameResources.Structure;
 import GameResources.City;
 import GameResources.Settlement;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Orchestrates a Catan game session.
@@ -60,6 +62,9 @@ public class Game {
     /** winner of the game (null until winner) */
     private Player winner = null;
 
+    /** visualizer for game state */
+    private final Visualizer visualizer;
+
     /**
      * Construct game with provided board
      *
@@ -89,6 +94,8 @@ public class Game {
 
         this.winPoints = winPoints;
         this.maxRounds = maxRounds;
+
+        this.visualizer = new JSONVisualizer(new ObjectMapper(), board);
     }
 
     /**
@@ -145,7 +152,7 @@ public class Game {
         SetupManager setup = new SetupManager(board, System.currentTimeMillis());
         setup.run(players);
         currentPlayerIndex = 0;
-        Visualizer.setupJSON(board);
+        visualizer.setupJSON();
     }
 
     /** One player turn. */
@@ -203,7 +210,7 @@ public class Game {
     public void playOneTurn() {
         nextTurn();
         checkWin();
-        Visualizer.updateJSON(board);
+        this.visualizer.updateJSON();
     }
 
     /**

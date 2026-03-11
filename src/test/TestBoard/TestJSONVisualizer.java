@@ -1,8 +1,9 @@
 package TestBoard;
 
 import Board.Board;
+import Board.JSONVisualizer;
 import Board.Visualizer;
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -10,7 +11,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestVisualizer {
+class TestJSONVisualizer {
     //    @BeforeEach
     void resetJSON() {
         // Delete existing JSON files
@@ -24,10 +25,13 @@ class TestVisualizer {
 
     @Test
     void setupJSON() throws IOException {
-        assertDoesNotThrow(() -> Visualizer.setupJSON(new Board()), "Ensures that JSON is set up without any errors.");
+        Visualizer visualizer = new JSONVisualizer(new ObjectMapper(), new Board());
+        assertDoesNotThrow(() -> visualizer.setupJSON(), "Ensures that JSON is set up without any errors.");
     }
 
     @Test
     void updateJSON() {
+        Visualizer visualizer = new JSONVisualizer(new ObjectMapper(), new Board());
+        assertDoesNotThrow(() -> visualizer.updateJSON(), "Ensures that JSON is set up without any errors.");
     }
 }
