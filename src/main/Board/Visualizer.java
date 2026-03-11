@@ -65,6 +65,11 @@ public class Visualizer {
         }
     }
 
+    /**
+     * Updates the board following turns
+     *
+     * @param board
+     */
     public static void updateJSON(Board board) {
         List<Node> nodes = board.getNodes();
         ObjectMapper objectMapper = new ObjectMapper();

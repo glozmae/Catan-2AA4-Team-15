@@ -1,8 +1,7 @@
-package TestBoard;
+package TestTask3;
 
 import Board.Board;
 import Board.Visualizer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

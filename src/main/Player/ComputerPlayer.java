@@ -25,21 +25,30 @@ import GameResources.Settlement;
  */
 public class ComputerPlayer extends Player {
 
+    /** Random number generator for decision-making and move selection. */
     private Random randomizer;
 
+    /**
+     * Default constructor. Initializes the computer player with a default Random instance.
+     */
     public ComputerPlayer() {
         super();
         this.randomizer = new Random();
     }
 
+    /**
+     * Seeded constructor for deterministic behavior during testing.
+     * @param seed The seed for the random number generator.
+     */
     public ComputerPlayer(int seed) {
         super();
         this.randomizer = new Random(seed);
     }
 
     /**
-     * Initiate the current player's turn.
-     * Uses a while loop to execute multiple actions per turn if resources allow.
+     * Logic for the computer player's turn.
+     * Continually evaluates and executes building priorities as long as moves are possible.
+     * @param game The current game context.
      */
     @Override
     public void takeTurn(Game game) {
@@ -113,6 +122,11 @@ public class ComputerPlayer extends Player {
         System.out.println(this + " ends their turn.");
     }
 
+    /**
+     * Handles initial board setup for the AI.
+     * Places two settlements and two roads according to standard game rules.
+     * @param game The current game instance.
+     */
     @Override
     public void setup(Game game) {
         List<Node> allNodes = game.getBoard().getNodes();
@@ -153,12 +167,22 @@ public class ComputerPlayer extends Player {
     // HELPER METHODS
     // =========================================================================
 
+    /**
+     * Places a settlement on a node and updates player and node states.
+     * @param node The node to build on.
+     * @param s The settlement object to place.
+     */
     private void placeSettlement(Node node, Settlement s) {
         node.setPlayer(this);
         node.setStructure(s);
         this.addStructure(s);
     }
 
+    /**
+     * Upgrades a settlement to a city on the board and in the player's inventory.
+     * @param node The node where the city is being built.
+     * @param c The city object to place.
+     */
     private void placeCity(Node node, City c) {
         if (node.getStructure() instanceof Settlement) {
             this.removeStructure(node.getStructure());
@@ -167,6 +191,13 @@ public class ComputerPlayer extends Player {
         this.addStructure(c);
     }
 
+    /**
+     * Establishes a road between two nodes.
+     * Handles bidirectional edge assignment.
+     * @param start The starting node of the road.
+     * @param end The ending node of the road.
+     * @param r The road object.
+     */
     private void placeRoad(Node start, Node end, Road r) {
         if (start.getLeft() == end) {
             start.setLeftRoad(r);
@@ -181,6 +212,12 @@ public class ComputerPlayer extends Player {
         this.addRoad(r);
     }
 
+    /**
+     * Checks if any neighbors of a node are occupied by a player.
+     * Helper for distance rule validation.
+     * @param n The node to check.
+     * @return True if a neighbor is occupied, false otherwise.
+     */
     private boolean isNeighborOccupied(Node n) {
         if (n.getLeft() != null && n.getLeft().getPlayer() != null) return true;
         if (n.getRight() != null && n.getRight().getPlayer() != null) return true;
@@ -188,11 +225,13 @@ public class ComputerPlayer extends Player {
         return false;
     }
 
+    /** Deducts resources for a road construction. */
     private void payForRoad() {
         removeResource(ResourceType.BRICK);
         removeResource(ResourceType.LUMBER);
     }
 
+    /** Deducts resources for a settlement construction. */
     private void payForSettlement() {
         removeResource(ResourceType.BRICK);
         removeResource(ResourceType.LUMBER);
@@ -200,6 +239,7 @@ public class ComputerPlayer extends Player {
         removeResource(ResourceType.GRAIN);
     }
 
+    /** Deducts resources for a city upgrade. */
     private void payForCity() {
         removeResource(ResourceType.GRAIN);
         removeResource(ResourceType.GRAIN);
@@ -208,6 +248,10 @@ public class ComputerPlayer extends Player {
         removeResource(ResourceType.ORE);
     }
 
+    /**
+     * Implementation of the robber discard rule.
+     * Randomly removes cards until the player's hand count is 7 or fewer.
+     */
     @Override
     public void robberDiscard() {
         while (getHand().getCount() > 7) {
@@ -219,6 +263,11 @@ public class ComputerPlayer extends Player {
         }
     }
 
+    /**
+     * Chooses a random tile to place the robber on.
+     * @param tiles List of available tiles on the board.
+     * @return The tile selected by the AI.
+     */
     @Override
     public Tile setRobber(List<Tile> tiles) {
         int randomIndex = randomizer.nextInt(tiles.size());

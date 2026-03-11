@@ -19,7 +19,8 @@ import GameResources.Settlement;
  * This class implements the human player.
  * Reads input from the command line and executes actions based on assignments specs.
  *
- * @author [Your Name], [Student ID], McMaster University
+ * @author Taihan Mobasshir, 400578506, McMaster University
+ * @autor Parnia Yazdinia, 400567795, McMaster University
  */
 public class HumanPlayer extends Player {
 

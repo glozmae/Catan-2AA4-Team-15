@@ -10,27 +10,25 @@ import GameResources.Settlement;
 import Player.Player;
 
 /**
- * manages the standard Catan setup phase:
- * Each player places on settlement and one road in forward order and a second
+ * Manages the standard Catan setup phase:
+ * Each player places one settlement and one road in forward order and a second
  * settlement and road in reverse order and receives starting resources from
- * tiles
- * Perfroms board placements
- * 
- * @author Elizabeth Glozman, 400559660, McMaster University
+ * tiles.
+ * Performs board placements.
+ * * @author Elizabeth Glozman, 400559660, McMaster University
  */
 public class SetupManager {
 
-    /** board for setup */
+    /** Board for setup */
     private final Board board;
 
-    /** random number for placment */
+    /** Random number generator for placement */
     private final Random rng;
 
     /**
-     * setup manager bound to specific board
-     * 
-     * @param board - board during setup
-     * @param seed  - randomized placement sedd
+     * Setup manager bound to a specific board.
+     * * @param board - board during setup
+     * @param seed  - randomized placement seed
      */
     public SetupManager(Board board, long seed) {
         this.board = board;
@@ -38,12 +36,10 @@ public class SetupManager {
     }
 
     /**
-     * Full standard setup phase
-     * 
-     * Forward order: 1 road + 1 settlement
+     * Full standard setup phase.
+     * * Forward order: 1 road + 1 settlement
      * Reverse Order: 1 road + 1 settlement
-     * 
-     * @param players - players in the game
+     * * @param players - players in the game
      */
     public void run(List<Player> players) {
         // Forward placement
@@ -62,10 +58,9 @@ public class SetupManager {
     }
 
     /**
-     * Places settlement during setup by selecting random legal node
-     * settlement is plaed onto board and recorded on player
-     * 
-     * @param player - player placing settlement
+     * Places settlement during setup by selecting a random legal node.
+     * Settlement is placed onto the board and recorded on the player.
+     * * @param player - player placing settlement
      * @return - node where settlement is placed
      */
     private Node placeInitialSettlement(Player player) {
@@ -84,10 +79,9 @@ public class SetupManager {
     }
 
     /**
-     * Check node is legal for settlement placement
-     * Follows catan distance rule
-     * 
-     * @param n - node to check
+     * Check if a node is legal for settlement placement.
+     * Follows the Catan distance rule.
+     * * @param n - node to check
      * @return true if node is empty & no adjacent structures
      */
     private boolean isLegalSettlementNode(Node n) {
@@ -103,6 +97,12 @@ public class SetupManager {
                 && (v == null || v.getStructure() == null);
     }
 
+    /**
+     * Scans the board to find all candidate nodes that satisfy settlement placement rules
+     * and randomly selects one for the AI to build on.
+     * * @return A randomly selected, legal Node for settlement placement.
+     * @throws IllegalStateException if the board is completely full and no legal nodes remain.
+     */
     private Node pickRandomLegalSettlementNode() {
         List<Node> candidates = new ArrayList<>();
         for (Node n : board.getNodes()) {
@@ -116,10 +116,9 @@ public class SetupManager {
     }
 
     /**
-     * Build list of candidate nodes that satisfy settlement placement rules and
-     * select one
-     * 
-     * @param player - Player placing road
+     * Build list of candidate nodes that satisfy road placement rules and
+     * select one.
+     * * @param player - Player placing road
      * @param from   - node road starts from
      * @throws IllegalStateException if no open edge exists
      */
@@ -168,12 +167,11 @@ public class SetupManager {
     }
 
     /**
-     * Attempt to place road reference on both ends of an edge
-     * 
-     * @param a    - first node end
+     * Attempt to place road reference on both ends of an edge.
+     * * @param a    - first node end
      * @param b    - second node end
-     * @param road - road ot place
-     * @return - true of both sides place succesfully
+     * @param road - road to place
+     * @return - true if both sides place successfully
      * @throws IllegalStateException if adjacency mismatch when placing
      */
     private boolean tryPlaceRoadBothWays(Node a, Node b, Road road) {
@@ -188,12 +186,11 @@ public class SetupManager {
     }
 
     /**
-     * Attempt to set road reference on correct edge if target node is valid
-     * 
-     * @param from - node recieving road reference
+     * Attempt to set road reference on correct edge if target node is valid.
+     * * @param from - node receiving road reference
      * @param to   - neighbouring node
      * @param road - road to set on edge
-     * @return - true if placememnt is succesful
+     * @return - true if placement is successful
      */
     private boolean trySetRoadOnEdge(Node from, Node to, Road road) {
         if (to == from.getLeft()) {
@@ -211,9 +208,8 @@ public class SetupManager {
 
     /**
      * Grant player one resource card per non-desert tile adjacent to second
-     * settlement placement
-     * 
-     * @param player         - player receives starting resources
+     * settlement placement.
+     * * @param player         - player receiving starting resources
      * @param settlementNode - node containing player's second settlement
      */
     private void grantStartingResources(Player player, Node settlementNode) {

@@ -20,7 +20,7 @@ import GameResources.ResourceType;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestHumanPlayer {
+class TestHumanPlayerParser {
 
     private final InputStream standardIn = System.in;
 
