@@ -14,23 +14,23 @@ import GameResources.Settlement;
 import Player.Player;
 
 /**
- * JUnit tests for the Player abstract class,
- * using a simple concrete test subclass.
- */
+ * JUnit tests for the Player abstract class, using a simple concrete test subclass.
+* 
+* @author Elizabeth Glozman, McMaster University 
+* @version Winter 2026
+*/
 public class TestPlayer {
 
     /**
-     * Simple concrete subclass used only for testing Player.
+     * Simple concrete subclass used only for testing Player
      */
     private static class DummyPlayer extends Player {
         @Override
         public void takeTurn(Game game) {
-            // no-op for testing
         }
 
         @Override
         public void setup(Game game) {
-            // no-op for testing
         }
     }
 
@@ -39,6 +39,9 @@ public class TestPlayer {
         Player.resetNumPlayers();
     }
 
+    /**
+     * Check that IDs are assigned in increasing order
+     */
     @Test
     void testPlayerConstructorAssignsId() {
         DummyPlayer p1 = new DummyPlayer();
@@ -48,6 +51,9 @@ public class TestPlayer {
         assertEquals(1, p2.getId());
     }
 
+    /**
+     * Check that every player gets a different, non-null colour
+     */
     @Test
     void testPlayerConstructorAssignsColor() {
         DummyPlayer p1 = new DummyPlayer();
@@ -58,6 +64,9 @@ public class TestPlayer {
         assertNotEquals(p1.getColor(), p2.getColor());
     }
 
+    /**
+     * Chek that resources can be added and removed correctly from hand
+     */
     @Test
     void testAddAndRemoveResource() {
         DummyPlayer p = new DummyPlayer();
@@ -74,6 +83,9 @@ public class TestPlayer {
         assertEquals(1, p.getResourceAmount(ResourceType.BRICK));
     }
 
+    /**
+     * Check that adding a settlement stores it in the list and assigns to correct owner
+     */
     @Test
     void testAddSettlement() {
         DummyPlayer p = new DummyPlayer();
@@ -86,6 +98,9 @@ public class TestPlayer {
         assertEquals(p, settlement.getOwner());
     }
 
+    /**
+     * Checks that adding a city stores it in the list and assigns to correct owner
+     */
     @Test
     void testAddCity() {
         DummyPlayer p = new DummyPlayer();
@@ -98,6 +113,9 @@ public class TestPlayer {
         assertEquals(p, city.getOwner());
     }
 
+    /**
+     * check that removing a structure deletes it from appropriate collection
+     */
     @Test
     void testRemoveStructure() {
         DummyPlayer p = new DummyPlayer();
@@ -110,6 +128,9 @@ public class TestPlayer {
         assertEquals(0, p.getSettlements().size());
     }
 
+    /**
+     * Checks that adding a road stores it in the list and assigns to correct owner
+     */
     @Test
     void testAddRoad() {
         DummyPlayer p = new DummyPlayer();
@@ -121,12 +142,18 @@ public class TestPlayer {
         assertEquals(p, road.getOwner());
     }
 
+    /**
+     * Checks that hand is initialized and not null
+     */
     @Test
     void testGetHandIsNotNull() {
         DummyPlayer p = new DummyPlayer();
         assertNotNull(p.getHand());
     }
 
+    /**
+     * Check that string representation of player has player number and colour
+     */
     @Test
     void testToStringContainsPlayerNumber() {
         DummyPlayer p = new DummyPlayer();
@@ -137,6 +164,9 @@ public class TestPlayer {
         assertTrue(text.contains("color"));
     }
 
+    /**
+     * Checks that creating more than maximum allowed players throws an exception
+     */
     @Test
     void testMaxPlayersExceededThrowsException() {
         new DummyPlayer();
@@ -147,6 +177,9 @@ public class TestPlayer {
         assertThrows(IllegalStateException.class, DummyPlayer::new);
     }
 
+    /**
+     * Checks that resetting static player counter restarts ID count from 0
+     */
     @Test
     void testResetNumPlayersAllowsFreshCreation() {
         new DummyPlayer();
@@ -158,6 +191,9 @@ public class TestPlayer {
         assertEquals(0, fresh.getId());
     }
 
+    /**
+     * Checks that longest road starts at road 0
+     */
     @Test
     void testLongestRoadStartsAtZero() {
         DummyPlayer p = new DummyPlayer();
