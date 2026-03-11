@@ -121,6 +121,11 @@ public class Node {
 		if (node.vert == null) node.vert = this;
 	}
 
+	/**
+	 * Gets the id of the node
+	 * @return The id of the node
+	 */
+	public int getId() { return id; }
 
 	/**
 	 * Gets the player who currently owns the structure on this node.

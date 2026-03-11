@@ -13,6 +13,7 @@ import Board.Board;
 import Board.Tile;
 import Board.Node;
 import Board.SetupManager;
+import Board.Visualizer;
 
 import Player.Player;
 
@@ -144,6 +145,7 @@ public class Game {
         SetupManager setup = new SetupManager(board, System.currentTimeMillis());
         setup.run(players);
         currentPlayerIndex = 0;
+        Visualizer.setupJSON(board);
     }
 
     /** One player turn. */
@@ -201,6 +203,7 @@ public class Game {
     public void playOneTurn() {
         nextTurn();
         checkWin();
+        Visualizer.updateJSON(board);
     }
 
     /**

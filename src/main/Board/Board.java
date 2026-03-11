@@ -87,7 +87,7 @@ public class Board {
         tiles.add(createTile(12, n(17, 15, 14, 37, 38, 39), resourceDeck.get(12)));
         tiles.add(createTile(13, n(40, 18, 17, 39, 41, 42), resourceDeck.get(13)));
         tiles.add(createTile(14, n(43, 21, 16, 18, 40, 44), resourceDeck.get(14)));
-        tiles.add(createTile(15, n(47, 46, 19, 21, 43, 45), resourceDeck.get(15)));
+        tiles.add(createTile(15, n(45, 46, 19, 21, 43, 47), resourceDeck.get(15)));
         tiles.add(createTile(16, n(48, 49, 22, 20, 19, 46), resourceDeck.get(16)));
         tiles.add(createTile(17, n(50, 51, 52, 23, 22, 49), resourceDeck.get(17)));
         tiles.add(createTile(18, n(52, 53, 24, 7, 6, 23), resourceDeck.get(18)));

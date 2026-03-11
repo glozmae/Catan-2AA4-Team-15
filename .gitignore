@@ -42,3 +42,8 @@ dependency-reduced-pom.xml
 #OS files
 .DS_Store
 Thumbs.db
+
+#Python visualizer
+__pycache__/
+visualize/**/*.png
+visualize/state.json
