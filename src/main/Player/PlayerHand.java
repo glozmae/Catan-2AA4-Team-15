@@ -21,16 +21,16 @@ public class PlayerHand {
     /**
      * Map of the count of each resource type in the player's hand
      **/
-    private final Map<ResourceType, Integer> count;
+    private final Map<ResourceType, Integer> cardCounter;
 
     /**
      * Creates a new PlayerHand instance
      */
     public PlayerHand() {
-        this.count = new EnumMap<>(ResourceType.class);
+        this.cardCounter = new EnumMap<>(ResourceType.class);
         for (ResourceType type : ResourceType.values()) {
             if (type != ResourceType.DESERT) {
-                this.count.put(type, 0);
+                this.cardCounter.put(type, 0);
             }
         }
     }
@@ -45,7 +45,7 @@ public class PlayerHand {
         if (type == ResourceType.DESERT) {
             throw new IllegalArgumentException("Cannot get count of DESERT from player hand");
         }
-        return this.count.getOrDefault(type, 0);
+        return this.cardCounter.getOrDefault(type, 0);
     }
 
     /**
@@ -61,10 +61,10 @@ public class PlayerHand {
         if (amount <= 0) {
             throw new IllegalArgumentException("Error: Cannot add " + amount + " of " + type + " to player hand");
         }
-        if (this.count.containsKey(type)) {
-            this.count.put(type, this.count.get(type) + amount);
+        if (this.cardCounter.containsKey(type)) {
+            this.cardCounter.put(type, this.cardCounter.get(type) + amount);
         } else {
-            this.count.put(type, amount);
+            this.cardCounter.put(type, amount);
         }
     }
 
@@ -78,9 +78,9 @@ public class PlayerHand {
         if (type == ResourceType.DESERT) {
             throw new IllegalArgumentException("Cannot remove DESERT from player hand");
         }
-        int inHand = this.count.get(type);
+        int inHand = this.cardCounter.get(type);
         if (inHand >= amount) {
-            this.count.put(type, inHand - amount);
+            this.cardCounter.put(type, inHand - amount);
         } else {
             throw new IllegalArgumentException("Error: Requested " + amount + " of " + type + " to remove but only " + inHand + " are in hand!");
         }

@@ -194,7 +194,6 @@ public class ComputerPlayer extends Player {
      * Helper to update the Board State and Player Inventory when building a Settlement.
      */
     private void placeSettlement(Node node, Settlement s) {
-        node.setPlayer(this);       // Mark board node as owned
         node.setStructure(s);       // Place structure on board
         this.addStructure(s);       // Add to player inventory
     }
