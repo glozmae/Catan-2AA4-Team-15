@@ -80,7 +80,7 @@ mvn compile
 # 2. Package
 mvn package
 # 3. Run the jar
-java -jar target/<jar file>
+java -jar target/Catan-2AA4-Team-15-1.0.jar
 ```
 
 ### Using the visualizer
