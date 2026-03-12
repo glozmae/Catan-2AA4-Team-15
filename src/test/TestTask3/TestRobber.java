@@ -1,4 +1,4 @@
-package TestBoard;
+package TestTask3;
 
 import Board.Node;
 import Board.Robber;

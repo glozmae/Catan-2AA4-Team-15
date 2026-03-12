@@ -191,4 +191,45 @@ class TestHumanPlayerParser {
         assertEquals(6, nodes[1]);
     }
 
+    @Test
+    void testBuildSettlement_NotAffordable() {
+        HumanPlayer hp = createPlayerWithInput("build settlement 0\ngo\n");
+        // No resources added
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new FixedDice(6), new Board(), 10, 20);
+
+        hp.takeTurn(game);
+
+        assertEquals(0, hp.getSettlements().size(), "Settlement should NOT be placed without resources.");
+    }
+
+    @Test
+    void testBuildCity_NoSettlementAtNode() {
+        HumanPlayer hp = createPlayerWithInput("build city 0\ngo\n");
+        hp.addResource(ResourceType.GRAIN);
+        hp.addResource(ResourceType.GRAIN);
+        hp.addResource(ResourceType.ORE);
+        hp.addResource(ResourceType.ORE);
+        hp.addResource(ResourceType.ORE);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new FixedDice(6), new Board(), 10, 20);
+        // Node 0 is empty — no settlement owned by hp
+
+        hp.takeTurn(game);
+
+        assertEquals(0, hp.getCities().size(), "Cannot build city without an existing settlement.");
+    }
+
+    @Test
+    void testBuildRoad_InvalidNodeId() {
+        HumanPlayer hp = createPlayerWithInput("build road 0,9999\ngo\n");
+        hp.addResource(ResourceType.BRICK);
+        hp.addResource(ResourceType.LUMBER);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new FixedDice(6), new Board(), 10, 20);
+
+        hp.takeTurn(game);
+
+        assertEquals(0, hp.getRoads().size(), "Road should NOT be placed with an invalid node.");
+    }
 }
