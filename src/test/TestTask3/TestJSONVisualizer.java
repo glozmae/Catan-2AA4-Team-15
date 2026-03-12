@@ -1,8 +1,9 @@
-package TestBoard;
+package TestTask3;
 
 import Board.Board;
 import Board.JSONVisualizer;
 import Board.Visualizer;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
@@ -26,12 +27,12 @@ class TestJSONVisualizer {
     @Test
     void setupJSON() throws IOException {
         Visualizer visualizer = new JSONVisualizer(new ObjectMapper(), new Board());
-        assertDoesNotThrow(() -> visualizer.setup(), "Ensures that JSON is set up without any errors.");
+        assertDoesNotThrow(visualizer::setup, "Ensures that JSON is set up without any errors.");
     }
 
     @Test
     void updateJSON() {
         Visualizer visualizer = new JSONVisualizer(new ObjectMapper(), new Board());
-        assertDoesNotThrow(() -> visualizer.update(), "Ensures that JSON is set up without any errors.");
+        assertDoesNotThrow(visualizer::update, "Ensures that JSON is set up without any errors.");
     }
 }

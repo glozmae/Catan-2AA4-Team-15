@@ -29,7 +29,16 @@ public class Board {
      */
     private List<Tile> tiles;
 
+    /**
+     * A mapping that associates a specific dice roll number (2-12) to the list of tiles
+     * that possess that number token. Used for quick resource distribution lookups.
+     */
     private Map<Integer, List<Tile>> tilesByRoll;
+
+    /**
+     * Robber entity, allows robber functionalities
+     */
+    private Robber robber;
 
     /**
      * Constructor: Builds the standard Catan board layout with RANDOMIZED resources.
@@ -96,16 +105,37 @@ public class Board {
         // 4. Distribute Dice Numbers
         // This will automatically skip whichever tile is the Desert
         setupDiceNumbers();
+
+        for (Tile t : tiles) {
+            if (t.getType() == ResourceType.DESERT) {
+                robber = new Robber(t);
+                break;
+            }
+        }
     }
 
+    /**
+     * Retrieves the list of tiles associated with a specific dice roll number.
+     * * @param roll The dice roll number (2-12) to look up.
+     * @return A list of Tile objects that have the matching production number token.
+     * Returns an empty list if no tiles match the given roll.
+     */
     public List<Tile> getTilesForRoll(int roll) {
         return tilesByRoll.getOrDefault(roll, Collections.emptyList());
     }
 
+    /**
+     * Gets the complete list of all hexagonal tiles that make up the board.
+     * * @return A list containing all 19 Tile objects.
+     */
     public List<Tile> getTiles() {
         return tiles;
     }
 
+    /**
+     * Gets the complete list of all intersection nodes on the board.
+     * * @return A list containing all 54 Node objects.
+     */
     public List<Node> getNodes() {
         return nodes;
     }
@@ -115,6 +145,14 @@ public class Board {
      */
     private Tile createTile(int id, Node[] nodes, ResourceType type) {
         return new Tile(id, nodes, type);
+    }
+
+    /**
+     * Returns the robber to manipulate its position or check its presence
+     * @return Robber
+     */
+    public Robber getRobber() {
+        return robber;
     }
 
     /**

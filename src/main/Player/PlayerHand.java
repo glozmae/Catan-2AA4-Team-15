@@ -48,6 +48,19 @@ public class PlayerHand {
         return this.cardCounter.getOrDefault(type, 0);
     }
 
+	/**
+	 * returns the number of cards the player has in their hand
+	 *
+	 * @return size of hand
+	 */
+	public int getCount() {
+		int totalCards = 0;
+		for (int amount : this.cardCounter.values()) {
+			totalCards += amount; 
+		}
+		return totalCards;
+	}
+
     /**
      * Adds the specified amount of the given resource type to the hand
      *

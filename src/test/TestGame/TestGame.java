@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import Board.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -63,6 +64,17 @@ public class TestGame {
         public void setup(Game game) {
             // no action needed
         }
+
+        @Override
+        public void robberDiscard() {
+            // no action needed
+        }
+
+        @Override
+        public Tile setRobber(List<Tile> tiles) {
+            return null;
+        }
+
     }
 
     /**
@@ -84,8 +96,10 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void minPlayersAccepted() {
-        Game game = new Game(makePlayers(2), new FixedDice(6), 10, 5);
+    void minPlayersAccepted() {
+        List<Player> players = makePlayers(2);
+        Dice dice = new FixedDice(6);
+        Game game = new Game(players, dice, 10, 5);
         assertEquals(2, game.getPlayers().size(), "game stores 2 players");
     }
 
@@ -94,8 +108,10 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void maxPlayersAccepted() {
-        Game game = new Game(makePlayers(4), new FixedDice(6), 10, 5);
+    void maxPlayersAccepted() {
+        List<Player> players = makePlayers(4);
+        Dice dice = new FixedDice(6);
+        Game game = new Game(players, dice, 10, 5);
         assertEquals(4, game.getPlayers().size(), "game stores 4 players");
     }
 
@@ -104,9 +120,10 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void initialState() {
+    void initialState() {
         List<Player> players = makePlayers(2);
-        Game game = new Game(players, new FixedDice(8), 10, 5);
+        Dice dice = new FixedDice(6);
+        Game game = new Game(players, dice, 10, 5);
 
         assertEquals(0, game.getRound(), "round starts at 0");
         assertEquals(-1, game.getLastRoll(), "last roll starts at -1");
@@ -122,8 +139,10 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void multiDiceReturnsDiceRoll() {
-        Game game = new Game(makePlayers(2), new FixedDice(9), 10, 5);
+    void multiDiceReturnsDiceRoll() {
+        List<Player> players = makePlayers(2);
+        Dice dice = new FixedDice(9);
+        Game game = new Game(players, dice, 10, 5);
         assertEquals(9, game.rollMultiDice(), "rollMultiDice returns dice roll");
     }
 
@@ -132,8 +151,10 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void playersListIsUnmodifiable() {
-        Game game = new Game(makePlayers(2), new FixedDice(6), 10, 5);
+    void playersListIsUnmodifiable() {
+        List<Player> players = makePlayers(2);
+        Dice dice = new FixedDice(6);
+        Game game = new Game(players, dice, 10, 5);
 
         try {
             game.getPlayers().add(new TestPlayer());
@@ -149,8 +170,10 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void badWinPointsRejected() {
-        assertThrows(IllegalArgumentException.class, () -> new Game(makePlayers(2), new FixedDice(6), 0, 5));
+    void badWinPointsRejected() {
+        List<Player> players = makePlayers(2);
+        Dice dice = new FixedDice(6);
+        assertThrows(IllegalArgumentException.class, () -> new Game(players, dice, 0, 5), "Win points must be positive");
     }
 
     /**
@@ -158,8 +181,10 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void badRoundsRejected() {
-        assertThrows(IllegalArgumentException.class, () -> new Game(makePlayers(2), new FixedDice(6), 10, 0));
+    void badRoundsRejected() {
+        List<Player> players = makePlayers(2);
+        Dice dice = new FixedDice(6);
+        assertThrows(IllegalArgumentException.class, () -> new Game(players, dice, 10, 0), "Rounds must be in the valid range");
     }
 
     /**
@@ -167,8 +192,8 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void nullDiceRejected() {
-        assertThrows(NullPointerException.class, () -> new Game(makePlayers(2), null, 10, 5));
+    void nullDiceRejected() {
+        assertThrows(NullPointerException.class, () -> new Game(makePlayers(2), null, 10, 5), "Null dice is not allowed");
     }
 
     /**
@@ -176,7 +201,30 @@ public class TestGame {
      */
     @Test
     @Timeout(TIMEOUT)
-    public void nullPlayersRejected() {
-        assertThrows(NullPointerException.class, () -> new Game(null, new FixedDice(6), 10, 5));
+    void nullPlayersRejected() {
+        Dice dice = new FixedDice(6);
+        assertThrows(NullPointerException.class, () -> new Game(null, dice, 10, 5), "Null players list is not allowed");
+    }
+
+    /**
+     * Tests that single player is not allowed
+     */
+    @Test
+    @Timeout(TIMEOUT)
+    void singlePlayerRejected() {
+        List<Player> players = new ArrayList<Player>();
+        players.add(new TestPlayer());
+        Dice dice = new FixedDice(6);
+        assertThrows(IllegalArgumentException.class, () -> new Game(players, dice, 10, 5), "Single player is not allowed");
+    }
+
+    /**
+     * Simple sanity check for simulate
+     */
+    @Test
+    @Timeout(TIMEOUT)
+    void TestSimulate() {
+        Game game = new Game(makePlayers(2), new FixedDice(6), 10, 10);
+        assertDoesNotThrow(() -> game.simulate(), "simulate does not throw any errors");
     }
 }

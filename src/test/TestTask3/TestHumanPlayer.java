@@ -1,0 +1,231 @@
+package TestTask3;
+
+import GameResources.Road;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.List;
+
+import GameResources.Settlement;
+import Player.Player;
+import Player.ComputerPlayer;
+import Player.HumanPlayer;
+import Board.Board;
+import Board.Node;
+import Board.Tile;
+import Game.Game;
+import Game.Dice;
+import GameResources.ResourceType;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
+public class TestHumanPlayer {
+
+    private final InputStream standardIn = System.in;
+
+    /**
+     * A simple fixed dice stub for testing games without randomness.
+     */
+    private static class FixedDice implements Dice {
+        private final int fixedRoll;
+        public FixedDice(int fixedRoll) { this.fixedRoll = fixedRoll; }
+        @Override
+        public int roll() { return fixedRoll; }
+    }
+
+    @BeforeEach
+    void setUp() {
+        Player.resetNumPlayers();
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Restore standard System.in after every test to prevent breaking the console
+        System.setIn(standardIn);
+    }
+
+    /**
+     * Helper method to simulate user typing into the console.
+     * MUST be called BEFORE creating the HumanPlayer object so the Scanner grabs the fake input stream.
+     */
+    private HumanPlayer createPlayerWithInput(String data) {
+        ByteArrayInputStream testIn = new ByteArrayInputStream(data.getBytes());
+        System.setIn(testIn);
+        return new HumanPlayer();
+    }
+
+    @Test
+    void testTakeTurn_ListAndGo() {
+        // Simulate user typing "list" to check inventory, then "go" to end turn
+        HumanPlayer hp = createPlayerWithInput("list\ngo\n");
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new TestHumanPlayer.FixedDice(6), new Board(), 10, 20);
+
+        // If the method completes without getting stuck in an infinite loop, it passes
+        assertDoesNotThrow(() -> hp.takeTurn(game));
+    }
+
+    @Test
+    void testTakeTurn_RollCommandIntercept() {
+        // Simulate user instinctively typing "roll", then "go"
+        HumanPlayer hp = createPlayerWithInput("roll\ngo\n");
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new TestHumanPlayer.FixedDice(8), new Board(), 10, 20);
+
+        assertDoesNotThrow(() -> hp.takeTurn(game));
+    }
+
+    @Test
+    void testSetup() {
+        // Simulate placing Settlement at Node 0, Road to Node 1
+        // Then Settlement at Node 3, Road to Node 4
+        HumanPlayer hp = createPlayerWithInput("0\n1\n3\n4\n");
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new TestHumanPlayer.FixedDice(6), new Board(), 10, 20);
+
+        hp.setup(game);
+
+        assertEquals(2, hp.getSettlements().size(), "Player should have placed exactly 2 setup settlements.");
+        assertEquals(2, hp.getRoads().size(), "Player should have placed exactly 2 setup roads.");
+    }
+
+    @Test
+    void testRobberDiscard() {
+        // Simulate the user typing an invalid string first, then correctly typing "BRICK"
+        HumanPlayer hp = createPlayerWithInput("INVALID_TEXT\nBRICK\n");
+
+        // Give the player 8 Bricks (triggers the > 7 rule)
+        for (int i = 0; i < 8; i++) {
+            hp.addResource(ResourceType.BRICK);
+        }
+
+        assertEquals(8, hp.getHand().getCount(), "Hand should start with 8 cards.");
+
+        hp.robberDiscard();
+
+        // Hand should be successfully reduced to 7
+        assertEquals(7, hp.getHand().getCount(), "Hand should be reduced to 7 cards after discarding.");
+        assertEquals(7, hp.getResourceAmount(ResourceType.BRICK), "Remaining cards should all be BRICK.");
+    }
+
+    @Test
+    void testSetRobber() {
+        // Since setRobber is now fully random (Requirement R2.5), we don't need console input
+        HumanPlayer hp = createPlayerWithInput("");
+        Board board = new Board();
+        List<Tile> tiles = board.getTiles();
+
+        Tile chosenTile = hp.setRobber(tiles);
+
+        assertNotNull(chosenTile, "The randomly selected tile should not be null.");
+        assertTrue(tiles.contains(chosenTile), "The selected tile must exist on the board.");
+    }
+
+
+    @Test
+    void testBuildSettlement_NotAffordable() {
+        HumanPlayer hp = createPlayerWithInput("build settlement 0\ngo\n");
+        // No resources added
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new TestHumanPlayer.FixedDice(6), new Board(), 10, 20);
+
+        hp.takeTurn(game);
+
+        assertEquals(0, hp.getSettlements().size(), "Settlement should NOT be placed without resources.");
+    }
+
+    @Test
+    void testBuildCity_NoSettlementAtNode() {
+        HumanPlayer hp = createPlayerWithInput("build city 0\ngo\n");
+        hp.addResource(ResourceType.GRAIN);
+        hp.addResource(ResourceType.GRAIN);
+        hp.addResource(ResourceType.ORE);
+        hp.addResource(ResourceType.ORE);
+        hp.addResource(ResourceType.ORE);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new TestHumanPlayer.FixedDice(6), new Board(), 10, 20);
+        // Node 0 is empty — no settlement owned by hp
+
+        hp.takeTurn(game);
+
+        assertEquals(0, hp.getCities().size(), "Cannot build city without an existing settlement.");
+    }
+
+    @Test
+    void testBuildRoad_InvalidNodeId() {
+        HumanPlayer hp = createPlayerWithInput("build road 0,9999\ngo\n");
+        hp.addResource(ResourceType.BRICK);
+        hp.addResource(ResourceType.LUMBER);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new TestHumanPlayer.FixedDice(6), new Board(), 10, 20);
+
+        hp.takeTurn(game);
+
+        assertEquals(0, hp.getRoads().size(), "Road should NOT be placed with an invalid node.");
+    }
+
+    @Test
+    void testBuildSettlement_Valid() {
+        Board board = new Board();
+        Node node0 = board.getNodes().get(0);
+        Node node1 = board.getNodes().get(1);
+        Road r = new Road();
+        node0.setLeftRoad(r);
+        node1.setRightRoad(r);
+
+        HumanPlayer hp = createPlayerWithInput("build settlement 1\ngo\n");
+        hp.addResource(ResourceType.BRICK);
+        hp.addResource(ResourceType.LUMBER);
+        hp.addResource(ResourceType.WOOL);
+        hp.addResource(ResourceType.GRAIN);
+        r.setOwner(hp);
+
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new FixedDice(6), board, 10, 1);
+
+        hp.takeTurn(game);
+
+        assertEquals(1, hp.getSettlements().size());
+    }
+
+    @Test
+    void testBuildCity_Valid() {
+        Board board = new Board();
+        Node node0 = board.getNodes().get(0);
+        HumanPlayer hp = createPlayerWithInput("build city 0\ngo\n");
+        Settlement s = new Settlement();
+        node0.setStructure(s);
+        hp.addStructure(s);
+        hp.addResource(ResourceType.GRAIN);
+        hp.addResource(ResourceType.GRAIN);
+        hp.addResource(ResourceType.ORE);
+        hp.addResource(ResourceType.ORE);
+        hp.addResource(ResourceType.ORE);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new TestHumanPlayer.FixedDice(6), board, 10, 20);
+
+        hp.takeTurn(game);
+
+        assertEquals(1, hp.getCities().size(), "1 city should be placed");
+    }
+
+    @Test
+    void testBuildRoad_Valid() {
+        Board board = new Board();
+        Node node0 = board.getNodes().get(0);
+        HumanPlayer hp = createPlayerWithInput("build road 0,1\ngo\n");
+        Settlement s = new Settlement();
+        node0.setStructure(s);
+        hp.addStructure(s);
+        hp.addResource(ResourceType.BRICK);
+        hp.addResource(ResourceType.LUMBER);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new TestHumanPlayer.FixedDice(6), board, 10, 20);
+        hp.takeTurn(game);
+        assertEquals(1, hp.getRoads().size(), "1 road should be placed");
+    }
+}

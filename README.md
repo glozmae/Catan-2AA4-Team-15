@@ -69,7 +69,7 @@ Navigate to the root directory of the project and run the following commands to 
 javac -d out src/**/*.java
 
 # 2. Run the Main class (Entry Point)
-java -cp out Game.Main
+java -cp out Game.Demonstrator
 ```
 
 ### Using the visualizer

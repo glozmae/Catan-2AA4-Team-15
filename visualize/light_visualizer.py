@@ -39,12 +39,15 @@ class CatanBoardVisualizer:
         with open(json_path, 'r') as f:
             self.map_data = json.load(f)
 
-    def load_state_json(self, json_path: str) -> None:
-        """
-        Load game state from JSON file.
-        """
-        with open(json_path, 'r') as f:
-            self.state_data = json.load(f)
+    def load_state_json(self, json_path):
+        try:
+            with open(json_path, 'r') as f:
+                self.state_data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            # The file is currently in the middle of a microsecond swap!
+            # Just ignore it; the visualizer will try again on the next frame.
+            self.state_data = None
+            pass
 
     def _parse_resource(self, resource_str: Optional[str]) -> Optional[str]:
         """Convert resource string to FastResource or None for desert."""
@@ -158,7 +161,10 @@ class CatanBoardVisualizer:
         for road_data in self.state_data.get("roads", []):
             edge = (road_data["a"], road_data["b"])
             color = self._parse_color(road_data["owner"])
-            board.build_road(color, edge)
+            try:
+                board.build_road(color, edge)
+            except ValueError:
+                pass
 
     def build_game(self) -> Game:
         """
@@ -199,13 +205,6 @@ class CatanBoardVisualizer:
     ) -> np.ndarray:
         """
         Render the board and save to file.
-        Args:
-            output_dir: Directory to save the rendered image (PNG). If None, doesn't save.
-            render_scale: Scale factor for rendering (default 1.0)
-            show: Whether to display the image (requires display)
-
-        Returns:
-            RGB numpy array of the rendered board
         """
         if self.game is None:
             self.build_game()
@@ -228,16 +227,10 @@ class CatanBoardVisualizer:
             img.save(output_path)
             print(f"Board rendered and saved to {output_path}")
 
-        os.makedirs(output_dir, exist_ok=True)
-
-        return output_path
-
         # Clean up
         renderer.close()
 
         return rgb_array
-
-
 
 def visualize_board_from_json(
         map_json_path: str,
@@ -247,16 +240,16 @@ def visualize_board_from_json(
 ) -> None:
     """
     Convenience function to visualize a Catan board from JSON files.
-
-    Args:
-        map_json_path: Path to map JSON file
-        state_json_path: Path to state JSON file
-        output_dir: Path to save rendered image
-        render_scale: Rendering scale factor (higher = bigger image)
     """
     visualizer = CatanBoardVisualizer()
     visualizer.load_map_json(map_json_path)
     visualizer.load_state_json(state_json_path)
+
+    # --- SKIP FRAME GUARD ---
+    # If the file was mid-swap and loaded as None, skip rendering this frame!
+    if getattr(visualizer, 'state_data', None) is None:
+        return
+
     visualizer.render(output_dir=output_dir, render_scale=render_scale)
 
 
@@ -266,23 +259,29 @@ if __name__ == "__main__":
         print("  python light_visualizer.py base_map.json state.json")
         print("  python light_visualizer.py base_map.json --watch")
         sys.exit(1)
+
     base_map_path = sys.argv[1]
     watch_mode = "--watch" in sys.argv
     state_path = "state.json"
+
     if len(sys.argv) >= 3:
         if sys.argv[2] != "--watch" and sys.argv[2].endswith(".json"):
             state_path = sys.argv[2]
+
     last_mtime = None
     print("Visualizer started.")
+
     if watch_mode:
         print("Watch mode enabled. Waiting for state.json changes...")
+
     while True:
         state = {}
         if os.path.exists(state_path):
             mtime = os.path.getmtime(state_path)
             if (not watch_mode) or (mtime != last_mtime):
                 last_mtime = mtime
-                visualize_board_from_json(base_map_path,state_path)
+                visualize_board_from_json(base_map_path, state_path)
+
         if not watch_mode:
             break
         time.sleep(0.5)
