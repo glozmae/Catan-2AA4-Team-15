@@ -1,24 +1,8 @@
 package TestTask3;
 
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.List;
-
-import GameResources.Settlement;
-import Player.Player;
-import Player.ComputerPlayer;
 import Player.HumanPlayer;
-import Board.Board;
-import Board.Node;
-import Board.Tile;
-import Game.Game;
-import Game.Dice;
-import GameResources.ResourceType;
 
 import static org.junit.jupiter.api.Assertions.*;
 

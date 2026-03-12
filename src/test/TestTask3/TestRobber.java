@@ -15,7 +15,7 @@ import GameResources.ResourceType;
  *
  * @author Taihan Mobasshir, 400578506, McMaster University
  */
-public class TestRobber {
+class TestRobber {
 
     private Tile desertTile;
     private Tile forestTile;
@@ -25,7 +25,7 @@ public class TestRobber {
      * Set up dummy tiles and initialize the robber before each test.
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         // 1. Create a valid array of 6 actual Node objects for the Desert Tile
         Node[] desertNodes = new Node[6];
         for (int i = 0; i < 6; i++) {
@@ -50,7 +50,7 @@ public class TestRobber {
      * Tests that the constructor correctly assigns the initial tile.
      */
     @Test
-    public void testRobberInitialization() {
+    void testRobberInitialization() {
         // Robber should be on the desert tile
         assertTrue(robber.hasRobber(desertTile), "Robber should be located on the initial desert tile.");
 
@@ -62,7 +62,7 @@ public class TestRobber {
      * Tests that the robber correctly updates its location when moved.
      */
     @Test
-    public void testNewRobberMovement() {
+    void testNewRobberMovement() {
         // Move the robber to the forest tile
         robber.newRobber(forestTile);
 
