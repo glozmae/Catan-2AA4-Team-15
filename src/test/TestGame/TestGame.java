@@ -162,7 +162,7 @@ public class TestGame {
     @Test
     @Timeout(TIMEOUT)
     public void badWinPointsRejected() {
-        assertThrows(IllegalArgumentException.class, () -> new Game(makePlayers(2), new FixedDice(6), 0, 5));
+        assertThrows(IllegalArgumentException.class, () -> new Game(makePlayers(2), new FixedDice(6), 0, 5), "Win points must be positive");
     }
 
     /**
@@ -171,7 +171,7 @@ public class TestGame {
     @Test
     @Timeout(TIMEOUT)
     public void badRoundsRejected() {
-        assertThrows(IllegalArgumentException.class, () -> new Game(makePlayers(2), new FixedDice(6), 10, 0));
+        assertThrows(IllegalArgumentException.class, () -> new Game(makePlayers(2), new FixedDice(6), 10, 0), "Rounds must be in the valid range");
     }
 
     /**
@@ -180,7 +180,7 @@ public class TestGame {
     @Test
     @Timeout(TIMEOUT)
     public void nullDiceRejected() {
-        assertThrows(NullPointerException.class, () -> new Game(makePlayers(2), null, 10, 5));
+        assertThrows(NullPointerException.class, () -> new Game(makePlayers(2), null, 10, 5), "Null dice is not allowed");
     }
 
     /**
@@ -189,6 +189,17 @@ public class TestGame {
     @Test
     @Timeout(TIMEOUT)
     public void nullPlayersRejected() {
-        assertThrows(NullPointerException.class, () -> new Game(null, new FixedDice(6), 10, 5));
+        assertThrows(NullPointerException.class, () -> new Game(null, new FixedDice(6), 10, 5), "Null players list is not allowed");
+    }
+
+    /**
+     * Tests that single player is not allowed
+     */
+    @Test
+    @Timeout(TIMEOUT)
+    public void singlePlayerRejected() {
+        List<Player> players = new ArrayList<Player>();
+        players.add(new TestPlayer());
+        assertThrows(IllegalArgumentException.class, () -> new Game(players, new FixedDice(6), 10, 5), "Single player is not allowed");
     }
 }

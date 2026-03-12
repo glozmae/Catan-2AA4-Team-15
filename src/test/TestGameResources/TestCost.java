@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CostTest {
+class TestCost {
 
     @Test
     @DisplayName("Constructor should correctly assign positive values")
