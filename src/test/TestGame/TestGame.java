@@ -202,4 +202,14 @@ public class TestGame {
         players.add(new TestPlayer());
         assertThrows(IllegalArgumentException.class, () -> new Game(players, new FixedDice(6), 10, 5), "Single player is not allowed");
     }
+
+    /**
+     * Simple sanity check for simulate
+     */
+    @Test
+    @Timeout(TIMEOUT)
+    public void TestSimulate() {
+        Game game = new Game(makePlayers(2), new FixedDice(6), 10, 10);
+        assertDoesNotThrow(() -> game.simulate(), "simulate does not throw any errors");
+    }
 }
