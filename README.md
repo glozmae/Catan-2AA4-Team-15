@@ -72,6 +72,17 @@ javac -d out src/**/*.java
 java -cp out Game.Demonstrator
 ```
 
+**Option 2: Using Maven**
+Navigate to the root directory and run the following commands to compile the source code and package it into a jar:
+```bash
+# 1. Compile
+mvn compile
+# 2. Package
+mvn package
+# 3. Run the jar
+java -jar target/<jar file>
+```
+
 ### Using the visualizer
 Create a new python venv using the command `python -m venv .venv` and activate it using `.\.venv\Scripts\activate`.
 Install the required dependencies using `pip install -r requirements.txt`.
