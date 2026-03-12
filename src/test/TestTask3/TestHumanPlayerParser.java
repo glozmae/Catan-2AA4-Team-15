@@ -1,8 +1,5 @@
 package TestTask3;
 
-import Player.Player;
-import Player.ComputerPlayer;
-import Player.HumanPlayer;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +9,12 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import GameResources.Settlement;
+import Player.Player;
+import Player.ComputerPlayer;
+import Player.HumanPlayer;
 import Board.Board;
+import Board.Node;
 import Board.Tile;
 import Game.Game;
 import Game.Dice;
@@ -231,5 +233,57 @@ class TestHumanPlayerParser {
         hp.takeTurn(game);
 
         assertEquals(0, hp.getRoads().size(), "Road should NOT be placed with an invalid node.");
+    }
+
+    @Test
+    void testBuildSettlement_Valid() {
+        HumanPlayer hp = createPlayerWithInput("build settlement 0\ngo\n");
+        hp.addResource(ResourceType.BRICK);
+        hp.addResource(ResourceType.LUMBER);
+        hp.addResource(ResourceType.WOOL);
+        hp.addResource(ResourceType.GRAIN);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new FixedDice(6), new Board(), 10, 20);
+
+        hp.takeTurn(game);
+
+        assertEquals(1, hp.getSettlements().size(), "1 settlement should be placed");
+    }
+
+    @Test
+    void testBuildCity_Valid() {
+        Board board = new Board();
+        Node node0 = board.getNodes().get(0);
+        HumanPlayer hp = createPlayerWithInput("build city 0\ngo\n");
+        Settlement s = new Settlement();
+        node0.setStructure(s);
+        hp.addStructure(s);
+        hp.addResource(ResourceType.GRAIN);
+        hp.addResource(ResourceType.GRAIN);
+        hp.addResource(ResourceType.ORE);
+        hp.addResource(ResourceType.ORE);
+        hp.addResource(ResourceType.ORE);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new FixedDice(6), board, 10, 20);
+
+        hp.takeTurn(game);
+
+        assertEquals(1, hp.getCities().size(), "1 city should be placed");
+    }
+
+    @Test
+    void testBuildRoad_Valid() {
+        Board board = new Board();
+        Node node0 = board.getNodes().get(0);
+        HumanPlayer hp = createPlayerWithInput("build road 0,1\ngo\n");
+        Settlement s = new Settlement();
+        node0.setStructure(s);
+        hp.addStructure(s);
+        hp.addResource(ResourceType.BRICK);
+        hp.addResource(ResourceType.LUMBER);
+        ComputerPlayer cp = new ComputerPlayer();
+        Game game = new Game(List.of(hp, cp), new FixedDice(6), board, 10, 20);
+        hp.takeTurn(game);
+        assertEquals(1, hp.getRoads().size(), "1 road should be placed");
     }
 }
