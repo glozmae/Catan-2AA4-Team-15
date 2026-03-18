@@ -1,11 +1,13 @@
 package Player;
 
+import java.util.Scanner;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import Board.Node;
 import Board.Tile;
 import Game.Game;
