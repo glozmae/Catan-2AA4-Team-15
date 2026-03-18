@@ -59,7 +59,7 @@ public class ComputerPlayer extends Player {
         while (madeMove) {
             madeMove = false;
 
-            EvaluatedMove bestMove = chooseBestMove(game);
+            AIMove bestMove = chooseBestMove(game);
             if (bestMove != null) {
                 System.out.println(bestMove.message);
                 bestMove.action.run();
@@ -122,8 +122,8 @@ public class ComputerPlayer extends Player {
      * @param game The current game context.
      * @return The chosen move, or null if no valid move exists.
      */
-    private EvaluatedMove chooseBestMove(Game game) {
-        List<EvaluatedMove> moves = new ArrayList<>();
+    private AIMove chooseBestMove(Game game) {
+        List<AIMove> moves = new ArrayList<>();
         List<Node> allNodes = game.getBoard().getNodes();
 
         addCityMoves(moves, allNodes);
@@ -135,14 +135,14 @@ public class ComputerPlayer extends Player {
         }
 
         double bestValue = -1.0;
-        for (EvaluatedMove move : moves) {
+        for (AIMove move : moves) {
             if (move.value > bestValue) {
                 bestValue = move.value;
             }
         }
 
-        List<EvaluatedMove> bestMoves = new ArrayList<>();
-        for (EvaluatedMove move : moves) {
+        List<AIMove> bestMoves = new ArrayList<>();
+        for (AIMove move : moves) {
             if (move.value == bestValue) {
                 bestMoves.add(move);
             }
@@ -157,7 +157,7 @@ public class ComputerPlayer extends Player {
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
      */
-    private void addCityMoves(List<EvaluatedMove> moves, List<Node> allNodes) {
+    private void addCityMoves(List<AIMove> moves, List<Node> allNodes) {
         if (getResourceAmount(ResourceType.GRAIN) < 2
                 || getResourceAmount(ResourceType.ORE) < 3
                 || getCities().size() >= City.getMax()) {
@@ -167,7 +167,7 @@ public class ComputerPlayer extends Player {
         for (Node node : allNodes) {
             if (node.getPlayer() == this && node.getStructure() instanceof Settlement) {
                 Node target = node;
-                moves.add(new EvaluatedMove(
+                moves.add(new AIMove(
                         1.0,
                         this + " upgrading to City at Node " + target.getId(),
                         () -> {
@@ -185,7 +185,7 @@ public class ComputerPlayer extends Player {
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
      */
-    private void addSettlementMoves(List<EvaluatedMove> moves, List<Node> allNodes) {
+    private void addSettlementMoves(List<AIMove> moves, List<Node> allNodes) {
         if (getResourceAmount(ResourceType.BRICK) < 1
                 || getResourceAmount(ResourceType.LUMBER) < 1
                 || getResourceAmount(ResourceType.WOOL) < 1
@@ -197,7 +197,7 @@ public class ComputerPlayer extends Player {
         for (Node node : allNodes) {
             if (node.canBuildSettlement(this)) {
                 Node target = node;
-                moves.add(new EvaluatedMove(
+                moves.add(new AIMove(
                         1.0,
                         this + " building Settlement at Node " + target.getId(),
                         () -> {
@@ -215,7 +215,7 @@ public class ComputerPlayer extends Player {
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
      */
-    private void addRoadMoves(List<EvaluatedMove> moves, List<Node> allNodes) {
+    private void addRoadMoves(List<AIMove> moves, List<Node> allNodes) {
         if (getResourceAmount(ResourceType.BRICK) < 1
                 || getResourceAmount(ResourceType.LUMBER) < 1
                 || getRoads().size() >= Road.getMax()) {
@@ -228,7 +228,7 @@ public class ComputerPlayer extends Player {
                 Node start = startNode;
                 Node end = endNode;
 
-                moves.add(new EvaluatedMove(
+                moves.add(new AIMove(
                         0.8,
                         this + " building Road from Node " + start.getId() + " to " + end.getId(),
                         () -> {
