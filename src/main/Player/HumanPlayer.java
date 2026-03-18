@@ -39,11 +39,15 @@ public class HumanPlayer extends Player {
     /** Reads commands from the console for this human player. */
     private final Scanner commandReader;
     private final Random randomizer;
+    private final Deque<PlayerCommand> undoStack;
+    private final Deque<PlayerCommand> redoStack;
 
     public HumanPlayer() {
         super();
         this.commandReader = new Scanner(System.in);
         this.randomizer = new Random();
+        this.undoStack = new ArrayDeque<>();
+        this.redoStack = new ArrayDeque<>();
     }
 
     /**
