@@ -14,13 +14,14 @@ import GameResources.Settlement;
 
 /************************************************************/
 /**
- * Represents a computer simulation of a player (AI Agent).
+ * Represents a computer-controlled player that uses rule-based machine intelligence.
  * <p>
- * This AI uses a "Priority Action Loop" strategy:
- * 1. It attempts to build the most valuable structure it can afford (City > Settlement > Road).
- * 2. It executes that move immediately.
- * 3. It loops and repeats this process until it runs out of resources or valid moves.
- * * @author Yojith Sai Biradavolu, McMaster University
+ * This AI evaluates the actions currently available to it, assigns each one an
+ * immediate value, and chooses the highest-valued move, using randomness to break ties.
+ * It also spends cards when its hand is too large and prioritizes road-building situations
+ * that protect or improve its road network.
+ *
+ * @author Parnia Yazdinia, McMaster University
  * @version Winter, 2026
  */
 public class ComputerPlayer extends Player {
@@ -256,6 +257,160 @@ public class ComputerPlayer extends Player {
     }
 
     /**
+     * Checks whether there is a road move that helps connect two of this player's
+     * road segments that are at most two units apart.
+     *
+     * @param game The current game context.
+     * @return true if such a move exists, false otherwise.
+     */
+    private boolean connectNearbyRoad(Game game) {
+        if (getResourceAmount(ResourceType.BRICK) < 1
+                || getResourceAmount(ResourceType.LUMBER) < 1
+                || getRoads().size() >= Road.getMax()) {
+            return false;
+        }
+
+        List<Node> allNodes = game.getBoard().getNodes();
+        for (Node startNode : allNodes) {
+            List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
+            for (Node endNode : validTargets) {
+                if (connectRoadCandidate(startNode, endNode)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Chooses a road move that helps connect two nearby road segments.
+     *
+     * @param game The current game context.
+     * @return A road-connecting move, or null if none exists.
+     */
+    private AIMove connectRoadMove(Game game) {
+        List<AIMove> connectingMoves = new ArrayList<>();
+        List<Node> allNodes = game.getBoard().getNodes();
+
+        for (Node startNode : allNodes) {
+            List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
+            for (Node endNode : validTargets) {
+                if (connectRoadCandidate(startNode, endNode)) {
+                    Node start = startNode;
+                    Node end = endNode;
+
+                    connectingMoves.add(new AIMove(
+                            0.8,
+                            this + " building connecting Road from Node " + start.getId() + " to " + end.getId(),
+                            () -> {
+                                payForRoad();
+                                placeRoad(start, end, new Road());
+                            }
+                    ));
+                }
+            }
+        }
+
+        if (connectingMoves.isEmpty()) {
+            return null;
+        }
+
+        return connectingMoves.get(randomizer.nextInt(connectingMoves.size()));
+    }
+
+    /**
+     * Returns true if building a road from start to end helps connect this player's
+     * road network to another owned road segment within at most two units.
+     *
+     * @param start Starting node of the candidate road.
+     * @param end Ending node of the candidate road.
+     * @return true if this road is a good connecting move.
+     */
+    private boolean connectRoadCandidate(Node start, Node end) {
+        if (hasOtherOwnedRoad(end, start)) {
+            return true;
+        }
+
+        for (Node next : getNeighbors(end)) {
+            if (next == start) {
+                continue;
+            }
+
+            if (getRoadBetween(end, next) == null && hasOtherOwnedRoad(next, end)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true if the given node touches one of this player's roads,
+     * excluding the edge that leads to the excluded neighbor.
+     *
+     * @param node The node being checked.
+     * @param excludedNeighbor The neighbor edge to ignore.
+     * @return true if another owned road is present.
+     */
+    private boolean hasOtherOwnedRoad(Node node, Node excludedNeighbor) {
+        for (Node neighbor : getNeighbors(node)) {
+            if (neighbor == excludedNeighbor) {
+                continue;
+            }
+
+            Road road = getRoadBetween(node, neighbor);
+            if (road != null && road.getOwner() == this) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns all non-null neighboring nodes of the given node.
+     *
+     * @param node The node whose neighbors are needed.
+     * @return List of neighboring nodes.
+     */
+    private List<Node> getNeighbors(Node node) {
+        List<Node> neighbors = new ArrayList<>();
+
+        if (node.getLeft() != null) {
+            neighbors.add(node.getLeft());
+        }
+        if (node.getRight() != null) {
+            neighbors.add(node.getRight());
+        }
+        if (node.getVert() != null) {
+            neighbors.add(node.getVert());
+        }
+
+        return neighbors;
+    }
+
+    /**
+     * Returns the road on the edge between two adjacent nodes, if one exists.
+     *
+     * @param a First node.
+     * @param b Second node.
+     * @return The road on that edge, or null if none exists.
+     */
+    private Road getRoadBetween(Node a, Node b) {
+        if (a.getLeft() == b) {
+            return a.getLeftRoad();
+        }
+        if (a.getRight() == b) {
+            return a.getRightRoad();
+        }
+        if (a.getVert() == b) {
+            return a.getVertRoad();
+        }
+        return null;
+    }
+
+    /**
      * Adds all currently valid city-upgrade moves.
      *
      * @param moves The list of candidate moves.
@@ -290,8 +445,7 @@ public class ComputerPlayer extends Player {
      * @param allNodes All nodes on the board.
      */
     private void addSettlementMoves(List<AIMove> moves, List<Node> allNodes) {
-        if (getResourceAmount(ResourceType.BRICK) < 1
-                || getResourceAmount(ResourceType.LUMBER) < 1
+        if (getResourceAmount(ResourceType.BRICK) < 1 || getResourceAmount(ResourceType.LUMBER) < 1
                 || getResourceAmount(ResourceType.WOOL) < 1
                 || getResourceAmount(ResourceType.GRAIN) < 1
                 || getSettlements().size() >= Settlement.getMax()) {
