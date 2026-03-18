@@ -57,9 +57,12 @@ public class HumanPlayer extends Player {
     public void takeTurn(Game game) {
         boolean turnFinished = false;
 
+        undoStack.clear();
+        redoStack.clear();
+
         System.out.println("\n========================================");
         System.out.println("Your Turn: " + this.toString());
-        System.out.println("Commands: roll | list | build settlement <id> | build city <id> | build road <id,id> | go");
+        System.out.println("Commands: roll | list | build settlement <id> | build city <id> | build road <id,id> | undo | redo | go");
         System.out.println("========================================");
 
         while (!turnFinished) {
@@ -80,7 +83,19 @@ public class HumanPlayer extends Player {
                 continue;
             }
 
-            // GO COMMAND (R2.4 Step Forward)
+            // UNDO COMMAND
+            if (UNDO_PATTERN.matcher(command).matches()) {
+                undoLastCommand(game);   //need to come back and fix this eror
+                continue;
+            }
+
+            // REDO COMMAND
+            if (REDO_PATTERN.matcher(command).matches()) {
+                redoLastCommand(game);
+                continue;
+            }
+
+            // GO COMMAND
             if (GO_PATTERN.matcher(command).matches()) {
                 turnFinished = true;
                 logAction(game.getRound(), "Ended turn (Go)");

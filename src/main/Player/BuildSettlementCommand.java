@@ -54,7 +54,7 @@ public class BuildSettlementCommand implements PlayerCommand {
 
     @Override
     public String getUndoMessage() {
-        return "Undid settlement at node " + node.getId();
+        return "Removed settlement from node " + node.getId();
     }
 
     private void payCost() {
