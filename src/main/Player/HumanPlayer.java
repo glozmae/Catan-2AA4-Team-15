@@ -230,10 +230,8 @@ public class HumanPlayer extends Player {
             return true;
         }
 
-        payCost(s.getCost());
-        node.setStructure(s);
-        addStructure(s);
-        logAction(game.getRound(), "Built settlement at node " + nodeId);
+        PlayerCommand buildSettlement = new BuildSettlementCommand(this, node);
+        executeCommand(game, buildSettlement);
         return true;
     }
 
@@ -249,17 +247,9 @@ public class HumanPlayer extends Player {
             return true;
         }
 
-        City c = new City();
-        if (!affordable(c.getCost())) {
-            System.out.println("Not enough resources!");
-            return true;
-        }
-
-        payCost(c.getCost());
-        removeStructure(node.getStructure());
-        node.setStructure(c);
-        addStructure(c);
-        logAction(game.getRound(), "Built city at node " + nodeId);
+        //Need to ad city
+        PlayerCommand buildCity = new BuildCityCommand(this, node);
+        executeCommand(game, buildCity);
         return true;
     }
 
@@ -272,7 +262,9 @@ public class HumanPlayer extends Player {
         Node beginNode = findNode(game, fromId);
         Node endNode = findNode(game, toId);
 
-        if (beginNode == null || endNode == null || getRoads().size() >= Road.getMax() || (!beginNode.getBuildableRoadNeighbors(this).contains(endNode) && !endNode.getBuildableRoadNeighbors(this).contains(beginNode))) {
+        if (beginNode == null || endNode == null || getRoads().size() >= Road.getMax() ||
+                (!beginNode.getBuildableRoadNeighbors(this).contains(endNode) &&
+                        !endNode.getBuildableRoadNeighbors(this).contains(beginNode))) {
             System.out.println("Cannot build road there (No connection or edge already taken).");
             return true;
         }
@@ -283,10 +275,8 @@ public class HumanPlayer extends Player {
             return true;
         }
 
-        payCost(r.getCost());
-        placeRoadEdge(beginNode, endNode, r);
-        addRoad(r);
-        logAction(game.getRound(), "Built road [" + fromId + "," + toId + "]");
+        PlayerCommand buildRoad = new BuildRoadCommand(this, beginNode, endNode);
+        executeCommand(game, buildRoad);
         return true;
     }
 
@@ -315,14 +305,6 @@ public class HumanPlayer extends Player {
                 && getResourceAmount(ResourceType.ORE) >= cost.getOre();
     }
 
-    private void payCost(Cost cost) {
-        for (int i=0; i<cost.getBrick(); i++) removeResource(ResourceType.BRICK);
-        for (int i=0; i<cost.getLumber(); i++) removeResource(ResourceType.LUMBER);
-        for (int i=0; i<cost.getWool(); i++) removeResource(ResourceType.WOOL);
-        for (int i=0; i<cost.getGrain(); i++) removeResource(ResourceType.GRAIN);
-        for (int i=0; i<cost.getOre(); i++) removeResource(ResourceType.ORE);
-    }
-
     private Node findNode(Game game, int nodeId) {
         List<Node> nodes = game.getBoard().getNodes();
         if (nodeId < 0 || nodeId >= nodes.size()) return null;
@@ -343,6 +325,44 @@ public class HumanPlayer extends Player {
         if (start.getLeft() == end) { start.setLeftRoad(r); end.setRightRoad(r); }
         else if (start.getRight() == end) { start.setRightRoad(r); end.setLeftRoad(r); }
         else if (start.getVert() == end) { start.setVertRoad(r); end.setVertRoad(r); }
+    }
+
+    private void executeCommand(Game game, PlayerCommand command) {
+        command.execute();
+        undoStack.push(command);
+        redoStack.clear();
+        logAction(game.getRound(), command.getExecuteMessage());
+    }
+
+    private void undoLastCommand(Game game) {
+        if (undoStack.isEmpty()) {
+            System.out.println("Nothing to undo.");
+            return;
+        }
+        PlayerCommand command = undoStack.pop();
+        command.undo();
+        redoStack.push(command);
+        logAction(game.getRound(), command.getUndoMessage());
+    }
+
+    private void redoLastCommand(Game game) {
+        if (redoStack.isEmpty()) {
+            System.out.println("Nothing to redo.");
+            return;
+        }
+        PlayerCommand command = redoStack.pop();
+        command.execute();
+        undoStack.push(command);
+        logAction(game.getRound(), "Redid: " + command.getExecuteMessage());
+    }
+
+    //Parser helpers
+    public static boolean undoCommand(String command) {
+        return UNDO_PATTERN.matcher(command).matches();
+    }
+
+    public static boolean redoCommand(String command) {
+        return REDO_PATTERN.matcher(command).matches();
     }
 
     // ==========================================
