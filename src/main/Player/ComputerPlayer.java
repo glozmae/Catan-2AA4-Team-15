@@ -282,43 +282,6 @@ public class ComputerPlayer extends Player {
 
         return false;
     }
-
-    /**
-     * Chooses a road move that helps connect two nearby road segments.
-     *
-     * @param game The current game context.
-     * @return A road-connecting move, or null if none exists.
-     */
-    private AIMove connectRoadMove(Game game) {
-        List<AIMove> connectingMoves = new ArrayList<>();
-        List<Node> allNodes = game.getBoard().getNodes();
-
-        for (Node startNode : allNodes) {
-            List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
-            for (Node endNode : validTargets) {
-                if (connectRoadCandidate(startNode, endNode)) {
-                    Node start = startNode;
-                    Node end = endNode;
-
-                    connectingMoves.add(new AIMove(
-                            0.8,
-                            this + " building connecting Road from Node " + start.getId() + " to " + end.getId(),
-                            () -> {
-                                payForRoad();
-                                placeRoad(start, end, new Road());
-                            }
-                    ));
-                }
-            }
-        }
-
-        if (connectingMoves.isEmpty()) {
-            return null;
-        }
-
-        return connectingMoves.get(randomizer.nextInt(connectingMoves.size()));
-    }
-
     /**
      * Returns true if building a road from start to end helps connect this player's
      * road network to another owned road segment within at most two units.
@@ -411,7 +374,43 @@ public class ComputerPlayer extends Player {
     }
 
     /**
-     * Adds all currently valid city-upgrade moves.
+     * Chooses a road move that helps connect two nearby road segments.
+     *
+     * @param game The current game context.
+     * @return A road-connecting move, or null if none exists.
+     */
+    private AIMove connectRoadMove(Game game) {
+        List<AIMove> connectingMoves = new ArrayList<>();
+        List<Node> allNodes = game.getBoard().getNodes();
+
+        for (Node startNode : allNodes) {
+            List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
+            for (Node endNode : validTargets) {
+                if (connectRoadCandidate(startNode, endNode)) {
+
+                    PlayerCommand buildRoadCommand = new BuildRoadCommand(this, startNode, endNode);
+                    MoveEvaluator evaluator = new BaseMoveEvaluator(buildRoadCommand);
+                    evaluator = new BuilderDecorator(evaluator);
+                    evaluator = new HandDepleterDecorator(evaluator, this, 2);
+
+                    connectingMoves.add(new AIMove(
+                            evaluator.evaluateValue(),
+                            buildRoadCommand.getExecuteMessage() + " (Connecting)",
+                            buildRoadCommand::execute
+                    ));
+                }
+            }
+        }
+
+        if (connectingMoves.isEmpty()) {
+            return null;
+        }
+
+        return connectingMoves.get(randomizer.nextInt(connectingMoves.size()));
+    }
+
+    /**
+     * Adds all currently valid city-upgrade moves dynamically calculating R3.2 values.
      *
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
@@ -425,21 +424,23 @@ public class ComputerPlayer extends Player {
 
         for (Node node : allNodes) {
             if (node.getPlayer() == this && node.getStructure() instanceof Settlement) {
-                Node target = node;
+
+                PlayerCommand buildCityCommand = new BuildCityCommand(this, node);
+                MoveEvaluator evaluator = new BaseMoveEvaluator(buildCityCommand);
+                evaluator = new VPEarnerDecorator(evaluator);
+                evaluator = new HandDepleterDecorator(evaluator, this, 5);
+
                 moves.add(new AIMove(
-                        1.0,
-                        this + " upgrading to City at Node " + target.getId(),
-                        () -> {
-                            payForCity();
-                            placeCity(target, new City());
-                        }
+                        evaluator.evaluateValue(),
+                        buildCityCommand.getExecuteMessage(),
+                        buildCityCommand::execute
                 ));
             }
         }
     }
 
     /**
-     * Adds all currently valid settlement-building moves.
+     * Adds all currently valid settlement-building moves dynamically calculating R3.2 values.
      *
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
@@ -454,21 +455,23 @@ public class ComputerPlayer extends Player {
 
         for (Node node : allNodes) {
             if (node.canBuildSettlement(this)) {
-                Node target = node;
+
+                PlayerCommand buildSettlementCommand = new BuildSettlementCommand(this, node);
+                MoveEvaluator evaluator = new BaseMoveEvaluator(buildSettlementCommand);
+                evaluator = new VPEarnerDecorator(evaluator);
+                evaluator = new HandDepleterDecorator(evaluator, this, 4);
+
                 moves.add(new AIMove(
-                        1.0,
-                        this + " building Settlement at Node " + target.getId(),
-                        () -> {
-                            payForSettlement();
-                            placeSettlement(target, new Settlement());
-                        }
+                        evaluator.evaluateValue(),
+                        buildSettlementCommand.getExecuteMessage(),
+                        buildSettlementCommand::execute
                 ));
             }
         }
     }
 
     /**
-     * Adds all currently valid road-building moves.
+     * Adds all currently valid road-building moves dynamically calculating R3.2 values.
      *
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
@@ -483,16 +486,16 @@ public class ComputerPlayer extends Player {
         for (Node startNode : allNodes) {
             List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
             for (Node endNode : validTargets) {
-                Node start = startNode;
-                Node end = endNode;
+
+                PlayerCommand buildRoadCommand = new BuildRoadCommand(this, startNode, endNode);
+                MoveEvaluator evaluator = new BaseMoveEvaluator(buildRoadCommand);
+                evaluator = new BuilderDecorator(evaluator);
+                evaluator = new HandDepleterDecorator(evaluator, this, 2);
 
                 moves.add(new AIMove(
-                        0.8,
-                        this + " building Road from Node " + start.getId() + " to " + end.getId(),
-                        () -> {
-                            payForRoad();
-                            placeRoad(start, end, new Road());
-                        }
+                        evaluator.evaluateValue(),
+                        buildRoadCommand.getExecuteMessage(),
+                        buildRoadCommand::execute
                 ));
             }
         }
@@ -551,8 +554,7 @@ public class ComputerPlayer extends Player {
     private boolean isNeighborOccupied(Node n) {
         if (n.getLeft() != null && n.getLeft().getPlayer() != null) return true;
         if (n.getRight() != null && n.getRight().getPlayer() != null) return true;
-        if (n.getVert() != null && n.getVert().getPlayer() != null) return true;
-        return false;
+        return n.getVert() != null && n.getVert().getPlayer() != null;
     }
 
     /** Deducts resources for a road construction. */
