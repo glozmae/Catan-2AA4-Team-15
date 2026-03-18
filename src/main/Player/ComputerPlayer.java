@@ -47,78 +47,26 @@ public class ComputerPlayer extends Player {
 
     /**
      * Logic for the computer player's turn.
-     * Continually evaluates and executes building priorities as long as moves are possible.
+     * Continually evaluates all currently available actions and chooses
+     * the one with the highest immediate value.
+     *
      * @param game The current game context.
      */
     @Override
     public void takeTurn(Game game) {
         boolean madeMove = true;
 
-        // Loop allows the AI to make multiple purchases per turn (preventing Robber hoarding)
         while (madeMove) {
             madeMove = false;
-            List<Node> allNodes = game.getBoard().getNodes();
 
-            // --- PRIORITY 1: CITIES (Highest VP, Best Resource Gen) ---
-            if (getResourceAmount(ResourceType.GRAIN) >= 2 && getResourceAmount(ResourceType.ORE) >= 3 && getCities().size() < City.getMax()) {
-                List<Node> validCityNodes = new ArrayList<>();
-                for (Node node : allNodes) {
-                    if (node.getPlayer() == this && node.getStructure() instanceof Settlement) {
-                        validCityNodes.add(node);
-                    }
-                }
-                if (!validCityNodes.isEmpty()) {
-                    Node target = validCityNodes.get(randomizer.nextInt(validCityNodes.size()));
-                    System.out.println(this + " upgrading to City at Node " + target.getId());
-                    payForCity();
-                    placeCity(target, new City());
-                    madeMove = true;
-                    continue; // Loop again from the top!
-                }
-            }
-
-            // --- PRIORITY 2: SETTLEMENTS (VP + New Resource Gen) ---
-            if (getResourceAmount(ResourceType.BRICK) >= 1 && getResourceAmount(ResourceType.LUMBER) >= 1
-                    && getResourceAmount(ResourceType.WOOL) >= 1 && getResourceAmount(ResourceType.GRAIN) >= 1
-                    && getSettlements().size() < Settlement.getMax()) {
-
-                List<Node> validSettlementNodes = new ArrayList<>();
-                for (Node node : allNodes) {
-                    if (node.canBuildSettlement(this)) {
-                        validSettlementNodes.add(node);
-                    }
-                }
-                if (!validSettlementNodes.isEmpty()) {
-                    Node target = validSettlementNodes.get(randomizer.nextInt(validSettlementNodes.size()));
-                    System.out.println(this + " building Settlement at Node " + target.getId());
-                    payForSettlement();
-                    placeSettlement(target, new Settlement());
-                    madeMove = true;
-                    continue;
-                }
-            }
-
-            // --- PRIORITY 3: ROADS (Expansion) ---
-            if (getResourceAmount(ResourceType.BRICK) >= 1 && getResourceAmount(ResourceType.LUMBER) >= 1 && getRoads().size() < Road.getMax()) {
-                List<Runnable> validRoadMoves = new ArrayList<>();
-
-                for (Node startNode : allNodes) {
-                    List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
-                    for (Node endNode : validTargets) {
-                        validRoadMoves.add(() -> {
-                            System.out.println(this + " building Road from Node " + startNode.getId() + " to " + endNode.getId());
-                            payForRoad();
-                            placeRoad(startNode, endNode, new Road());
-                        });
-                    }
-                }
-                if (!validRoadMoves.isEmpty()) {
-                    Runnable move = validRoadMoves.get(randomizer.nextInt(validRoadMoves.size()));
-                    move.run();
-                    madeMove = true;
-                }
+            EvaluatedMove bestMove = chooseBestMove(game);
+            if (bestMove != null) {
+                System.out.println(bestMove.message);
+                bestMove.action.run();
+                madeMove = true;
             }
         }
+
         System.out.println(this + " ends their turn.");
     }
 
@@ -166,6 +114,131 @@ public class ComputerPlayer extends Player {
     // =========================================================================
     // HELPER METHODS
     // =========================================================================
+
+    /**
+     * Chooses the highest-valued available move for the current game state.
+     * If multiple moves have the same best value, one is chosen randomly.
+     *
+     * @param game The current game context.
+     * @return The chosen move, or null if no valid move exists.
+     */
+    private EvaluatedMove chooseBestMove(Game game) {
+        List<EvaluatedMove> moves = new ArrayList<>();
+        List<Node> allNodes = game.getBoard().getNodes();
+
+        addCityMoves(moves, allNodes);
+        addSettlementMoves(moves, allNodes);
+        addRoadMoves(moves, allNodes);
+
+        if (moves.isEmpty()) {
+            return null;
+        }
+
+        double bestValue = -1.0;
+        for (EvaluatedMove move : moves) {
+            if (move.value > bestValue) {
+                bestValue = move.value;
+            }
+        }
+
+        List<EvaluatedMove> bestMoves = new ArrayList<>();
+        for (EvaluatedMove move : moves) {
+            if (move.value == bestValue) {
+                bestMoves.add(move);
+            }
+        }
+
+        return bestMoves.get(randomizer.nextInt(bestMoves.size()));
+    }
+
+    /**
+     * Adds all currently valid city-upgrade moves.
+     *
+     * @param moves The list of candidate moves.
+     * @param allNodes All nodes on the board.
+     */
+    private void addCityMoves(List<EvaluatedMove> moves, List<Node> allNodes) {
+        if (getResourceAmount(ResourceType.GRAIN) < 2
+                || getResourceAmount(ResourceType.ORE) < 3
+                || getCities().size() >= City.getMax()) {
+            return;
+        }
+
+        for (Node node : allNodes) {
+            if (node.getPlayer() == this && node.getStructure() instanceof Settlement) {
+                Node target = node;
+                moves.add(new EvaluatedMove(
+                        1.0,
+                        this + " upgrading to City at Node " + target.getId(),
+                        () -> {
+                            payForCity();
+                            placeCity(target, new City());
+                        }
+                ));
+            }
+        }
+    }
+
+    /**
+     * Adds all currently valid settlement-building moves.
+     *
+     * @param moves The list of candidate moves.
+     * @param allNodes All nodes on the board.
+     */
+    private void addSettlementMoves(List<EvaluatedMove> moves, List<Node> allNodes) {
+        if (getResourceAmount(ResourceType.BRICK) < 1
+                || getResourceAmount(ResourceType.LUMBER) < 1
+                || getResourceAmount(ResourceType.WOOL) < 1
+                || getResourceAmount(ResourceType.GRAIN) < 1
+                || getSettlements().size() >= Settlement.getMax()) {
+            return;
+        }
+
+        for (Node node : allNodes) {
+            if (node.canBuildSettlement(this)) {
+                Node target = node;
+                moves.add(new EvaluatedMove(
+                        1.0,
+                        this + " building Settlement at Node " + target.getId(),
+                        () -> {
+                            payForSettlement();
+                            placeSettlement(target, new Settlement());
+                        }
+                ));
+            }
+        }
+    }
+
+    /**
+     * Adds all currently valid road-building moves.
+     *
+     * @param moves The list of candidate moves.
+     * @param allNodes All nodes on the board.
+     */
+    private void addRoadMoves(List<EvaluatedMove> moves, List<Node> allNodes) {
+        if (getResourceAmount(ResourceType.BRICK) < 1
+                || getResourceAmount(ResourceType.LUMBER) < 1
+                || getRoads().size() >= Road.getMax()) {
+            return;
+        }
+
+        for (Node startNode : allNodes) {
+            List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
+            for (Node endNode : validTargets) {
+                Node start = startNode;
+                Node end = endNode;
+
+                moves.add(new EvaluatedMove(
+                        0.8,
+                        this + " building Road from Node " + start.getId() + " to " + end.getId(),
+                        () -> {
+                            payForRoad();
+                            placeRoad(start, end, new Road());
+                        }
+                ));
+            }
+        }
+    }
 
     /**
      * Places a settlement on a node and updates player and node states.
@@ -271,5 +344,20 @@ public class ComputerPlayer extends Player {
     public Tile setRobber(List<Tile> tiles) {
         int randomIndex = randomizer.nextInt(tiles.size());
         return tiles.get(randomIndex);
+    }
+
+    /**
+     * Represents a possible AI move together with its immediate value.
+     */
+    private static class AIMove {
+        private final double value;
+        private final String message;
+        private final Runnable action;
+
+        private AIMove(double value, String message, Runnable action) {
+            this.value = value;
+            this.message = message;
+            this.action = action;
+        }
     }
 }
