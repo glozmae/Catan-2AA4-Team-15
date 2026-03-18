@@ -33,6 +33,9 @@ public class HumanPlayer extends Player {
     private static final Pattern BUILD_SETTLEMENT = Pattern.compile("^build\\s+settlement\\s+(\\d+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern BUILD_CITY = Pattern.compile("^build\\s+city\\s+(\\d+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern BUILD_ROAD = Pattern.compile("^build\\s+road\\s+\\[?\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\]?$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern UNDO_PATTERN = Pattern.compile("^undo$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REDO_PATTERN = Pattern.compile("^redo$", Pattern.CASE_INSENSITIVE);
+
     /** Reads commands from the console for this human player. */
     private final Scanner commandReader;
     private final Random randomizer;
