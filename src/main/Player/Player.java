@@ -109,7 +109,11 @@ public abstract class Player {
 	 * @param structure Structure to be added
 	 */
 	public void addStructure(Structure structure) {
-		structure.setOwner(this);
+		if (structure.getOwner() == null) {
+			structure.setOwner(this);
+		} else if (structure.getOwner() != this) {
+			throw new IllegalArgumentException("Structure belongs to another player");
+		}
 		this.structures.add(structure);
 	}
 
@@ -128,8 +132,21 @@ public abstract class Player {
 	 * @param road Road to be added
 	 */
 	public void addRoad(Road road) {
-		road.setOwner(this);
+		if (road.getOwner() == null) {
+			road.setOwner(this);
+		} else if (road.getOwner() != this) {
+			throw new IllegalArgumentException("Road belongs to another player");
+		}
 		this.roads.add(road);
+	}
+
+	/**
+	 * Removes a road from the player's road list
+	 *
+	 * @param road Road to be removed
+	 */
+	public void removeRoad(Road road) {
+		this.roads.remove(road);
 	}
 
 	/**
