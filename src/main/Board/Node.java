@@ -155,6 +155,27 @@ public class Node {
 	public Road getVertRoad() { return vertRoad; }
 
 	/**
+	 * Clears the left road on this node.
+	 */
+	public void clearLeftRoad() {
+		this.leftRoad = null;
+	}
+
+	/**
+	 * Clears the right road on this node.
+	 */
+	public void clearRightRoad() {
+		this.rightRoad = null;
+	}
+
+	/**
+	 * Clears the vertical road on this node.
+	 */
+	public void clearVertRoad() {
+		this.vertRoad = null;
+	}
+
+	/**
 	 * Sets the structure for this node. Only works if no structure is currently assigned.
 	 */
 	public void setStructure(Structure structure) {
