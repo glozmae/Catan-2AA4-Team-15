@@ -59,7 +59,17 @@ public class ComputerPlayer extends Player {
         while (madeMove) {
             madeMove = false;
 
-            AIMove bestMove = chooseBestMove(game);
+            AIMove bestMove;
+            if (mustSpendCards()) {
+                bestMove = mandatorySpendMove(game);
+            } else if (connectNearbyRoad(game)) {
+                bestMove = connectRoadMove(game);
+            } else if (protectLongestRoad(game)) {
+                bestMove = connectedRoadMove(game);
+            } else {
+                bestMove = bestMove(game);
+            }
+
             if (bestMove != null) {
                 System.out.println(bestMove.message);
                 bestMove.action.run();
@@ -122,7 +132,7 @@ public class ComputerPlayer extends Player {
      * @param game The current game context.
      * @return The chosen move, or null if no valid move exists.
      */
-    private AIMove chooseBestMove(Game game) {
+    private AIMove bestMove(Game game) {
         List<AIMove> moves = new ArrayList<>();
         List<Node> allNodes = game.getBoard().getNodes();
 
@@ -149,6 +159,100 @@ public class ComputerPlayer extends Player {
         }
 
         return bestMoves.get(randomizer.nextInt(bestMoves.size()));
+    }
+
+    /**
+     * Returns true if the AI currently has more than 7 resource cards.
+     *
+     * @return true if the AI must spend cards first, false otherwise
+     */
+    private boolean mustSpendCards() {
+        return getHand().getCount() > 7;
+    }
+
+    /**
+     * Chooses a move when the AI is forced to spend cards first.
+     * This considers the same available build actions, since all of them
+     * reduce the number of cards in hand. (This may need to be chaned later)
+     *
+     * @param game The current game context.
+     * @return The chosen move, or null if no valid spending move exists.
+     */
+    private AIMove mandatorySpendMove(Game game) {
+        List<AIMove> moves = new ArrayList<>();
+        List<Node> allNodes = game.getBoard().getNodes();
+
+        addCityMoves(moves, allNodes);
+        addSettlementMoves(moves, allNodes);
+        addRoadMoves(moves, allNodes);
+
+        if (moves.isEmpty()) {
+            return null;
+        }
+
+        double bestValue = -1.0;
+        for (AIMove move : moves) {
+            if (move.value > bestValue) {
+                bestValue = move.value;
+            }
+        }
+
+        List<AIMove> bestMoves = new ArrayList<>();
+        for (AIMove move : moves) {
+            if (move.value == bestValue) {
+                bestMoves.add(move);
+            }
+        }
+
+        return bestMoves.get(randomizer.nextInt(bestMoves.size()));
+    }
+
+    /**
+     * Checks whether the AI should prioritize extending its road network
+     * because another player is within one road of its longest road.
+     *
+     * @param game The current game context.
+     * @return true if the AI should force a connected road move, false otherwise.
+     */
+    private boolean protectLongestRoad(Game game) {
+        if (getLongestRoad() < 5) {
+            return false;
+        }
+
+        if (getResourceAmount(ResourceType.BRICK) < 1
+                || getResourceAmount(ResourceType.LUMBER) < 1
+                || getRoads().size() >= Road.getMax()) {
+            return false;
+        }
+
+        int myLongestRoad = getLongestRoad();
+
+        for (Player player : game.getPlayers()) {
+            if (player != this && player.getLongestRoad() >= myLongestRoad - 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Chooses a connected road move when the AI must protect its longest road lead.
+     *
+     * @param game The current game context.
+     * @return A connected road move, or null if none exists.
+     */
+    private AIMove connectedRoadMove(Game game) {
+        List<AIMove> roadMoves = new ArrayList<>();
+        List<Node> allNodes = game.getBoard().getNodes();
+
+        addRoadMoves(roadMoves, allNodes);
+
+        if (roadMoves.isEmpty()) {
+            return null;
+        }
+
+        return roadMoves.get(randomizer.nextInt(roadMoves.size()));
     }
 
     /**
