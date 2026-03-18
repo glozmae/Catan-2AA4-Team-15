@@ -247,7 +247,12 @@ public class HumanPlayer extends Player {
             return true;
         }
 
-        //Need to ad city
+        City c = new City();
+        if (!affordable(c.getCost())) {
+            System.out.println("Not enough resources!");
+            return true;
+        }
+
         PlayerCommand buildCity = new BuildCityCommand(this, node);
         executeCommand(game, buildCity);
         return true;
