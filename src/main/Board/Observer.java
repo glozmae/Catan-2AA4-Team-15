@@ -1,15 +1,21 @@
 package Board;
 
+/**
+ * Interface for all observers
+ *
+ * @author Yojith Sai Biradavolu, McMaster University
+ */
 public interface Observer {
     /**
      * Updates state of the observer based on the subjects
      *
      */
-    public void update();
+    void update();
 
     /**
      * Sets the subject that the observer is observing
-     * @param subject the subject to observe
+     *
+     * @param subject The subject to observe
      */
-    public void setSubject(Subject subject);
+    void setSubject(Subject subject);
 }

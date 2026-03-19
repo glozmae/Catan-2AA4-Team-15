@@ -2,21 +2,23 @@ package Board;
 
 import java.util.List;
 import java.util.ArrayList;
+
 import GameResources.ResourceType;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 
 /**
  * Represents the entire game map.
- *
+ * <p>
  * This class is responsible for initializing the graph topology of the board.
  * It creates all 54 intersection Nodes first, then creates the 19 Hexagonal Tiles,
  * randomly assigns resources (including the Desert), and distributes the dice number tokens.
  *
  * @author Taihan Mobasshir, 400578506, McMaster University
  */
-public class Board implements Subject{
+public class Board implements Subject {
 
     /**
      * Master list of all 54 intersections (vertices) on the board.
@@ -40,6 +42,9 @@ public class Board implements Subject{
      */
     private Robber robber;
 
+    /**
+     * List of observers that are watching to this board
+     */
     private List<Observer> observers;
 
     /**
@@ -121,6 +126,7 @@ public class Board implements Subject{
     /**
      * Retrieves the list of tiles associated with a specific dice roll number.
      * * @param roll The dice roll number (2-12) to look up.
+     *
      * @return A list of Tile objects that have the matching production number token.
      * Returns an empty list if no tiles match the given roll.
      */
@@ -153,6 +159,7 @@ public class Board implements Subject{
 
     /**
      * Returns the robber to manipulate its position or check its presence
+     *
      * @return Robber
      */
     public Robber getRobber() {
@@ -201,7 +208,9 @@ public class Board implements Subject{
     }
 
     /**
-     * @param observer
+     * Attach an observer to the subject
+     *
+     * @param observer The observer to attach
      */
     @Override
     public void attach(Observer observer) {
@@ -211,12 +220,15 @@ public class Board implements Subject{
     }
 
     /**
-     * @param observer
+     * Detach an observer from the subject
+     *
+     * @param observer The observer to detach
      */
     @Override
     public void detach(Observer observer) {
         for (int i = 0; i < observers.size(); i++) {
-            if (observers.get(i) == observer) {
+            if (observers.get(i).equals(observer)) {
+                observer.setSubject(null);
                 observers.remove(i);
                 break;
             }
@@ -224,7 +236,7 @@ public class Board implements Subject{
     }
 
     /**
-     *
+     * Notify all observers of any changes
      */
     @Override
     public void notifyObservers() {

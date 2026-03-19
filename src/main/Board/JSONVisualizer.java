@@ -24,18 +24,29 @@ public class JSONVisualizer implements Visualizer {
     /**
      * Maps each tile from 0-18 to a qsr coordinate
      **/
-    private static final int[][] TILE_COORDS = {
-            {0, 0, 0}, {1, -1, 0}, {0, -1, 1}, {-1, 0, 1}, {-1, 1, 0},
-            {0, 1, -1}, {1, 0, -1}, {2, -2, 0}, {1, -2, 1}, {0, -2, 2},
-            {-1, -1, 2}, {-2, 0, 2}, {-2, 1, 1}, {-2, 2, 0}, {-1, 2, -1},
-            {0, 2, -2}, {1, 1, -2}, {2, 0, -2}, {2, -1, -1},};
+    private static final int[][] TILE_COORDS = {{0, 0, 0}, {1, -1, 0}, {0, -1, 1}, {-1, 0, 1}, {-1, 1, 0},
+            {0, 1, -1}, {1, 0, -1}, {2, -2, 0}, {1, -2, 1}, {0, -2, 2}, {-1, -1, 2}, {-2, 0, 2}, {-2, 1, 1},
+            {-2, 2, 0}, {-1, 2, -1}, {0, 2, -2}, {1, 1, -2}, {2, 0, -2}, {2, -1, -1},};
 
+    /**
+     * ObjectMapper for JSON serialization
+     */
     private final ObjectMapper objectMapper;
+
+    /**
+     * Board that the visualizer is observing
+     */
     private Board board;
 
+    /**
+     * Constructor for JSONVisualizer
+     *
+     * @param objectMapper ObjectMapper for JSON serialization
+     */
     public JSONVisualizer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
+
     /**
      * Creates the base map JSON based on the board state
      */
@@ -71,7 +82,7 @@ public class JSONVisualizer implements Visualizer {
     }
 
     /**
-     * Updates state JSON based on current board state
+     * Updates state JSON based on the current board state
      */
     @Override
     public void update() {
@@ -117,7 +128,7 @@ public class JSONVisualizer implements Visualizer {
     }
 
     /**
-     * Sets the subject that the observer is observing
+     * Sets the subject that the observer is observing. Must be of type Board.
      *
      * @param subject the subject to observe
      */
