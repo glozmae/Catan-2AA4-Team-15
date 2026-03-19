@@ -6,10 +6,15 @@ package Board;
  *
  * @author Yojith Sai Biradavolu, McMaster University
  */
-public interface Visualizer extends Observer {
+public interface Visualizer {
     /**
      * Creates the base map based on the current board state
      *
      */
     public void setup();
+
+    /**
+     * Updates the visualizer based on the current board state
+     */
+    public void update();
 }
