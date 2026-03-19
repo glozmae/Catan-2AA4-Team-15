@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Yojith Sai Biradavolu, McMaster University
  */
-public class JSONVisualizer implements Visualizer, Observer {
+public class JSONVisualizer implements Visualizer {
     private final String BASE_MAP_JSON = "visualize/base_map.json";
     private final String STATE_JSON = "visualize/state.json";
 

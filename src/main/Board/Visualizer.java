@@ -6,7 +6,7 @@ package Board;
  *
  * @author Yojith Sai Biradavolu, McMaster University
  */
-public interface Visualizer {
+public interface Visualizer extends Observer {
     /**
      * Creates the base map based on the current board state
      *
