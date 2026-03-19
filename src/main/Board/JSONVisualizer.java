@@ -31,11 +31,10 @@ public class JSONVisualizer implements Visualizer {
             {0, 2, -2}, {1, 1, -2}, {2, 0, -2}, {2, -1, -1},};
 
     private final ObjectMapper objectMapper;
-    private final Board board;
+    private Board board;
 
-    public JSONVisualizer(ObjectMapper objectMapper, Board board) {
+    public JSONVisualizer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.board = board;
     }
     /**
      * Creates the base map JSON based on the board state
@@ -115,5 +114,18 @@ public class JSONVisualizer implements Visualizer {
         } catch (IOException e) {
             System.err.println("Error: Could not create state JSON");
         }
+    }
+
+    /**
+     * Sets the subject that the observer is observing
+     *
+     * @param subject the subject to observe
+     */
+    @Override
+    public void setSubject(Subject subject) {
+        if (!(subject instanceof Board)) {
+            throw new IllegalArgumentException("Subject must be of type Board");
+        }
+        this.board = (Board) subject;
     }
 }

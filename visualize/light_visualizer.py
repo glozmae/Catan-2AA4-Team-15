@@ -94,7 +94,7 @@ class CatanBoardVisualizer:
         numbers = []
 
         for tile_data in self.map_data["tiles"]:
-            coord = (tile_data["q"], tile_data["s"], tile_data["r"])
+            coord = (-tile_data["r"], -tile_data["q"], -tile_data["s"])
 
             if sum(coord) != 0:
                 raise ValueError(f"Invalid cube coordinate: {coord}. Sum must be 0.")

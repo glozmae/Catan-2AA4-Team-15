@@ -16,7 +16,7 @@ import java.util.Collections;
  *
  * @author Taihan Mobasshir, 400578506, McMaster University
  */
-public class Board {
+public class Board implements Subject{
 
     /**
      * Master list of all 54 intersections (vertices) on the board.
@@ -39,6 +39,8 @@ public class Board {
      * Robber entity, allows robber functionalities
      */
     private Robber robber;
+
+    private List<Observer> observers;
 
     /**
      * Constructor: Builds the standard Catan board layout with RANDOMIZED resources.
@@ -112,6 +114,8 @@ public class Board {
                 break;
             }
         }
+
+        observers = new ArrayList<>();
     }
 
     /**
@@ -193,6 +197,39 @@ public class Board {
             t.setProductionNumber(number);
             tilesByRoll.get(number).add(t);
             tokenIndex++;
+        }
+    }
+
+    /**
+     * @param observer
+     */
+    @Override
+    public void attach(Observer observer) {
+        observers.add(observer);
+        observer.setSubject(this);
+
+    }
+
+    /**
+     * @param observer
+     */
+    @Override
+    public void detach(Observer observer) {
+        for (int i = 0; i < observers.size(); i++) {
+            if (observers.get(i) == observer) {
+                observers.remove(i);
+                break;
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update();
         }
     }
 }
