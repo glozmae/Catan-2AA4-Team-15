@@ -96,10 +96,10 @@ class Board:
         buildable = self.buildable_node_ids(
             color, initial_build_phase=initial_build_phase
         )
-        if node_id not in buildable:
-            raise ValueError(
-                "Invalid Settlement Placement: not connected and not initial-placement"
-            )
+        # if node_id not in buildable:
+        #     raise ValueError(
+        #         "Invalid Settlement Placement: not connected and not initial-placement"
+        #     )
 
         if node_id in self.buildings:
             raise ValueError("Invalid Settlement Placement: a building exists there")
