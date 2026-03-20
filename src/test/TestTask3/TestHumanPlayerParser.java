@@ -8,20 +8,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestHumanPlayerParser {
 
-    // ==========================================
-    // TASK 3.3: REGEX PARSER TESTS (10 Tests)
-    // ==========================================
-
     @Test
     void testRegexRollCommand_Valid() {
         assertTrue(HumanPlayer.rollCommand("roll"));
-        assertTrue(HumanPlayer.rollCommand("RoLl")); // Case insensitive
+        assertTrue(HumanPlayer.rollCommand("RoLl"));
     }
 
     @Test
     void testRegexRollCommand_Invalid() {
         assertFalse(HumanPlayer.rollCommand("roll dice"));
-        assertFalse(HumanPlayer.rollCommand(" roll")); // Leading spaces should be trimmed before parsing
+        assertFalse(HumanPlayer.rollCommand(" roll"));
     }
 
     @Test
@@ -38,6 +34,20 @@ class TestHumanPlayerParser {
     }
 
     @Test
+    void testRegexUndoCommand() {
+        assertTrue(HumanPlayer.undoCommand("undo"));
+        assertTrue(HumanPlayer.undoCommand("UNDO"));
+        assertFalse(HumanPlayer.undoCommand("undo last"));
+    }
+
+    @Test
+    void testRegexRedoCommand() {
+        assertTrue(HumanPlayer.redoCommand("redo"));
+        assertTrue(HumanPlayer.redoCommand("REDO"));
+        assertFalse(HumanPlayer.redoCommand("redo action"));
+    }
+
+    @Test
     void testRegexBuildSettlement_Valid() {
         assertEquals(15, HumanPlayer.parseSettlementNodeId("build settlement 15"));
         assertEquals(0, HumanPlayer.parseSettlementNodeId("BUILD settlement 0"));
@@ -45,8 +55,8 @@ class TestHumanPlayerParser {
 
     @Test
     void testRegexBuildSettlement_Invalid() {
-        assertNull(HumanPlayer.parseSettlementNodeId("build settlement")); // Missing ID
-        assertNull(HumanPlayer.parseSettlementNodeId("build settlement fifteen")); // Not a number
+        assertNull(HumanPlayer.parseSettlementNodeId("build settlement"));
+        assertNull(HumanPlayer.parseSettlementNodeId("build settlement fifteen"));
     }
 
     @Test
@@ -70,7 +80,6 @@ class TestHumanPlayerParser {
 
     @Test
     void testRegexBuildRoad_BracketSyntaxAndSpaces() {
-        // Tests the optional brackets and messy spacing handled by the Regex
         int[] nodes = HumanPlayer.parseRoadNodeIds("build road [ 5 , 6 ]");
         assertNotNull(nodes);
         assertEquals(5, nodes[0]);

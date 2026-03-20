@@ -96,7 +96,6 @@ public class ComputerPlayer extends Player {
 
             while (chosenNode == null && attempts < 500) {
                 Node candidate = allNodes.get(randomizer.nextInt(allNodes.size()));
-
                 if (candidate.getPlayer() == null && !isNeighborOccupied(candidate)) {
                     chosenNode = candidate;
                 }
@@ -110,11 +109,7 @@ public class ComputerPlayer extends Player {
 
             placeSettlement(chosenNode, new Settlement());
 
-            List<Node> neighbors = new ArrayList<>();
-            if (chosenNode.getLeft() != null) neighbors.add(chosenNode.getLeft());
-            if (chosenNode.getRight() != null) neighbors.add(chosenNode.getRight());
-            if (chosenNode.getVert() != null) neighbors.add(chosenNode.getVert());
-
+            List<Node> neighbors = getNeighbors(chosenNode);
             if (!neighbors.isEmpty()) {
                 Node roadTarget = neighbors.get(randomizer.nextInt(neighbors.size()));
                 placeRoad(chosenNode, roadTarget, new Road());
@@ -123,12 +118,33 @@ public class ComputerPlayer extends Player {
     }
 
     // =========================================================================
-    // HELPER METHODS
+    // AI MOVE SELECTION
     // =========================================================================
 
     /**
+     * Helper to extract the highest valued move from a list of candidate moves,
+     * breaking any ties randomly to ensure dynamic AI behavior.
+     * * @param moves The list of evaluated AIMoves.
+     * @return The chosen optimal AIMove, or null if the list is empty.
+     */
+    private AIMove pickBestMove(List<AIMove> moves) {
+        if (moves.isEmpty()) return null;
+
+        double bestValue = -1.0;
+        for (AIMove move : moves) {
+            if (move.value > bestValue) bestValue = move.value;
+        }
+
+        List<AIMove> bestMoves = new ArrayList<>();
+        for (AIMove move : moves) {
+            if (move.value == bestValue) bestMoves.add(move);
+        }
+
+        return bestMoves.get(randomizer.nextInt(bestMoves.size()));
+    }
+
+    /**
      * Chooses the highest-valued available move for the current game state.
-     * If multiple moves have the same best value, one is chosen randomly.
      *
      * @param game The current game context.
      * @return The chosen move, or null if no valid move exists.
@@ -141,100 +157,17 @@ public class ComputerPlayer extends Player {
         addSettlementMoves(moves, allNodes);
         addRoadMoves(moves, allNodes);
 
-        if (moves.isEmpty()) {
-            return null;
-        }
-
-        double bestValue = -1.0;
-        for (AIMove move : moves) {
-            if (move.value > bestValue) {
-                bestValue = move.value;
-            }
-        }
-
-        List<AIMove> bestMoves = new ArrayList<>();
-        for (AIMove move : moves) {
-            if (move.value == bestValue) {
-                bestMoves.add(move);
-            }
-        }
-
-        return bestMoves.get(randomizer.nextInt(bestMoves.size()));
-    }
-
-    /**
-     * Returns true if the AI currently has more than 7 resource cards.
-     *
-     * @return true if the AI must spend cards first, false otherwise
-     */
-    private boolean mustSpendCards() {
-        return getHand().getCount() > 7;
+        return pickBestMove(moves);
     }
 
     /**
      * Chooses a move when the AI is forced to spend cards first.
-     * This considers the same available build actions, since all of them
-     * reduce the number of cards in hand. (This may need to be chaned later)
      *
      * @param game The current game context.
      * @return The chosen move, or null if no valid spending move exists.
      */
     private AIMove mandatorySpendMove(Game game) {
-        List<AIMove> moves = new ArrayList<>();
-        List<Node> allNodes = game.getBoard().getNodes();
-
-        addCityMoves(moves, allNodes);
-        addSettlementMoves(moves, allNodes);
-        addRoadMoves(moves, allNodes);
-
-        if (moves.isEmpty()) {
-            return null;
-        }
-
-        double bestValue = -1.0;
-        for (AIMove move : moves) {
-            if (move.value > bestValue) {
-                bestValue = move.value;
-            }
-        }
-
-        List<AIMove> bestMoves = new ArrayList<>();
-        for (AIMove move : moves) {
-            if (move.value == bestValue) {
-                bestMoves.add(move);
-            }
-        }
-
-        return bestMoves.get(randomizer.nextInt(bestMoves.size()));
-    }
-
-    /**
-     * Checks whether the AI should prioritize extending its road network
-     * because another player is within one road of its longest road.
-     *
-     * @param game The current game context.
-     * @return true if the AI should force a connected road move, false otherwise.
-     */
-    private boolean protectLongestRoad(Game game) {
-        if (getLongestRoad() < 5) {
-            return false;
-        }
-
-        if (getResourceAmount(ResourceType.BRICK) < 1
-                || getResourceAmount(ResourceType.LUMBER) < 1
-                || getRoads().size() >= Road.getMax()) {
-            return false;
-        }
-
-        int myLongestRoad = getLongestRoad();
-
-        for (Player player : game.getPlayers()) {
-            if (player != this && player.getLongestRoad() >= myLongestRoad - 1) {
-                return true;
-            }
-        }
-
-        return false;
+        return bestMove(game);
     }
 
     /**
@@ -245,42 +178,8 @@ public class ComputerPlayer extends Player {
      */
     private AIMove connectedRoadMove(Game game) {
         List<AIMove> roadMoves = new ArrayList<>();
-        List<Node> allNodes = game.getBoard().getNodes();
-
-        addRoadMoves(roadMoves, allNodes);
-
-        if (roadMoves.isEmpty()) {
-            return null;
-        }
-
-        return roadMoves.get(randomizer.nextInt(roadMoves.size()));
-    }
-
-    /**
-     * Checks whether there is a road move that helps connect two of this player's
-     * road segments that are at most two units apart.
-     *
-     * @param game The current game context.
-     * @return true if such a move exists, false otherwise.
-     */
-    private boolean connectNearbyRoad(Game game) {
-        if (getResourceAmount(ResourceType.BRICK) < 1
-                || getResourceAmount(ResourceType.LUMBER) < 1
-                || getRoads().size() >= Road.getMax()) {
-            return false;
-        }
-
-        List<Node> allNodes = game.getBoard().getNodes();
-        for (Node startNode : allNodes) {
-            List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
-            for (Node endNode : validTargets) {
-                if (connectRoadCandidate(startNode, endNode)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        addRoadMoves(roadMoves, game.getBoard().getNodes());
+        return pickBestMove(roadMoves);
     }
 
     /**
@@ -297,26 +196,71 @@ public class ComputerPlayer extends Player {
             List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
             for (Node endNode : validTargets) {
                 if (connectRoadCandidate(startNode, endNode)) {
-                    Node start = startNode;
-                    Node end = endNode;
+
+                    PlayerCommand buildRoadCommand = new BuildRoadCommand(this, startNode, endNode);
+                    MoveEvaluator evaluator = new BaseMoveEvaluator(buildRoadCommand);
+                    evaluator = new BuilderDecorator(evaluator);
+                    evaluator = new HandDepleterDecorator(evaluator, this, 2);
 
                     connectingMoves.add(new AIMove(
-                            0.8,
-                            this + " building connecting Road from Node " + start.getId() + " to " + end.getId(),
-                            () -> {
-                                payForRoad();
-                                placeRoad(start, end, new Road());
-                            }
+                            evaluator.evaluateValue(),
+                            buildRoadCommand.getExecuteMessage() + " (Connecting)",
+                            buildRoadCommand::execute
                     ));
                 }
             }
         }
 
-        if (connectingMoves.isEmpty()) {
-            return null;
-        }
+        return pickBestMove(connectingMoves);
+    }
 
-        return connectingMoves.get(randomizer.nextInt(connectingMoves.size()));
+    // =========================================================================
+    // HELPER METHODS
+    // =========================================================================
+
+    /**
+     * Returns true if the AI currently has more than 7 resource cards.
+     *
+     * @return true if the AI must spend cards first, false otherwise.
+     */
+    private boolean mustSpendCards() {
+        return getHand().getCount() > 7;
+    }
+
+    /**
+     * Checks whether the AI should prioritize extending its road network
+     * because another player is within one road of its longest road.
+     *
+     * @param game The current game context.
+     * @return true if the AI should force a connected road move, false otherwise.
+     */
+    private boolean protectLongestRoad(Game game) {
+        if (getLongestRoad() < 5) return false;
+        if (getResourceAmount(ResourceType.BRICK) < 1 || getResourceAmount(ResourceType.LUMBER) < 1 || getRoads().size() >= Road.getMax()) return false;
+
+        int myLongestRoad = getLongestRoad();
+        for (Player player : game.getPlayers()) {
+            if (player != this && player.getLongestRoad() >= myLongestRoad - 1) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether there is a road move that helps connect two of this player's
+     * road segments that are at most two units apart.
+     *
+     * @param game The current game context.
+     * @return true if such a move exists, false otherwise.
+     */
+    private boolean connectNearbyRoad(Game game) {
+        if (getResourceAmount(ResourceType.BRICK) < 1 || getResourceAmount(ResourceType.LUMBER) < 1 || getRoads().size() >= Road.getMax()) return false;
+
+        for (Node startNode : game.getBoard().getNodes()) {
+            for (Node endNode : startNode.getBuildableRoadNeighbors(this)) {
+                if (connectRoadCandidate(startNode, endNode)) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -328,20 +272,11 @@ public class ComputerPlayer extends Player {
      * @return true if this road is a good connecting move.
      */
     private boolean connectRoadCandidate(Node start, Node end) {
-        if (hasOtherOwnedRoad(end, start)) {
-            return true;
-        }
-
+        if (hasOtherOwnedRoad(end, start)) return true;
         for (Node next : getNeighbors(end)) {
-            if (next == start) {
-                continue;
-            }
-
-            if (getRoadBetween(end, next) == null && hasOtherOwnedRoad(next, end)) {
-                return true;
-            }
+            if (next == start) continue;
+            if (getRoadBetween(end, next) == null && hasOtherOwnedRoad(next, end)) return true;
         }
-
         return false;
     }
 
@@ -355,16 +290,10 @@ public class ComputerPlayer extends Player {
      */
     private boolean hasOtherOwnedRoad(Node node, Node excludedNeighbor) {
         for (Node neighbor : getNeighbors(node)) {
-            if (neighbor == excludedNeighbor) {
-                continue;
-            }
-
+            if (neighbor == excludedNeighbor) continue;
             Road road = getRoadBetween(node, neighbor);
-            if (road != null && road.getOwner() == this) {
-                return true;
-            }
+            if (road != null && road.getOwner() == this) return true;
         }
-
         return false;
     }
 
@@ -376,17 +305,9 @@ public class ComputerPlayer extends Player {
      */
     private List<Node> getNeighbors(Node node) {
         List<Node> neighbors = new ArrayList<>();
-
-        if (node.getLeft() != null) {
-            neighbors.add(node.getLeft());
-        }
-        if (node.getRight() != null) {
-            neighbors.add(node.getRight());
-        }
-        if (node.getVert() != null) {
-            neighbors.add(node.getVert());
-        }
-
+        if (node.getLeft() != null) neighbors.add(node.getLeft());
+        if (node.getRight() != null) neighbors.add(node.getRight());
+        if (node.getVert() != null) neighbors.add(node.getVert());
         return neighbors;
     }
 
@@ -398,102 +319,70 @@ public class ComputerPlayer extends Player {
      * @return The road on that edge, or null if none exists.
      */
     private Road getRoadBetween(Node a, Node b) {
-        if (a.getLeft() == b) {
-            return a.getLeftRoad();
-        }
-        if (a.getRight() == b) {
-            return a.getRightRoad();
-        }
-        if (a.getVert() == b) {
-            return a.getVertRoad();
-        }
+        if (a.getLeft() == b) return a.getLeftRoad();
+        if (a.getRight() == b) return a.getRightRoad();
+        if (a.getVert() == b) return a.getVertRoad();
         return null;
     }
 
     /**
-     * Adds all currently valid city-upgrade moves.
+     * Adds all currently valid city-upgrade moves dynamically calculating R3.2 values.
      *
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
      */
     private void addCityMoves(List<AIMove> moves, List<Node> allNodes) {
-        if (getResourceAmount(ResourceType.GRAIN) < 2
-                || getResourceAmount(ResourceType.ORE) < 3
-                || getCities().size() >= City.getMax()) {
-            return;
-        }
+        if (getResourceAmount(ResourceType.GRAIN) < 2 || getResourceAmount(ResourceType.ORE) < 3 || getCities().size() >= City.getMax()) return;
 
         for (Node node : allNodes) {
             if (node.getPlayer() == this && node.getStructure() instanceof Settlement) {
-                Node target = node;
-                moves.add(new AIMove(
-                        1.0,
-                        this + " upgrading to City at Node " + target.getId(),
-                        () -> {
-                            payForCity();
-                            placeCity(target, new City());
-                        }
-                ));
+                PlayerCommand buildCityCommand = new BuildCityCommand(this, node);
+                MoveEvaluator evaluator = new BaseMoveEvaluator(buildCityCommand);
+                evaluator = new VPEarnerDecorator(evaluator);
+                evaluator = new HandDepleterDecorator(evaluator, this, 5);
+                moves.add(new AIMove(evaluator.evaluateValue(), buildCityCommand.getExecuteMessage(), buildCityCommand::execute));
             }
         }
     }
 
     /**
-     * Adds all currently valid settlement-building moves.
+     * Adds all currently valid settlement-building moves dynamically calculating R3.2 values.
      *
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
      */
     private void addSettlementMoves(List<AIMove> moves, List<Node> allNodes) {
         if (getResourceAmount(ResourceType.BRICK) < 1 || getResourceAmount(ResourceType.LUMBER) < 1
-                || getResourceAmount(ResourceType.WOOL) < 1
-                || getResourceAmount(ResourceType.GRAIN) < 1
-                || getSettlements().size() >= Settlement.getMax()) {
-            return;
-        }
+                || getResourceAmount(ResourceType.WOOL) < 1 || getResourceAmount(ResourceType.GRAIN) < 1
+                || getSettlements().size() >= Settlement.getMax()) return;
 
         for (Node node : allNodes) {
             if (node.canBuildSettlement(this)) {
-                Node target = node;
-                moves.add(new AIMove(
-                        1.0,
-                        this + " building Settlement at Node " + target.getId(),
-                        () -> {
-                            payForSettlement();
-                            placeSettlement(target, new Settlement());
-                        }
-                ));
+                PlayerCommand buildSettlementCommand = new BuildSettlementCommand(this, node);
+                MoveEvaluator evaluator = new BaseMoveEvaluator(buildSettlementCommand);
+                evaluator = new VPEarnerDecorator(evaluator);
+                evaluator = new HandDepleterDecorator(evaluator, this, 4);
+                moves.add(new AIMove(evaluator.evaluateValue(), buildSettlementCommand.getExecuteMessage(), buildSettlementCommand::execute));
             }
         }
     }
 
     /**
-     * Adds all currently valid road-building moves.
+     * Adds all currently valid road-building moves dynamically calculating R3.2 values.
      *
      * @param moves The list of candidate moves.
      * @param allNodes All nodes on the board.
      */
     private void addRoadMoves(List<AIMove> moves, List<Node> allNodes) {
-        if (getResourceAmount(ResourceType.BRICK) < 1
-                || getResourceAmount(ResourceType.LUMBER) < 1
-                || getRoads().size() >= Road.getMax()) {
-            return;
-        }
+        if (getResourceAmount(ResourceType.BRICK) < 1 || getResourceAmount(ResourceType.LUMBER) < 1 || getRoads().size() >= Road.getMax()) return;
 
         for (Node startNode : allNodes) {
-            List<Node> validTargets = startNode.getBuildableRoadNeighbors(this);
-            for (Node endNode : validTargets) {
-                Node start = startNode;
-                Node end = endNode;
-
-                moves.add(new AIMove(
-                        0.8,
-                        this + " building Road from Node " + start.getId() + " to " + end.getId(),
-                        () -> {
-                            payForRoad();
-                            placeRoad(start, end, new Road());
-                        }
-                ));
+            for (Node endNode : startNode.getBuildableRoadNeighbors(this)) {
+                PlayerCommand buildRoadCommand = new BuildRoadCommand(this, startNode, endNode);
+                MoveEvaluator evaluator = new BaseMoveEvaluator(buildRoadCommand);
+                evaluator = new BuilderDecorator(evaluator);
+                evaluator = new HandDepleterDecorator(evaluator, this, 2);
+                moves.add(new AIMove(evaluator.evaluateValue(), buildRoadCommand.getExecuteMessage(), buildRoadCommand::execute));
             }
         }
     }
@@ -504,8 +393,8 @@ public class ComputerPlayer extends Player {
      * @param s The settlement object to place.
      */
     private void placeSettlement(Node node, Settlement s) {
-        node.setStructure(s);       // Place structure on board
-        this.addStructure(s);       // Add to player inventory
+        node.setStructure(s);
+        this.addStructure(s);
     }
 
     /**
@@ -514,9 +403,7 @@ public class ComputerPlayer extends Player {
      * @param c The city object to place.
      */
     private void placeCity(Node node, City c) {
-        if (node.getStructure() instanceof Settlement) {
-            this.removeStructure(node.getStructure());
-        }
+        if (node.getStructure() instanceof Settlement) this.removeStructure(node.getStructure());
         node.setStructure(c);
         this.addStructure(c);
     }
@@ -530,14 +417,11 @@ public class ComputerPlayer extends Player {
      */
     private void placeRoad(Node start, Node end, Road r) {
         if (start.getLeft() == end) {
-            start.setLeftRoad(r);
-            end.setRightRoad(r);
+            start.setLeftRoad(r); end.setRightRoad(r);
         } else if (start.getRight() == end) {
-            start.setRightRoad(r);
-            end.setLeftRoad(r);
+            start.setRightRoad(r); end.setLeftRoad(r);
         } else if (start.getVert() == end) {
-            start.setVertRoad(r);
-            end.setVertRoad(r);
+            start.setVertRoad(r); end.setVertRoad(r);
         }
         this.addRoad(r);
     }
@@ -551,31 +435,7 @@ public class ComputerPlayer extends Player {
     private boolean isNeighborOccupied(Node n) {
         if (n.getLeft() != null && n.getLeft().getPlayer() != null) return true;
         if (n.getRight() != null && n.getRight().getPlayer() != null) return true;
-        if (n.getVert() != null && n.getVert().getPlayer() != null) return true;
-        return false;
-    }
-
-    /** Deducts resources for a road construction. */
-    private void payForRoad() {
-        removeResource(ResourceType.BRICK);
-        removeResource(ResourceType.LUMBER);
-    }
-
-    /** Deducts resources for a settlement construction. */
-    private void payForSettlement() {
-        removeResource(ResourceType.BRICK);
-        removeResource(ResourceType.LUMBER);
-        removeResource(ResourceType.WOOL);
-        removeResource(ResourceType.GRAIN);
-    }
-
-    /** Deducts resources for a city upgrade. */
-    private void payForCity() {
-        removeResource(ResourceType.GRAIN);
-        removeResource(ResourceType.GRAIN);
-        removeResource(ResourceType.ORE);
-        removeResource(ResourceType.ORE);
-        removeResource(ResourceType.ORE);
+        return n.getVert() != null && n.getVert().getPlayer() != null;
     }
 
     /**
@@ -587,7 +447,7 @@ public class ComputerPlayer extends Player {
         while (getHand().getCount() > 7) {
             ResourceType[] types = ResourceType.values();
             int randomIndex = randomizer.nextInt(types.length);
-            if (types[randomIndex] != ResourceType.DESERT && getHand().getCount(types[randomIndex]) > 0 ) {
+            if (types[randomIndex] != ResourceType.DESERT && getHand().getCount(types[randomIndex]) > 0) {
                 getHand().removeCard(types[randomIndex], 1);
             }
         }
@@ -600,8 +460,7 @@ public class ComputerPlayer extends Player {
      */
     @Override
     public Tile setRobber(List<Tile> tiles) {
-        int randomIndex = randomizer.nextInt(tiles.size());
-        return tiles.get(randomIndex);
+        return tiles.get(randomizer.nextInt(tiles.size()));
     }
 
     /**
@@ -612,6 +471,12 @@ public class ComputerPlayer extends Player {
         private final String message;
         private final Runnable action;
 
+        /**
+         * Constructs a new AIMove.
+         * * @param value The calculated value/priority of this move.
+         * @param message The message to print if this move is executed.
+         * @param action The logic to run if this move is chosen.
+         */
         private AIMove(double value, String message, Runnable action) {
             this.value = value;
             this.message = message;

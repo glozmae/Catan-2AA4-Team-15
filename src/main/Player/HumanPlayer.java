@@ -55,8 +55,6 @@ public class HumanPlayer extends Player {
      */
     @Override
     public void takeTurn(Game game) {
-        boolean turnFinished = false;
-
         undoStack.clear();
         redoStack.clear();
 
@@ -65,50 +63,63 @@ public class HumanPlayer extends Player {
         System.out.println("Commands: roll | list | build settlement <id> | build city <id> | build road <id,id> | undo | redo | go");
         System.out.println("========================================");
 
+        boolean turnFinished = false;
         while (!turnFinished) {
             System.out.print("> ");
             String command = commandReader.nextLine().trim();
 
-            if (command.isEmpty()) continue;
-
-            // ROLL COMMAND
-            if (ROLL_PATTERN.matcher(command).matches()) {
-                System.out.println("The Game engine automatically rolls at the start of the turn. You rolled a " + game.getLastRoll() + ".");
-                continue;
-            }
-
-            // LIST COMMAND
-            if (LIST_PATTERN.matcher(command).matches()) {
-                printHand();
-                continue;
-            }
-
-            // UNDO COMMAND
-            if (UNDO_PATTERN.matcher(command).matches()) {
-                undoLastCommand(game);   //need to come back and fix this eror
-                continue;
-            }
-
-            // REDO COMMAND
-            if (REDO_PATTERN.matcher(command).matches()) {
-                redoLastCommand(game);
-                continue;
-            }
-
-            // GO COMMAND
-            if (GO_PATTERN.matcher(command).matches()) {
-                turnFinished = true;
-                logAction(game.getRound(), "Ended turn (Go)");
-                continue;
-            }
-
-            // BUILD COMMANDS
-            if (tryBuildSettlement(game, command)) continue;
-            if (tryBuildCity(game, command)) continue;
-            if (tryBuildRoad(game, command)) continue;
-
-            System.out.println("Unknown command or invalid syntax.");
+            // Delegate the complex branching to a helper method
+            turnFinished = processCommand(command, game);
         }
+    }
+
+    /**
+     * Processes a single human command.
+     * * @param command The string input from the user
+     * @param game The current game state
+     * @return true if the turn should end, false otherwise
+     */
+    private boolean processCommand(String command, Game game) {
+        if (command.isEmpty()) return false;
+
+        // ROLL COMMAND
+        if (ROLL_PATTERN.matcher(command).matches()) {
+            System.out.println("The Game engine automatically rolls at the start of the turn. You rolled a " + game.getLastRoll() + ".");
+            return false;
+        }
+
+        // LIST COMMAND
+        if (LIST_PATTERN.matcher(command).matches()) {
+            printHand();
+            return false;
+        }
+
+        // UNDO COMMAND
+        if (UNDO_PATTERN.matcher(command).matches()) {
+            undoLastCommand(game);   // need to come back and fix this error
+            return false;
+        }
+
+        // REDO COMMAND
+        if (REDO_PATTERN.matcher(command).matches()) {
+            redoLastCommand(game);
+            return false;
+        }
+
+        // GO COMMAND (Ends the turn)
+        if (GO_PATTERN.matcher(command).matches()) {
+            logAction(game.getRound(), "Ended turn (Go)");
+            return true;
+        }
+
+        // BUILD COMMANDS
+        if (tryBuildSettlement(game, command)) return false;
+        if (tryBuildCity(game, command)) return false;
+        if (tryBuildRoad(game, command)) return false;
+
+        // FALLBACK
+        System.out.println("Unknown command or invalid syntax.");
+        return false;
     }
 
     /**

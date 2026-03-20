@@ -6,7 +6,6 @@ import Board.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import Board.Node;
 import Game.Game;
 import GameResources.City;
 import GameResources.ResourceType;
@@ -18,10 +17,9 @@ import java.util.List;
 
 /**
  * JUnit tests for the Player abstract class, using a simple concrete test subclass.
-* 
-* @author Elizabeth Glozman, McMaster University 
-* @version Winter 2026
-*/
+ * * @author Elizabeth Glozman, McMaster University
+ * @version Winter 2026
+ */
 public class TestPlayer {
 
     /**
@@ -78,7 +76,7 @@ public class TestPlayer {
     }
 
     /**
-     * Chek that resources can be added and removed correctly from hand
+     * Check that resources can be added and removed correctly from hand
      */
     @Test
     void testAddAndRemoveResource() {
@@ -109,6 +107,22 @@ public class TestPlayer {
         assertEquals(1, p.getSettlements().size());
         assertEquals(0, p.getCities().size());
         assertEquals(p, settlement.getOwner());
+    }
+
+    /**
+     * Checks that adding a structure owned by another player throws an exception
+     */
+    @Test
+    void testAddStructureBelongingToAnotherPlayerThrowsException() {
+        DummyPlayer p1 = new DummyPlayer();
+        DummyPlayer p2 = new DummyPlayer();
+        Settlement settlement = new Settlement();
+
+        p1.addStructure(settlement);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            p2.addStructure(settlement);
+        }, "Should throw exception when adding a structure already owned by someone else.");
     }
 
     /**
@@ -153,6 +167,59 @@ public class TestPlayer {
 
         assertEquals(1, p.getRoads().size());
         assertEquals(p, road.getOwner());
+    }
+
+    /**
+     * Checks that adding a road owned by another player throws an exception
+     */
+    @Test
+    void testAddRoadBelongingToAnotherPlayerThrowsException() {
+        DummyPlayer p1 = new DummyPlayer();
+        DummyPlayer p2 = new DummyPlayer();
+        Road road = new Road();
+
+        p1.addRoad(road);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            p2.addRoad(road);
+        }, "Should throw exception when adding a road already owned by someone else.");
+    }
+
+    /**
+     * Checks that removing a road deletes it from the road list
+     */
+    @Test
+    void testRemoveRoad() {
+        DummyPlayer p = new DummyPlayer();
+        Road road = new Road();
+
+        p.addRoad(road);
+        assertEquals(1, p.getRoads().size());
+
+        p.removeRoad(road);
+        assertEquals(0, p.getRoads().size());
+    }
+
+    /**
+     * Checks that victory points are calculated correctly based on structures
+     */
+    @Test
+    void testCalculateVictoryPoints() {
+        DummyPlayer p = new DummyPlayer();
+
+        // Ensure starting VP is 0
+        assertEquals(0, p.calculateVictoryPoints());
+
+        Settlement settlement = new Settlement();
+        City city = new City();
+
+        p.addStructure(settlement);
+        p.addStructure(city);
+
+        // This verifies the loop inside calculateVictoryPoints runs.
+        // It asserts that the total points match whatever your structures dictate.
+        int expectedPoints = settlement.getVictoryPoints() + city.getVictoryPoints();
+        assertEquals(expectedPoints, p.calculateVictoryPoints());
     }
 
     /**
