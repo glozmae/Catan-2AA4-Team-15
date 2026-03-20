@@ -2,7 +2,6 @@ package Game;
 
 import Board.Board;
 import Board.Observer;
-import Board.Subject;
 
 /**
  * ConsoleLogger is an observer that logs game events to the console.
@@ -11,7 +10,7 @@ import Board.Subject;
  *
  * @author Yojith Sai Biradavolu, McMaster University
  */
-public class ConsoleLogger implements Observer {
+public class ConsoleLogger extends Observer {
     /**
      * The board that this observer is observing
      */
@@ -24,21 +23,5 @@ public class ConsoleLogger implements Observer {
     @Override
     public void update() {
         // Logs board state
-    }
-
-    /**
-     * Sets the board that the logger is observing. Must be of type Board.
-     *
-     * @param subject the subject to observe
-     */
-    @Override
-    public void setSubject(Subject subject) {
-    }
-
-    /**
-     * Removes the board that the logger is observing.
-     */
-    @Override
-    public void removeSubject() {
     }
 }

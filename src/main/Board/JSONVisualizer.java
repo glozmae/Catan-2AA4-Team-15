@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Yojith Sai Biradavolu, McMaster University
  */
-public class JSONVisualizer implements Visualizer {
+public class JSONVisualizer extends Observer implements Visualizer {
     private final String BASE_MAP_JSON = "visualize/base_map.json";
     private final String STATE_JSON = "visualize/state.json";
 
@@ -24,19 +24,12 @@ public class JSONVisualizer implements Visualizer {
     /**
      * Maps each tile from 0-18 to a qsr coordinate
      **/
-    private static final int[][] TILE_COORDS = {{0, 0, 0}, {1, -1, 0}, {0, -1, 1}, {-1, 0, 1}, {-1, 1, 0},
-            {0, 1, -1}, {1, 0, -1}, {2, -2, 0}, {1, -2, 1}, {0, -2, 2}, {-1, -1, 2}, {-2, 0, 2}, {-2, 1, 1},
-            {-2, 2, 0}, {-1, 2, -1}, {0, 2, -2}, {1, 1, -2}, {2, 0, -2}, {2, -1, -1},};
+    private static final int[][] TILE_COORDS = {{0, 0, 0}, {1, -1, 0}, {0, -1, 1}, {-1, 0, 1}, {-1, 1, 0}, {0, 1, -1}, {1, 0, -1}, {2, -2, 0}, {1, -2, 1}, {0, -2, 2}, {-1, -1, 2}, {-2, 0, 2}, {-2, 1, 1}, {-2, 2, 0}, {-1, 2, -1}, {0, 2, -2}, {1, 1, -2}, {2, 0, -2}, {2, -1, -1},};
 
     /**
      * ObjectMapper for JSON serialization
      */
     private final ObjectMapper objectMapper;
-
-    /**
-     * Board that the visualizer is observing
-     */
-    private Board board;
 
     /**
      * Constructor for JSONVisualizer
@@ -52,6 +45,7 @@ public class JSONVisualizer implements Visualizer {
      */
     @Override
     public void setup() {
+        Board board = (Board) this.subject;
         List<Tile> tiles = board.getTiles();
         ObjectNode baseMap = objectMapper.createObjectNode();
         List<ObjectNode> tileNodes = new ArrayList<>();
@@ -86,6 +80,7 @@ public class JSONVisualizer implements Visualizer {
      */
     @Override
     public void update() {
+        Board board = (Board) this.subject;
         List<Node> nodes = board.getNodes();
         ObjectNode state = objectMapper.createObjectNode();
         List<ObjectNode> roadNodes = new ArrayList<>();
@@ -137,14 +132,6 @@ public class JSONVisualizer implements Visualizer {
         if (!(subject instanceof Board)) {
             throw new IllegalArgumentException("Subject must be of type Board");
         }
-        this.board = (Board) subject;
-    }
-
-    /**
-     * Removes the subject that the visualizer is observing
-     */
-    @Override
-    public void removeSubject() {
-        this.board = null;
+        this.subject = subject;
     }
 }

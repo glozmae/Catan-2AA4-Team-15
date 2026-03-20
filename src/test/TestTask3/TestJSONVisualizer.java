@@ -28,7 +28,7 @@ class TestJSONVisualizer {
 
     @Test
     void setupJSON() throws IOException {
-        Visualizer visualizer = new JSONVisualizer(new ObjectMapper());
+        JSONVisualizer visualizer = new JSONVisualizer(new ObjectMapper());
         Board board = new Board();
         board.attach(visualizer);
         assertDoesNotThrow(visualizer::setup, "Ensures that JSON is set up without any errors.");
@@ -37,7 +37,7 @@ class TestJSONVisualizer {
 
     @Test
     void updateJSON() {
-        Visualizer visualizer = new JSONVisualizer(new ObjectMapper());
+        JSONVisualizer visualizer = new JSONVisualizer(new ObjectMapper());
         Board board = new Board();
         board.attach(visualizer);
         assertDoesNotThrow(visualizer::update, "Ensures that JSON is set up without any errors.");
@@ -46,7 +46,7 @@ class TestJSONVisualizer {
 
     @Test
     void setSubjectFailure() {
-        Visualizer visualizer = new JSONVisualizer(new ObjectMapper());
+        JSONVisualizer visualizer = new JSONVisualizer(new ObjectMapper());
         Subject dummySubject = null;
         assertThrows(IllegalArgumentException.class, () -> visualizer.setSubject(dummySubject), "Subject must be a board.");
     }
