@@ -9,7 +9,7 @@ import java.util.List;
  * @author Yojith Sai Biradavolu, McMaster University
  */
 public abstract class Subject {
-    List<Observer> observers = new ArrayList<>();
+    protected List<Observer> observers = new ArrayList<>();
 
     /**
      * Attach an observer to the subject
