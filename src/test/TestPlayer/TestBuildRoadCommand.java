@@ -19,9 +19,6 @@ import java.util.List;
  */
 public class TestBuildRoadCommand {
 
-    /**
-     * A simple concrete subclass of Player to isolate testing of the command.
-     */
     private static class DummyPlayer extends Player {
         @Override public void takeTurn(Game game) {}
         @Override public void setup(Game game) {}
@@ -36,7 +33,6 @@ public class TestBuildRoadCommand {
         Player.resetNumPlayers();
         player = new DummyPlayer();
 
-        // Give the player plenty of resources so payCost() doesn't throw underflow exceptions
         for (int i = 0; i < 5; i++) {
             player.addResource(ResourceType.BRICK);
             player.addResource(ResourceType.LUMBER);
@@ -46,21 +42,17 @@ public class TestBuildRoadCommand {
         }
     }
 
-    /**
-     * Tests standard execution and undo across a LEFT/RIGHT connection.
-     */
     @Test
     void testExecuteAndUndo_LeftConnection() {
         Node start = new Node(1);
         Node end = new Node(2);
-        start.setLeft(end); // This automatically sets end.right = start based on your Node logic
+        start.setLeft(end);
 
         int initialBrick = player.getResourceAmount(ResourceType.BRICK);
         int initialLumber = player.getResourceAmount(ResourceType.LUMBER);
 
         BuildRoadCommand command = new BuildRoadCommand(player, start, end);
 
-        // 1. Test Execute
         command.execute();
 
         assertEquals(initialBrick - 1, player.getResourceAmount(ResourceType.BRICK), "Brick should be deducted");
@@ -70,7 +62,6 @@ public class TestBuildRoadCommand {
         assertNotNull(end.getRightRoad(), "Road should be placed on end's right edge");
         assertEquals("Built road [1,2]", command.getExecuteMessage());
 
-        // 2. Test Undo
         command.undo();
 
         assertEquals(initialBrick, player.getResourceAmount(ResourceType.BRICK), "Brick should be refunded");
@@ -81,9 +72,6 @@ public class TestBuildRoadCommand {
         assertEquals("Removed road [1,2]", command.getUndoMessage());
     }
 
-    /**
-     * Tests standard execution and undo across a RIGHT/LEFT connection to hit the first 'else if'.
-     */
     @Test
     void testExecuteAndUndo_RightConnection() {
         Node start = new Node(3);
@@ -102,9 +90,6 @@ public class TestBuildRoadCommand {
         assertNull(end.getLeftRoad());
     }
 
-    /**
-     * Tests standard execution and undo across a VERTICAL connection to hit the final 'else if'.
-     */
     @Test
     void testExecuteAndUndo_VerticalConnection() {
         Node start = new Node(5);
@@ -123,9 +108,6 @@ public class TestBuildRoadCommand {
         assertNull(end.getVertRoad());
     }
 
-    /**
-     * Tests the guard clauses that prevent double-execution or double-undoing.
-     */
     @Test
     void testExecutionAndUndoGuards() {
         Node start = new Node(7);
@@ -134,7 +116,6 @@ public class TestBuildRoadCommand {
 
         BuildRoadCommand command = new BuildRoadCommand(player, start, end);
 
-        // Test Undo before Execute (Should safely do nothing)
         command.undo();
         assertEquals(0, player.getRoads().size(), "Should safely ignore undo if not executed");
 
@@ -142,7 +123,6 @@ public class TestBuildRoadCommand {
         int roadsAfterFirstExecute = player.getRoads().size();
         assertEquals(1, roadsAfterFirstExecute);
 
-        // Test Double Execute (Should safely do nothing)
         command.execute();
         assertEquals(roadsAfterFirstExecute, player.getRoads().size(), "Should safely ignore second execute");
 
@@ -150,7 +130,6 @@ public class TestBuildRoadCommand {
         int roadsAfterFirstUndo = player.getRoads().size();
         assertEquals(0, roadsAfterFirstUndo);
 
-        // Test Double Undo (Should safely do nothing)
         command.undo();
         assertEquals(roadsAfterFirstUndo, player.getRoads().size(), "Should safely ignore second undo");
     }

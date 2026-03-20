@@ -18,7 +18,6 @@ import Player.ComputerPlayer;
 import Player.Player;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -166,33 +165,27 @@ public class TestComputerPlayer {
     @Test
     void testSetupFailsWhenBoardFull() {
         ComputerPlayer ai = new ComputerPlayer(1);
-        ComputerPlayer opponent = new ComputerPlayer(2); // Create a second player
+        ComputerPlayer opponent = new ComputerPlayer(2);
 
-        // Pass both players to satisfy the 2-4 player rule
         Game game = new Game(List.of(ai, opponent), new FixedDice(6), new Board(), 10, 20);
 
-        // Fill the entire board with opponent settlements
         for (Node n : game.getBoard().getNodes()) {
             Settlement s = new Settlement();
             s.setOwner(opponent);
             n.setStructure(s);
         }
 
-        ai.setup(game); // Should trigger the "could not find a valid setup spot" warning
+        ai.setup(game);
         assertEquals(0, ai.getSettlements().size(), "AI should fail to place settlements when board is completely full");
     }
 
     @Test
     void testMandatorySpendMoveReturnsNullWhenNoValidMoves() {
         ComputerPlayer ai = new ComputerPlayer(1);
-
-        // Added new ComputerPlayer(2) to the list
         Game game = new Game(List.of(ai, new ComputerPlayer(2)), new FixedDice(6), new Board(), 10, 20);
 
-        // Give 8 Wool (Triggers mustSpendCards, but no moves are valid to spend just Wool)
         for(int i = 0; i < 8; i++) ai.addResource(ResourceType.WOOL);
 
-        // takeTurn will call mandatorySpendMove, which will return null, safely ending the loop
         assertDoesNotThrow(() -> ai.takeTurn(game));
     }
 
@@ -202,9 +195,8 @@ public class TestComputerPlayer {
         ComputerPlayer opponent = new ComputerPlayer(2);
         Game game = new Game(List.of(ai, opponent), new FixedDice(6), new Board(), 10, 20);
 
-        ai.setup(game); // Ensure AI has a road to extend
+        ai.setup(game);
 
-        // Use reflection to set longest road scores directly to trigger the protection logic
         Field lrField = Player.class.getDeclaredField("longestRoad");
         lrField.setAccessible(true);
         lrField.set(ai, 5);
@@ -222,22 +214,17 @@ public class TestComputerPlayer {
     void testConnectNearbyRoad_TwoEdgeGap() {
         ComputerPlayer ai = new ComputerPlayer(1);
         Board board = new Board();
-
-        // Added new ComputerPlayer(2) to the list
         Game game = new Game(List.of(ai, new ComputerPlayer(2)), new FixedDice(6), board, 10, 20);
 
-        // Manually link 5 nodes in a line
         Node n0 = board.getNodes().get(0); Node n1 = board.getNodes().get(1);
         Node n2 = board.getNodes().get(2); Node n3 = board.getNodes().get(3);
         Node n4 = board.getNodes().get(4);
         n0.setRight(n1); n1.setRight(n2); n2.setRight(n3); n3.setRight(n4);
 
-        // Build Road 1 on (0,1)
         Road r1 = new Road(); r1.setOwner(ai);
         n0.setRightRoad(r1); n1.setLeftRoad(r1);
         ai.addRoad(r1);
 
-        // Build Road 2 on (3,4) -- creating a 2-edge gap at (1,2) and (2,3)
         Road r2 = new Road(); r2.setOwner(ai);
         n3.setRightRoad(r2); n4.setLeftRoad(r2);
         ai.addRoad(r2);
@@ -247,62 +234,27 @@ public class TestComputerPlayer {
 
         ai.takeTurn(game);
 
-        // AI should detect the gap and build a road to start closing it
         assertEquals(3, ai.getRoads().size(), "AI should build a 3rd road to connect its nearby networks");
     }
 
     @Test
     void testMaxEntitiesReachedBranches() {
         ComputerPlayer ai = new ComputerPlayer(1);
-
-        // Added new ComputerPlayer(2) to the list
         Game game = new Game(List.of(ai, new ComputerPlayer(2)), new FixedDice(6), new Board(), 10, 20);
 
-        // Max out the AI's structures
         for(int i = 0; i < Settlement.getMax(); i++) ai.addStructure(new Settlement());
         for(int i = 0; i < City.getMax(); i++) ai.addStructure(new City());
         for(int i = 0; i < Road.getMax(); i++) ai.addRoad(new Road());
 
-        // Give enough resources to build everything
         ai.addResource(ResourceType.BRICK); ai.addResource(ResourceType.LUMBER);
         ai.addResource(ResourceType.WOOL); ai.addResource(ResourceType.GRAIN);
         for(int i = 0; i < 3; i++) ai.addResource(ResourceType.ORE);
 
         ai.takeTurn(game);
 
-        // Assert nothing was built because max limits caught the attempt
         assertEquals(Settlement.getMax(), ai.getSettlements().size());
         assertEquals(City.getMax(), ai.getCities().size());
         assertEquals(Road.getMax(), ai.getRoads().size());
-    }
-
-    @Test
-    void testDeadCodePayMethodsViaReflection() throws Exception {
-        // These methods exist in ComputerPlayer but are technically obsolete because
-        // PlayerCommand handles the payments. This reflection test gets them 100% coverage.
-        ComputerPlayer ai = new ComputerPlayer(1);
-        ai.addResource(ResourceType.BRICK); ai.addResource(ResourceType.LUMBER);
-
-        Method payRoad = ComputerPlayer.class.getDeclaredMethod("payForRoad");
-        payRoad.setAccessible(true);
-        payRoad.invoke(ai);
-        assertEquals(0, ai.getResourceAmount(ResourceType.BRICK));
-
-        ai.addResource(ResourceType.BRICK); ai.addResource(ResourceType.LUMBER);
-        ai.addResource(ResourceType.WOOL); ai.addResource(ResourceType.GRAIN);
-
-        Method paySettlement = ComputerPlayer.class.getDeclaredMethod("payForSettlement");
-        paySettlement.setAccessible(true);
-        paySettlement.invoke(ai);
-        assertEquals(0, ai.getResourceAmount(ResourceType.WOOL));
-
-        for(int i=0; i<3; i++) ai.addResource(ResourceType.ORE);
-        for(int i=0; i<2; i++) ai.addResource(ResourceType.GRAIN);
-
-        Method payCity = ComputerPlayer.class.getDeclaredMethod("payForCity");
-        payCity.setAccessible(true);
-        payCity.invoke(ai);
-        assertEquals(0, ai.getResourceAmount(ResourceType.ORE));
     }
 
     // ==========================================
