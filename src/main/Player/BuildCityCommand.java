@@ -3,7 +3,6 @@ package Player;
 import Board.Node;
 import GameResources.City;
 import GameResources.Cost;
-import GameResources.ResourceType;
 import GameResources.Settlement;
 
 /**
@@ -17,6 +16,11 @@ public class BuildCityCommand implements PlayerCommand {
     private final Cost cost;
     private boolean executed;
 
+    /**
+     * Constructs a BuildCityCommand.
+     * * @param player The player building the city.
+     * @param node The node where the existing settlement is located.
+     */
     public BuildCityCommand(Player player, Node node) {
         this.player = player;
         this.node = node;
@@ -26,55 +30,51 @@ public class BuildCityCommand implements PlayerCommand {
         this.executed = false;
     }
 
+    /**
+     * Executes the command: removes the previous settlement, pays the cost,
+     * places the city on the board, and adds it to the player's inventory.
+     */
     @Override
     public void execute() {
-        if (executed) {
-            return;
-        }
+        if (executed) return;
 
         player.removeStructure(previousSettlement);
-        payCost();
+        CommandCostHelper.payCost(player, cost);
         node.setStructure(city);
         player.addStructure(city);
         executed = true;
     }
 
+    /**
+     * Undoes the command: removes the city, restores the previous settlement,
+     * and refunds the cost.
+     */
     @Override
     public void undo() {
-        if (!executed) {
-            return;
-        }
+        if (!executed) return;
 
         player.removeStructure(city);
         node.setStructure(previousSettlement);
         player.addStructure(previousSettlement);
-        refundCost();
+        CommandCostHelper.refundCost(player, cost);
         executed = false;
     }
 
+    /**
+     * Retrieves the message to display when the command is executed.
+     * * @return The execution message.
+     */
     @Override
     public String getExecuteMessage() {
         return "Built city at node " + node.getId();
     }
 
+    /**
+     * Retrieves the message to display when the command is undone.
+     * * @return The undo message.
+     */
     @Override
     public String getUndoMessage() {
         return "Removed city from node " + node.getId();
-    }
-
-    private void payCost() {
-        for (int i = 0; i < cost.getBrick(); i++) player.removeResource(ResourceType.BRICK);
-        for (int i = 0; i < cost.getLumber(); i++) player.removeResource(ResourceType.LUMBER);
-        for (int i = 0; i < cost.getWool(); i++) player.removeResource(ResourceType.WOOL);
-        for (int i = 0; i < cost.getGrain(); i++) player.removeResource(ResourceType.GRAIN);
-        for (int i = 0; i < cost.getOre(); i++) player.removeResource(ResourceType.ORE);
-    }
-
-    private void refundCost() {
-        for (int i = 0; i < cost.getBrick(); i++) player.addResource(ResourceType.BRICK);
-        for (int i = 0; i < cost.getLumber(); i++) player.addResource(ResourceType.LUMBER);
-        for (int i = 0; i < cost.getWool(); i++) player.addResource(ResourceType.WOOL);
-        for (int i = 0; i < cost.getGrain(); i++) player.addResource(ResourceType.GRAIN);
-        for (int i = 0; i < cost.getOre(); i++) player.addResource(ResourceType.ORE);
     }
 }
