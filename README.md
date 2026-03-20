@@ -6,7 +6,7 @@
 ## 📖 Project Overview
 This repository contains a robust Java implementation of the **Settlers of Catan** board game. Designed as a capstone for **SFWRENG 2AA4**, this project demonstrates advanced Object-Oriented Programming (OOP) principles, graph theory application for board topology, and algorithmic decision-making for AI opponents.
 
-The simulator models the complete game lifecycle: from the randomized board setup and resource distribution to the turn-based economy and victory point calculation.
+The simulator models the complete game lifecycle: from the randomized board setup and resource distribution to the turn-based economy and victory point calculation. It also supports undo/redo for reversible player actions, rule-based move evaluation for computer players, and synchronized JSON updates for the visualizer during gameplay.
 
 ---
 
@@ -16,6 +16,11 @@ The simulator models the complete game lifecycle: from the randomized board setu
 * **Autonomous Decision Making:** The `ComputerPlayer` class utilizes a priority-based decision tree to analyze the board state.
 * **Valid Move Scanning:** Instead of random guessing, the AI scans the graph for all legally valid moves (Roads, Settlements, Cities) before executing strategies.
 * **Resource Management:** Dynamic assessment of hand resources to determine affordability of structures.
+* **Tie Handling:** When multiple legal moves have similar value, the AI can resolve ties without hardcoding every possible combination of rules.
+
+### ↩️ Reversible Player Actions
+* **Undo/Redo Support:** Player actions can be executed, stored, undone, and redone when needed.
+* **Localized Action Logic:** Reversible actions such as building roads, settlements, and cities are handled in a way that keeps execution and reversal logic clear and maintainable.
 
 ### 🗺️ Graph-Based Board Architecture
 * **Node & Edge Topology:** The game board is modeled not just as a grid, but as a mathematical graph where `Node` objects (intersections) are linked by `Road` edges.
@@ -38,7 +43,7 @@ The codebase is organized into domain-specific packages to ensure low coupling a
 | **`Board`** | Handles the physical state of the map. Includes `Node` (vertices), `Tile` (hexes), and `SetupManager` for board generation. |
 | **`Player`** | Contains the `Player` abstract class and concrete `ComputerPlayer`. Manages inventory via `PlayerHand` and score via `VictoryPointCalculator`. |
 | **`Game`** | The central controller. `Game.java` manages the turn loop, state transitions, and win conditions. `Main.java` serves as the entry point. |
-| **`GameResources`** | The model layer. Defines the immutable logic for `ResourceType`, `Road`, `Settlement`, `City`, and the `Bank`. |
+| **`GameResources`** | The model layer. Defines the immutable logic for `Road`, `Settlement`, `City`, and the `Bank`. |
 
 ---
 
