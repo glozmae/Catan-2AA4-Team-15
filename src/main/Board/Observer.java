@@ -5,22 +5,31 @@ package Board;
  *
  * @author Yojith Sai Biradavolu, McMaster University
  */
-public interface Observer {
+public abstract class Observer {
+    /**
+     * Subject that the observer is observing
+     */
+    protected Subject subject;
+
     /**
      * Updates state of the observer based on the subjects
      *
      */
-    void update();
+    public abstract void update();
 
     /**
      * Sets the subject that the observer is observing
      *
      * @param subject The subject to observe
      */
-    void setSubject(Subject subject);
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
 
     /**
      * Removes the subject that the observer is observing
      */
-    void removeSubject();
+    public void removeSubject() {
+        this.subject = null;
+    }
 }

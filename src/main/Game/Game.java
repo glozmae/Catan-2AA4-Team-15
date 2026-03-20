@@ -14,6 +14,7 @@ import Board.Tile;
 import Board.Node;
 import Board.SetupManager;
 import Board.Visualizer;
+import Board.Observer;
 import Player.Player;
 import Board.JSONVisualizer;
 import GameResources.ResourceType;
@@ -94,7 +95,7 @@ public class Game {
         this.maxRounds = maxRounds;
 
         this.visualizer = new JSONVisualizer(new ObjectMapper());
-        this.board.attach(this.visualizer);
+        this.board.attach((Observer) this.visualizer);
         this.board.attach(new ConsoleLogger());
     }
 
