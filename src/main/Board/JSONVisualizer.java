@@ -24,19 +24,29 @@ public class JSONVisualizer implements Visualizer {
     /**
      * Maps each tile from 0-18 to a qsr coordinate
      **/
-    private static final int[][] TILE_COORDS = {
-            {0, 0, 0}, {1, -1, 0}, {0, -1, 1}, {-1, 0, 1}, {-1, 1, 0},
-            {0, 1, -1}, {1, 0, -1}, {2, -2, 0}, {1, -2, 1}, {0, -2, 2},
-            {-1, -1, 2}, {-2, 0, 2}, {-2, 1, 1}, {-2, 2, 0}, {-1, 2, -1},
-            {0, 2, -2}, {1, 1, -2}, {2, 0, -2}, {2, -1, -1},};
+    private static final int[][] TILE_COORDS = {{0, 0, 0}, {1, -1, 0}, {0, -1, 1}, {-1, 0, 1}, {-1, 1, 0},
+            {0, 1, -1}, {1, 0, -1}, {2, -2, 0}, {1, -2, 1}, {0, -2, 2}, {-1, -1, 2}, {-2, 0, 2}, {-2, 1, 1},
+            {-2, 2, 0}, {-1, 2, -1}, {0, 2, -2}, {1, 1, -2}, {2, 0, -2}, {2, -1, -1},};
 
+    /**
+     * ObjectMapper for JSON serialization
+     */
     private final ObjectMapper objectMapper;
-    private final Board board;
 
-    public JSONVisualizer(ObjectMapper objectMapper, Board board) {
+    /**
+     * Board that the visualizer is observing
+     */
+    private Board board;
+
+    /**
+     * Constructor for JSONVisualizer
+     *
+     * @param objectMapper ObjectMapper for JSON serialization
+     */
+    public JSONVisualizer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.board = board;
     }
+
     /**
      * Creates the base map JSON based on the board state
      */
@@ -72,7 +82,7 @@ public class JSONVisualizer implements Visualizer {
     }
 
     /**
-     * Updates state JSON based on current board state
+     * Updates state JSON based on the current board state
      */
     @Override
     public void update() {
@@ -115,5 +125,26 @@ public class JSONVisualizer implements Visualizer {
         } catch (IOException e) {
             System.err.println("Error: Could not create state JSON");
         }
+    }
+
+    /**
+     * Sets the subject that the visualizer is observing. Must be of type Board.
+     *
+     * @param subject the subject to observe
+     */
+    @Override
+    public void setSubject(Subject subject) {
+        if (!(subject instanceof Board)) {
+            throw new IllegalArgumentException("Subject must be of type Board");
+        }
+        this.board = (Board) subject;
+    }
+
+    /**
+     * Removes the subject that the visualizer is observing
+     */
+    @Override
+    public void removeSubject() {
+        this.board = null;
     }
 }
