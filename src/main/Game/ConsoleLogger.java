@@ -2,7 +2,6 @@ package Game;
 
 import Board.Board;
 import Board.Observer;
-import Board.Subject;
 
 /**
  * ConsoleLogger is an observer that logs game events to the console.
