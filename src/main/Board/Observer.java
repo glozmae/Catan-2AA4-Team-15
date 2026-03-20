@@ -18,4 +18,9 @@ public interface Observer {
      * @param subject The subject to observe
      */
     void setSubject(Subject subject);
+
+    /**
+     * Removes the subject that the observer is observing
+     */
+    void removeSubject();
 }

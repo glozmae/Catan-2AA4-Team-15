@@ -128,7 +128,7 @@ public class JSONVisualizer implements Visualizer {
     }
 
     /**
-     * Sets the subject that the observer is observing. Must be of type Board.
+     * Sets the subject that the visualizer is observing. Must be of type Board.
      *
      * @param subject the subject to observe
      */
@@ -138,5 +138,13 @@ public class JSONVisualizer implements Visualizer {
             throw new IllegalArgumentException("Subject must be of type Board");
         }
         this.board = (Board) subject;
+    }
+
+    /**
+     * Removes the subject that the visualizer is observing
+     */
+    @Override
+    public void removeSubject() {
+        this.board = null;
     }
 }

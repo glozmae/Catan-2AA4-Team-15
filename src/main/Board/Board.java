@@ -216,7 +216,6 @@ public class Board implements Subject {
     public void attach(Observer observer) {
         observers.add(observer);
         observer.setSubject(this);
-
     }
 
     /**
@@ -228,7 +227,7 @@ public class Board implements Subject {
     public void detach(Observer observer) {
         for (int i = 0; i < observers.size(); i++) {
             if (observers.get(i).equals(observer)) {
-                observer.setSubject(null);
+                observer.removeSubject();
                 observers.remove(i);
                 break;
             }

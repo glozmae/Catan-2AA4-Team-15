@@ -27,15 +27,18 @@ public class ConsoleLogger implements Observer {
     }
 
     /**
-     * Sets the board that the observer is observing. Must be of type Board.
+     * Sets the board that the logger is observing. Must be of type Board.
      *
      * @param subject the subject to observe
      */
     @Override
     public void setSubject(Subject subject) {
-        if (!(subject instanceof Board)) {
-            throw new IllegalArgumentException("Subject must be of type Board");
-        }
-        this.board = (Board) subject;
+    }
+
+    /**
+     * Removes the board that the logger is observing.
+     */
+    @Override
+    public void removeSubject() {
     }
 }

@@ -3,6 +3,7 @@ package TestTask3;
 import Board.Board;
 import Board.JSONVisualizer;
 import Board.Visualizer;
+import Board.Subject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,7 @@ class TestJSONVisualizer {
         Board board = new Board();
         board.attach(visualizer);
         assertDoesNotThrow(visualizer::setup, "Ensures that JSON is set up without any errors.");
+        board.detach(visualizer);
     }
 
     @Test
@@ -39,5 +41,13 @@ class TestJSONVisualizer {
         Board board = new Board();
         board.attach(visualizer);
         assertDoesNotThrow(visualizer::update, "Ensures that JSON is set up without any errors.");
+        board.detach(visualizer);
+    }
+
+    @Test
+    void setSubjectFailure() {
+        Visualizer visualizer = new JSONVisualizer(new ObjectMapper());
+        Subject dummySubject = null;
+        assertThrows(IllegalArgumentException.class, () -> visualizer.setSubject(dummySubject), "Subject must be a board.");
     }
 }
