@@ -93,7 +93,9 @@ public class Game {
         this.winPoints = winPoints;
         this.maxRounds = maxRounds;
 
-        this.visualizer = new JSONVisualizer(new ObjectMapper(), board);
+        this.visualizer = new JSONVisualizer(new ObjectMapper());
+        this.board.attach(this.visualizer);
+        this.board.attach(new ConsoleLogger());
     }
 
     /**
@@ -151,6 +153,7 @@ public class Game {
         setup.run(players);
         currentPlayerIndex = 0;
         visualizer.setup();
+        board.notifyObservers();
     }
 
     /** One player turn. */
@@ -208,7 +211,7 @@ public class Game {
     public void playOneTurn() {
         nextTurn();
         checkWin();
-        this.visualizer.update();
+        this.board.notifyObservers(); // Rather than calling update on each observer, we call update on the board.
     }
 
     /**
