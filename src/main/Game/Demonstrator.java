@@ -37,7 +37,7 @@ public class Demonstrator {
 
         // creaet four computer players based of seed (ensures no repeats)
         List<Player> players = List.of(
-                new HumanPlayer(),
+                new ComputerPlayer(seed + 1),
                 new ComputerPlayer(seed + 2),
                 new ComputerPlayer(seed + 3),
                 new ComputerPlayer(seed + 4));

@@ -1,11 +1,13 @@
 package Player;
 
+import java.util.Scanner;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import Board.Node;
 import Board.Tile;
 import Game.Game;
@@ -31,14 +33,21 @@ public class HumanPlayer extends Player {
     private static final Pattern BUILD_SETTLEMENT = Pattern.compile("^build\\s+settlement\\s+(\\d+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern BUILD_CITY = Pattern.compile("^build\\s+city\\s+(\\d+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern BUILD_ROAD = Pattern.compile("^build\\s+road\\s+\\[?\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\]?$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern UNDO_PATTERN = Pattern.compile("^undo$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REDO_PATTERN = Pattern.compile("^redo$", Pattern.CASE_INSENSITIVE);
+
     /** Reads commands from the console for this human player. */
     private final Scanner commandReader;
     private final Random randomizer;
+    private final Deque<PlayerCommand> undoStack;
+    private final Deque<PlayerCommand> redoStack;
 
     public HumanPlayer() {
         super();
         this.commandReader = new Scanner(System.in);
         this.randomizer = new Random();
+        this.undoStack = new ArrayDeque<>();
+        this.redoStack = new ArrayDeque<>();
     }
 
     /**
@@ -46,45 +55,71 @@ public class HumanPlayer extends Player {
      */
     @Override
     public void takeTurn(Game game) {
-        boolean turnFinished = false;
+        undoStack.clear();
+        redoStack.clear();
 
         System.out.println("\n========================================");
         System.out.println("Your Turn: " + this.toString());
-        System.out.println("Commands: roll | list | build settlement <id> | build city <id> | build road <id,id> | go");
+        System.out.println("Commands: roll | list | build settlement <id> | build city <id> | build road <id,id> | undo | redo | go");
         System.out.println("========================================");
 
+        boolean turnFinished = false;
         while (!turnFinished) {
             System.out.print("> ");
             String command = commandReader.nextLine().trim();
 
-            if (command.isEmpty()) continue;
-
-            // ROLL COMMAND
-            if (ROLL_PATTERN.matcher(command).matches()) {
-                System.out.println("The Game engine automatically rolls at the start of the turn. You rolled a " + game.getLastRoll() + ".");
-                continue;
-            }
-
-            // LIST COMMAND
-            if (LIST_PATTERN.matcher(command).matches()) {
-                printHand();
-                continue;
-            }
-
-            // GO COMMAND (R2.4 Step Forward)
-            if (GO_PATTERN.matcher(command).matches()) {
-                turnFinished = true;
-                logAction(game.getRound(), "Ended turn (Go)");
-                continue;
-            }
-
-            // BUILD COMMANDS
-            if (tryBuildSettlement(game, command)) continue;
-            if (tryBuildCity(game, command)) continue;
-            if (tryBuildRoad(game, command)) continue;
-
-            System.out.println("Unknown command or invalid syntax.");
+            // Delegate the complex branching to a helper method
+            turnFinished = processCommand(command, game);
         }
+    }
+
+    /**
+     * Processes a single human command.
+     * * @param command The string input from the user
+     * @param game The current game state
+     * @return true if the turn should end, false otherwise
+     */
+    private boolean processCommand(String command, Game game) {
+        if (command.isEmpty()) return false;
+
+        // ROLL COMMAND
+        if (ROLL_PATTERN.matcher(command).matches()) {
+            System.out.println("The Game engine automatically rolls at the start of the turn. You rolled a " + game.getLastRoll() + ".");
+            return false;
+        }
+
+        // LIST COMMAND
+        if (LIST_PATTERN.matcher(command).matches()) {
+            printHand();
+            return false;
+        }
+
+        // UNDO COMMAND
+        if (UNDO_PATTERN.matcher(command).matches()) {
+            undoLastCommand(game);   // need to come back and fix this error
+            return false;
+        }
+
+        // REDO COMMAND
+        if (REDO_PATTERN.matcher(command).matches()) {
+            redoLastCommand(game);
+            return false;
+        }
+
+        // GO COMMAND (Ends the turn)
+        if (GO_PATTERN.matcher(command).matches()) {
+            logAction(game.getRound(), "Ended turn (Go)");
+            return true;
+        }
+
+        // BUILD COMMANDS
+        if (tryBuildSettlement(game, command)) return false;
+        if (tryBuildCity(game, command)) return false;
+        if (tryBuildRoad(game, command)) return false;
+
+        // FALLBACK
+        System.out.println("Unknown command or invalid syntax.");
+        return false;
     }
 
     /**
@@ -206,10 +241,8 @@ public class HumanPlayer extends Player {
             return true;
         }
 
-        payCost(s.getCost());
-        node.setStructure(s);
-        addStructure(s);
-        logAction(game.getRound(), "Built settlement at node " + nodeId);
+        PlayerCommand buildSettlement = new BuildSettlementCommand(this, node);
+        executeCommand(game, buildSettlement);
         return true;
     }
 
@@ -231,11 +264,8 @@ public class HumanPlayer extends Player {
             return true;
         }
 
-        payCost(c.getCost());
-        removeStructure(node.getStructure());
-        node.setStructure(c);
-        addStructure(c);
-        logAction(game.getRound(), "Built city at node " + nodeId);
+        PlayerCommand buildCity = new BuildCityCommand(this, node);
+        executeCommand(game, buildCity);
         return true;
     }
 
@@ -248,7 +278,9 @@ public class HumanPlayer extends Player {
         Node beginNode = findNode(game, fromId);
         Node endNode = findNode(game, toId);
 
-        if (beginNode == null || endNode == null || getRoads().size() >= Road.getMax() || (!beginNode.getBuildableRoadNeighbors(this).contains(endNode) && !endNode.getBuildableRoadNeighbors(this).contains(beginNode))) {
+        if (beginNode == null || endNode == null || getRoads().size() >= Road.getMax() ||
+                (!beginNode.getBuildableRoadNeighbors(this).contains(endNode) &&
+                        !endNode.getBuildableRoadNeighbors(this).contains(beginNode))) {
             System.out.println("Cannot build road there (No connection or edge already taken).");
             return true;
         }
@@ -259,10 +291,8 @@ public class HumanPlayer extends Player {
             return true;
         }
 
-        payCost(r.getCost());
-        placeRoadEdge(beginNode, endNode, r);
-        addRoad(r);
-        logAction(game.getRound(), "Built road [" + fromId + "," + toId + "]");
+        PlayerCommand buildRoad = new BuildRoadCommand(this, beginNode, endNode);
+        executeCommand(game, buildRoad);
         return true;
     }
 
@@ -291,14 +321,6 @@ public class HumanPlayer extends Player {
                 && getResourceAmount(ResourceType.ORE) >= cost.getOre();
     }
 
-    private void payCost(Cost cost) {
-        for (int i=0; i<cost.getBrick(); i++) removeResource(ResourceType.BRICK);
-        for (int i=0; i<cost.getLumber(); i++) removeResource(ResourceType.LUMBER);
-        for (int i=0; i<cost.getWool(); i++) removeResource(ResourceType.WOOL);
-        for (int i=0; i<cost.getGrain(); i++) removeResource(ResourceType.GRAIN);
-        for (int i=0; i<cost.getOre(); i++) removeResource(ResourceType.ORE);
-    }
-
     private Node findNode(Game game, int nodeId) {
         List<Node> nodes = game.getBoard().getNodes();
         if (nodeId < 0 || nodeId >= nodes.size()) return null;
@@ -319,6 +341,44 @@ public class HumanPlayer extends Player {
         if (start.getLeft() == end) { start.setLeftRoad(r); end.setRightRoad(r); }
         else if (start.getRight() == end) { start.setRightRoad(r); end.setLeftRoad(r); }
         else if (start.getVert() == end) { start.setVertRoad(r); end.setVertRoad(r); }
+    }
+
+    private void executeCommand(Game game, PlayerCommand command) {
+        command.execute();
+        undoStack.push(command);
+        redoStack.clear();
+        logAction(game.getRound(), command.getExecuteMessage());
+    }
+
+    private void undoLastCommand(Game game) {
+        if (undoStack.isEmpty()) {
+            System.out.println("Nothing to undo.");
+            return;
+        }
+        PlayerCommand command = undoStack.pop();
+        command.undo();
+        redoStack.push(command);
+        logAction(game.getRound(), command.getUndoMessage());
+    }
+
+    private void redoLastCommand(Game game) {
+        if (redoStack.isEmpty()) {
+            System.out.println("Nothing to redo.");
+            return;
+        }
+        PlayerCommand command = redoStack.pop();
+        command.execute();
+        undoStack.push(command);
+        logAction(game.getRound(), "Redid: " + command.getExecuteMessage());
+    }
+
+    //Parser helpers
+    public static boolean undoCommand(String command) {
+        return UNDO_PATTERN.matcher(command).matches();
+    }
+
+    public static boolean redoCommand(String command) {
+        return REDO_PATTERN.matcher(command).matches();
     }
 
     // ==========================================
