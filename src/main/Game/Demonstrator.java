@@ -2,9 +2,9 @@ package Game;
 
 import java.util.List;
 
+import Player.ClaudeMoveAdvisor;
 import Player.ComputerPlayer;
 import Player.MoveAdvisor;
-import Player.OpenAiMoveAdvisor;
 import Player.Player;
 
 /**
@@ -38,7 +38,7 @@ public class Demonstrator {
 
         // The first player uses the optional LLM advisor. Without an API key,
         // it automatically behaves like the original rule-based player.
-        MoveAdvisor optionalLlmAdvisor = OpenAiMoveAdvisor.fromEnvironment();
+        MoveAdvisor optionalLlmAdvisor = ClaudeMoveAdvisor.fromEnvironment();
 
         // creaet four computer players based of seed (ensures no repeats)
         List<Player> players = List.of(

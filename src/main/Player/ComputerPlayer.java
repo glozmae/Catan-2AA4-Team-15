@@ -158,7 +158,7 @@ public class ComputerPlayer extends Player {
         if (advice.isPresent()) {
             int selectedId = advice.get().moveId();
             if (selectedId >= 0 && selectedId < moves.size()) {
-                System.out.println("LLM advisor: " + advice.get().reason());
+                System.out.println("Claude advisor: " + advice.get().reason());
                 return moves.get(selectedId);
             }
         }

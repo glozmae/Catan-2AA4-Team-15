@@ -18,11 +18,11 @@ The simulator models the complete game lifecycle: from the randomized board setu
 * **Resource Management:** Dynamic assessment of hand resources to determine affordability of structures.
 * **Tie Handling:** When multiple legal moves have similar value, the AI can resolve ties without hardcoding every possible combination of rules.
 
-### Optional LLM Strategy Advisor
-The first computer player can use an OpenAI model as a small strategy advisor. The original Java rules still decide which moves are legal. The LLM only chooses one of those legal moves and gives a short reason.
+### Optional Claude Strategy Advisor
+The first computer player can use Claude as a small strategy advisor. The original Java rules still decide which moves are legal. Claude only chooses one of those legal moves and gives a short reason.
 
 ```text
-Java checks the rules -> legal move list -> LLM chooses a move number -> Java executes that legal move
+Java checks the rules -> legal move list -> Claude chooses a move number -> Java executes that legal move
 ```
 
 This feature is optional. If no API key is set, the simulator uses the original rule-based AI. It also falls back to that AI if the API is unavailable, times out, or returns an invalid move.
@@ -30,15 +30,15 @@ This feature is optional. If no API key is set, the simulator uses the original 
 To enable it in PowerShell:
 
 ```powershell
-$env:OPENAI_API_KEY="your-api-key"
+$env:ANTHROPIC_API_KEY="your-api-key"
 mvn package
 java -jar target/Catan-2AA4-Team-15-1.0.jar
 ```
 
-The default model is `gpt-5.6-luna`. To use another compatible model for the current terminal session:
+The default model is `claude-haiku-4-5`. To use another Claude model for the current terminal session:
 
 ```powershell
-$env:OPENAI_MODEL="your-model-id"
+$env:ANTHROPIC_MODEL="your-model-id"
 ```
 
 Keep the API key private and never commit it to GitHub. API requests may incur usage charges.
