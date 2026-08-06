@@ -2,6 +2,7 @@ package Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import Board.Node;
@@ -27,14 +28,16 @@ import GameResources.Settlement;
 public class ComputerPlayer extends Player {
 
     /** Random number generator for decision-making and move selection. */
-    private Random randomizer;
+    private final Random randomizer;
+
+    /** Optional advisor that may choose between moves already validated by the game. */
+    private final MoveAdvisor moveAdvisor;
 
     /**
      * Default constructor. Initializes the computer player with a default Random instance.
      */
     public ComputerPlayer() {
-        super();
-        this.randomizer = new Random();
+        this(new Random(), MoveAdvisor.DISABLED);
     }
 
     /**
@@ -42,8 +45,23 @@ public class ComputerPlayer extends Player {
      * @param seed The seed for the random number generator.
      */
     public ComputerPlayer(int seed) {
+        this(new Random(seed), MoveAdvisor.DISABLED);
+    }
+
+    /**
+     * Seeded constructor with an optional strategy advisor.
+     *
+     * @param seed seed for deterministic rule-based fallback behavior
+     * @param moveAdvisor advisor used to rank legal moves
+     */
+    public ComputerPlayer(int seed, MoveAdvisor moveAdvisor) {
+        this(new Random(seed), moveAdvisor);
+    }
+
+    private ComputerPlayer(Random randomizer, MoveAdvisor moveAdvisor) {
         super();
-        this.randomizer = new Random(seed);
+        this.randomizer = randomizer;
+        this.moveAdvisor = moveAdvisor == null ? MoveAdvisor.DISABLED : moveAdvisor;
     }
 
     /**
@@ -130,6 +148,21 @@ public class ComputerPlayer extends Player {
     private AIMove pickBestMove(List<AIMove> moves) {
         if (moves.isEmpty()) return null;
 
+        List<MoveOption> legalOptions = new ArrayList<>();
+        for (int index = 0; index < moves.size(); index++) {
+            AIMove move = moves.get(index);
+            legalOptions.add(new MoveOption(index, move.value, move.message));
+        }
+
+        Optional<MoveAdvice> advice = moveAdvisor.advise(summarizePlayerState(), legalOptions);
+        if (advice.isPresent()) {
+            int selectedId = advice.get().moveId();
+            if (selectedId >= 0 && selectedId < moves.size()) {
+                System.out.println("Claude advisor: " + advice.get().reason());
+                return moves.get(selectedId);
+            }
+        }
+
         double bestValue = -1.0;
         for (AIMove move : moves) {
             if (move.value > bestValue) bestValue = move.value;
@@ -141,6 +174,23 @@ public class ComputerPlayer extends Player {
         }
 
         return bestMoves.get(randomizer.nextInt(bestMoves.size()));
+    }
+
+    /**
+     * Builds a compact text summary for the advisor without exposing game objects.
+     *
+     * @return current resources, score, and built-piece counts
+     */
+    private String summarizePlayerState() {
+        return "victory points=" + calculateVictoryPoints()
+                + ", brick=" + getResourceAmount(ResourceType.BRICK)
+                + ", lumber=" + getResourceAmount(ResourceType.LUMBER)
+                + ", wool=" + getResourceAmount(ResourceType.WOOL)
+                + ", grain=" + getResourceAmount(ResourceType.GRAIN)
+                + ", ore=" + getResourceAmount(ResourceType.ORE)
+                + ", roads=" + getRoads().size()
+                + ", settlements=" + getSettlements().size()
+                + ", cities=" + getCities().size();
     }
 
     /**

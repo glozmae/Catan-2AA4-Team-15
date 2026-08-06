@@ -43,6 +43,10 @@ dependency-reduced-pom.xml
 .DS_Store
 Thumbs.db
 
+# Local secrets
+.env
+.env.*
+
 #Python visualizer
 __pycache__/
 visualize/**/*.png
