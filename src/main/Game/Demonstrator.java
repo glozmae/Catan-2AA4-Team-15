@@ -3,8 +3,9 @@ package Game;
 import java.util.List;
 
 import Player.ComputerPlayer;
+import Player.MoveAdvisor;
+import Player.OpenAiMoveAdvisor;
 import Player.Player;
-import Player.HumanPlayer;
 
 /**
  * Entry point for launching and simulation Catan game
@@ -35,9 +36,13 @@ public class Demonstrator {
 
         Player.resetNumPlayers();
 
+        // The first player uses the optional LLM advisor. Without an API key,
+        // it automatically behaves like the original rule-based player.
+        MoveAdvisor optionalLlmAdvisor = OpenAiMoveAdvisor.fromEnvironment();
+
         // creaet four computer players based of seed (ensures no repeats)
         List<Player> players = List.of(
-                new ComputerPlayer(seed + 1),
+                new ComputerPlayer(seed + 1, optionalLlmAdvisor),
                 new ComputerPlayer(seed + 2),
                 new ComputerPlayer(seed + 3),
                 new ComputerPlayer(seed + 4));

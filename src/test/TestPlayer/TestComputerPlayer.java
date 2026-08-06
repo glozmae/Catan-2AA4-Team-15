@@ -15,10 +15,14 @@ import GameResources.ResourceType;
 import GameResources.Road;
 import GameResources.Settlement;
 import Player.ComputerPlayer;
+import Player.MoveAdvice;
+import Player.MoveAdvisor;
 import Player.Player;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * JUnit 5 tests for ComputerPlayer
@@ -114,6 +118,29 @@ public class TestComputerPlayer {
         ai.takeTurn(game);
 
         assertEquals(roadsBefore + 1, ai.getRoads().size(), "AI should build one road when it is the only affordable move");
+    }
+
+    @Test
+    void testTakeTurnCanUseAdvisorForLegalMove() {
+        AtomicInteger calls = new AtomicInteger();
+        MoveAdvisor advisor = (state, moves) -> {
+            calls.incrementAndGet();
+            assertFalse(state.isBlank());
+            assertFalse(moves.isEmpty());
+            return Optional.of(new MoveAdvice(0, "This legal road extends the network."));
+        };
+
+        ComputerPlayer ai = new ComputerPlayer(11, advisor);
+        Game game = new Game(List.of(ai, new ComputerPlayer(22)), new FixedDice(6), new Board(), 10, 20);
+        ai.setup(game);
+        int roadsBefore = ai.getRoads().size();
+        ai.addResource(ResourceType.BRICK);
+        ai.addResource(ResourceType.LUMBER);
+
+        ai.takeTurn(game);
+
+        assertEquals(1, calls.get());
+        assertEquals(roadsBefore + 1, ai.getRoads().size());
     }
 
     @Test
