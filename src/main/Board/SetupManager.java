@@ -25,6 +25,9 @@ public class SetupManager {
     /** Random number generator for placement */
     private final Random rng;
 
+    /** Mathematical strategy used to compare legal settlement locations. */
+    private final ExpectedValueSettlementStrategy settlementStrategy;
+
     /**
      * Setup manager bound to a specific board.
      * * @param board - board during setup
@@ -33,6 +36,7 @@ public class SetupManager {
     public SetupManager(Board board, long seed) {
         this.board = board;
         this.rng = new Random(seed);
+        this.settlementStrategy = new ExpectedValueSettlementStrategy();
     }
 
     /**
@@ -64,7 +68,7 @@ public class SetupManager {
      * @return - node where settlement is placed
      */
     private Node placeInitialSettlement(Player player) {
-        Node node = pickRandomLegalSettlementNode();
+        Node node = pickBestLegalSettlementNode();
 
         Settlement s = new Settlement();
 
@@ -97,12 +101,13 @@ public class SetupManager {
     }
 
     /**
-     * Scans the board to find all candidate nodes that satisfy settlement placement rules
-     * and randomly selects one for the AI to build on.
-     * * @return A randomly selected, legal Node for settlement placement.
+     * Scans the board for legal settlement locations and selects the node with
+     * the highest expected resource production based on dice probabilities.
+     * Randomness is used only when multiple nodes have the same score.
+     * * @return The highest-scoring legal Node for settlement placement.
      * @throws IllegalStateException if the board is completely full and no legal nodes remain.
      */
-    private Node pickRandomLegalSettlementNode() {
+    private Node pickBestLegalSettlementNode() {
         List<Node> candidates = new ArrayList<>();
         for (Node n : board.getNodes()) {
             if (isLegalSettlementNode(n))
@@ -111,7 +116,7 @@ public class SetupManager {
         if (candidates.isEmpty()) {
             throw new IllegalStateException("No legal settlement nodes available.");
         }
-        return candidates.get(rng.nextInt(candidates.size()));
+        return settlementStrategy.choose(board, candidates, rng);
     }
 
     /**
