@@ -43,6 +43,21 @@ $env:ANTHROPIC_MODEL="your-model-id"
 
 Keep the API key private and never commit it to GitHub. API requests may incur usage charges.
 
+### Expected Value Maximization
+Initial settlement placement uses an expected-value strategy based on the exact
+probabilities of rolling two six-sided dice. Each legal intersection is scored
+using the production numbers on its adjacent tiles. Locations beside 6 and 8
+receive the highest probability weight, while locations beside 2 and 12 receive
+the lowest.
+
+```text
+expected production = sum of adjacent roll probabilities
+```
+
+The setup system selects the legal location with the highest expected resource
+production and uses seeded randomness only to break equal-score ties. This adds
+a mathematical strategy without changing the rules or simulating future games.
+
 ### ↩️ Reversible Player Actions
 * **Undo/Redo Support:** Player actions can be executed, stored, undone, and redone when needed.
 * **Localized Action Logic:** Reversible actions such as building roads, settlements, and cities are handled in a way that keeps execution and reversal logic clear and maintainable.
